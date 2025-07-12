@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Guestbook – The Tipsy Bunghole</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Tipsy Bunghole</title>
   <style>
     body {
       font-family: Georgia, serif;
@@ -15,18 +14,29 @@
     }
     a {
       color: #ffb347;
-      font-weight: bold;
       text-decoration: none;
+      font-weight: bold;
     }
     a:hover {
       text-decoration: underline;
     }
-    input, textarea {
-      width: 80%;
-      padding: 10px;
+    img {
+      border-radius: 8px;
+    }
+    section {
+      margin-top: 40px;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
       margin: 10px 0;
-      border-radius: 5px;
-      border: none;
+    }
+    input, textarea {
+      padding: 8px;
+      width: 80%;
+      margin: 10px 0;
     }
     button {
       padding: 10px 20px;
@@ -35,43 +45,117 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .entry {
-      background-color: #333;
-      margin: 10px auto;
-      padding: 10px;
-      border-radius: 8px;
-      width: 80%;
-      text-align: left;
+
+    .scrolling-banner {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      background-color: #ffc107;
+      color: #000;
+      font-weight: bold;
+      padding: 10px 0;
+      position: relative;
+    }
+
+    .scrolling-text {
+      display: inline-block;
+      padding-left: 100%;
+      animation: scroll-left 12s linear infinite;
+    }
+
+    @keyframes scroll-left {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
     }
   </style>
 </head>
 <body>
-  <h1>📖 The Guestbook</h1>
-  <p>Let the world know you dared enter The Tipsy Bunghole...</p>
+<div class="scrolling-banner">
+  <div class="scrolling-text">
+    👍 Voted BEST Bunghole in North Tonawanda NY 2025 👍
+  </div>
+</div>
 
-  <form onsubmit="saveEntry(); return false;">
+<h1>🥃 Welcome to The Tipsy Bunghole 🥃</h1>
+<p>Where bourbon flows and the jokes are low like our standards.</p>
+
+<section id="menu">
+  <h2>🥃 Drink Menu</h2>
+  <ul>
+    <li>The Bung'd Up Old Fashioned</li>
+    <li>Peachy Rim Job Runner</li>
+    <li>The Barrel Probe</li>
+    <li>Neat & Naughty</li>
+    <li>The Oak Spanker</li>
+  </ul>
+</section>
+
+<section id="teaser">
+  <h2>📸 Teaser</h2>
+  <p><strong>Do you want to see my bunghole?</strong></p>
+  <p><a href="#" id="showBungholeLink">👉 Yes, Show Me the Goods</a></p>
+</section>
+
+<div id="bungholeGallery" style="display: none; margin-top: 20px;">
+  <h2>📸 Bunghole Gallery</h2>
+  <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+    <img src="https://via.placeholder.com/200x150?text=Bottle+1" alt="Bourbon 1">
+    <img src="https://via.placeholder.com/200x150?text=Bottle+2" alt="Bourbon 2">
+    <img src="https://via.placeholder.com/200x150?text=Bar+Setup" alt="Bar Setup">
+    <img src="https://via.placeholder.com/200x150?text=Shady+Corner" alt="Shady Corner">
+    <img src="https://via.placeholder.com/200x150?text=VIP+Bunghole" alt="VIP Bunghole">
+  </div>
+</div>
+
+<section id="about">
+  <h2>🍻 Our Story</h2>
+  <p>Legend has it The Tipsy Bunghole was born after one too many bourbons and one very regrettable tattoo.</p>
+  <p>Since then, it's been a haven for lovers of brown liquor, bad puns, and mediocre snacks.</p>
+</section>
+
+<section id="reservation">
+  <h2>📆 Make a Reservation</h2>
+  <form onsubmit="sendReservation(); return false;">
     <input type="text" id="name" placeholder="Your Name" required><br>
-    <textarea id="message" placeholder="Say something filthy or flattering..." required></textarea><br>
-    <button type="submit">Leave My Mark</button>
+    <input type="text" id="date" placeholder="Preferred Date/Time" required><br>
+    <textarea id="notes" placeholder="Anything we should know? Raunchy preferences welcome."></textarea><br>
+    <button type="submit">Reserve My Bunghole</button>
   </form>
+  <p id="confirmation" style="margin-top: 10px;"></p>
+</section>
 
-  <div id="entries"></div>
+<section id="contact">
+  <h2>📞 Contact Us</h2>
+  <p>Email: <a href="mailto:whiskey@thetipsybunghole.com">whiskey@thetipsybunghole.com</a></p>
+  <p>Carrier pigeon or smoke signals also accepted.</p>
+</section>
 
-  <p style="margin-top: 40px;">
-    <a href="index.html">⬅️ Back to the Bunghole</a>
-  </p>
+<section id="guestbook-callout" style="margin-top: 60px;">
+  <p>Want to leave your mark on The Tipsy Bunghole? <a href="guestbook.html">📖 Sign the guestbook</a> — but no Sharpies, please.</p>
+</section>
 
-  <script>
-    function saveEntry() {
-      const name = document.getElementById('name').value;
-      const message = document.getElementById('message').value;
-      const entry = document.createElement('div');
-      entry.classList.add('entry');
-      entry.innerHTML = `<strong>${name}</strong>:<br>${message}`;
-      document.getElementById('entries').prepend(entry);
-      document.getElementById('name').value = '';
-      document.getElementById('message').value = '';
-    }
-  </script>
+<footer style="margin-top:60px; font-size:0.9em;">
+  <p>&copy; 2025 The Tipsy Bunghole — No refunds, no regrets.</p>
+</footer>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const link = document.getElementById("showBungholeLink");
+    const gallery = document.getElementById("bungholeGallery");
+
+    link.addEventListener("click", function (event) {
+      event.preventDefault();
+      gallery.style.display = (gallery.style.display === "none") ? "block" : "none";
+    });
+  });
+
+  function sendReservation() {
+    const name = document.getElementById("name").value;
+    const date = document.getElementById("date").value;
+    const confirmation = document.getElementById("confirmation");
+    confirmation.innerText = `Thanks ${name}! Your bunghole has been tentatively reserved for ${date}. Expect a text from our drunk intern shortly.`;
+  }
+</script>
+
 </body>
 </html>
