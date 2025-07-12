@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Tipsy Bunghole</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #1c1c1c;
+            color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #8b0000;
+            padding: 2em;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 3em;
+        }
+        .section {
+            padding: 2em;
+            max-width: 800px;
+            margin: auto;
+        }
+        .drink {
+            margin-bottom: 1.5em;
+        }
+        footer {
+            background-color: #333;
+            color: #ccc;
+            padding: 2em;
+            text-align: center;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to The Tipsy Bunghole</h1>
+        <p>Where the bourbon flows and inhibitions don’t.</p>
+        <p><a href="#reservation" style="color: #ffd700; font-size: 1.2em; text-decoration: underline;">Make a Reservation</a></p>
+    </header>
+
+    <div class="section">
+        <h2>Cocktail Menu</h2>
+        <div class="drink"><strong>The Slippery Bung:</strong> Bourbon, maple syrup, and regret.</div>
+        <div class="drink"><strong>Knob Creek Surprise:</strong> (Spoiler: it’s just Knob Creek... warm.)</div>
+        <div class="drink"><strong>Rim Job Royale:</strong> Cinnamon-sugar rim and a bad idea.</div>
+        <div class="drink"><strong>The Glazed Donut:</strong> Cream liqueur, bourbon, and a jelly bean.</div>
+    </div>
+
+    <div class="section">
+        <h2>Our Story</h2>
+        <p>Born in the basement of a Prohibition-era outhouse, The Tipsy Bunghole rose from the ashes of spilled whiskey and shattered dreams. What began as a leaky barrel and a love for bad decisions is now a home bar that doesn’t take itself too seriously. Just how we like our bourbon: slightly aged, mostly unfiltered.</p>
+    </div>
+
+    <div class="section">
+        <h2>Do You Want to See My Bunghole?</h2>
+        <p>Behold the sacred sanctum of spirits. A peek into The Tipsy Bunghole's innards, where barrels age, bourbon flows, and bad ideas ferment.</p>
+    </div>
+
+    <div class="section" id="reservation">
+        <h2>Make a Reservation</h2>
+        <p>Reservations are encouraged, ignored, or laughed at depending on how much we’ve had to drink. Submit your request below and we’ll probably forget it.</p>
+        <form onsubmit="return showConfirmation();">
+            <label for="name">Name:</label><br>
+            <input type="text" id="name" name="name" required><br><br>
+
+            <label for="phone">Phone Number:</label><br>
+            <input type="tel" id="phone" name="phone" required><br><br>
+
+            <label for="date">Date:</label><br>
+            <input type="date" id="date" name="date" required><br><br>
+
+            <label for="time">Time:</label><br>
+            <input type="time" id="time" name="time" required><br><br>
+
+            <label for="drink">Favorite Drink:</label><br>
+            <input type="text" id="drink" name="drink"><br><br>
+
+            <label for="message">Special Requests:</label><br>
+            <textarea id="message" name="message" rows="4" cols="40"></textarea><br><br>
+
+            <input type="submit" value="Reserve Your Bunghole">
+        </form>
+        <p id="confirmation" style="color: #ffd700; font-weight: bold; display: none; margin-top: 1em;"></p>
+    </div>
+
+    <script>
+        function showConfirmation() {
+            const name = document.getElementById("name").value;
+            const confirmation = document.getElementById("confirmation");
+            confirmation.innerText = "Thanks, " + name + "! A text message is now being dispatched via bourbon-soaked carrier pigeon. Expect your reservation confirmation sometime between now and never.";
+            confirmation.style.display = "block";
+            return false; // prevent actual form submission
+        }
+    </script>
+
+    <div class="section">
+        <h2>Contact Us</h2>
+        <p>Send us your love notes, hate mail, or drunken poetry.</p>
+        <p>Email: <a href="mailto:tipsy@thetipsybunghole.com">tipsy@thetipsybunghole.com</a></p>
+    </div>
+
+    <footer>
+        &copy; 2025 The Tipsy Bunghole. We barrel-aged this nonsense.
+    </footer>
+</body>
+</html>
