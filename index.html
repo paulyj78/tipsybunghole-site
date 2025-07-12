@@ -129,5 +129,12 @@
     <footer>
         &copy; 2025 The Tipsy Bunghole. We barrel-aged this nonsense.
     </footer>
+    <script>
+  document.getElementById("showBunghole").addEventListener("click", function(event) {
+    event.preventDefault();
+    const gallery = document.getElementById("bungholeGallery");
+    gallery.style.display = (gallery.style.display === "none") ? "block" : "none";
+  });
+</script>
 </body>
 </html>
