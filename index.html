@@ -46,7 +46,33 @@
       font-weight: bold;
       cursor: pointer;
     }
-  </style>
+
+  .scrolling-banner {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    background-color: #ffc107; /* optional: banner color */
+    color: #000; /* text color */
+    font-weight: bold;
+    padding: 10px 0;
+    position: relative;
+  }
+
+  .scrolling-text {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scroll-left 12s linear infinite;
+  }
+
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+</style>
 </head>
 <body>
 <div class="scrolling-banner">
