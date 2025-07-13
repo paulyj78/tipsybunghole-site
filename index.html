@@ -2,13 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>The Tipsy Bunghole</title>
   <style>
-    html, body {
-      overflow-x: hidden; /* prevent horizontal scroll during animation */
-    }
-
     body {
       font-family: Georgia, serif;
       background-color: #1e1e1e;
@@ -16,66 +12,49 @@
       text-align: center;
       padding: 20px;
     }
+
     a {
       color: #ffb347;
       text-decoration: none;
       font-weight: bold;
     }
+
     a:hover {
       text-decoration: underline;
     }
+
     img {
       border-radius: 8px;
+      max-width: 100%;
     }
+
     section {
       margin-top: 40px;
     }
+
     ul {
       list-style-type: none;
       padding: 0;
     }
+
     li {
       margin: 10px 0;
     }
+
     input, textarea {
       padding: 8px;
       width: 80%;
       margin: 10px 0;
-      border-radius: 4px;
-      border: 1px solid #444;
-      background-color: #2a2a2a;
-      color: #f5f5f5;
-      font-size: 1em;
     }
-    input:focus, textarea:focus {
-      outline: none;
-      border-color: #ffb347;
-      background-color: #3b3b3b;
-    }
+
     button {
       padding: 10px 20px;
       background-color: #ffb347;
       border: none;
       font-weight: bold;
       cursor: pointer;
-      border-radius: 20px;
-      box-shadow: 0 3px 6px rgba(255, 179, 71, 0.6);
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      letter-spacing: 1.2px;
-      user-select: none;
-    }
-    button:hover {
-      background-color: #e6a82a;
-      transform: scale(1.1) rotate(-2deg);
-      box-shadow: 0 6px 12px rgba(255, 179, 71, 0.8);
-    }
-    button:active {
-      transform: scale(0.95) rotate(2deg);
-      box-shadow: 0 2px 4px rgba(255, 179, 71, 0.5);
     }
 
-    /* Scrolling banner */
     .scrolling-banner {
       width: 100%;
       overflow: hidden;
@@ -86,304 +65,215 @@
       padding: 10px 0;
       position: relative;
     }
+
     .scrolling-text {
       display: inline-block;
       padding-left: 100%;
       animation: scroll-left 12s linear infinite;
     }
+
     @keyframes scroll-left {
       0% { transform: translateX(0); }
       100% { transform: translateX(-100%); }
     }
 
-    /* Logo animation */
-    .logo {
-      width: 150px;
-      margin: 0 auto 20px;
-      position: relative;
-      animation: stagger-roll-away 8s ease-in-out infinite;
-    }
-    @keyframes stagger-roll-away {
-      0%, 10% {
-        transform: translateX(0) rotate(0deg);
-        opacity: 1;
-      }
-      20%, 30% {
-        transform: translateX(-10px) rotate(-5deg);
-      }
-      40%, 50% {
-        transform: translateX(10px) rotate(5deg);
-      }
-      60% {
-        transform: translateX(0) rotate(0deg);
-        opacity: 1;
-      }
-      70% {
-        opacity: 1;
-      }
-      80% {
-        transform: translateX(120vw) rotate(720deg);
-        opacity: 0;
-      }
-      90%, 100% {
-        transform: translateX(0) rotate(0deg);
-        opacity: 1;
-      }
+    #logo {
+      width: 120px;
+      transition: transform 2s ease;
+      cursor: pointer;
     }
 
-    /* Gallery styling */
-    #bungholeGallery {
-      margin-top: 20px;
-      display: none;
+    .stagger-off {
+      animation: staggerAway 4s forwards;
     }
-    #bungholeGallery div {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
+
+    .stagger-on {
+      animation: staggerBack 4s forwards;
     }
-    #bungholeGallery img {
+
+    @keyframes staggerAway {
+      0% { transform: translateX(0) rotate(0deg); }
+      25% { transform: translateX(40px) rotate(-5deg); }
+      50% { transform: translateX(80px) rotate(5deg); }
+      75% { transform: translateX(120px) rotate(-3deg); }
+      100% { transform: translateX(100vw) rotate(10deg); }
+    }
+
+    @keyframes staggerBack {
+      0% { transform: translateX(100vw) rotate(10deg); }
+      25% { transform: translateX(60vw) rotate(-5deg); }
+      50% { transform: translateX(40vw) rotate(5deg); }
+      75% { transform: translateX(10vw) rotate(-3deg); }
+      100% { transform: translateX(0) rotate(0deg); }
+    }
+
+    .photo-buttons button {
+      margin: 0 5px;
+    }
+
+    .gallery-img {
       max-width: 200px;
-      height: auto;
-      border-radius: 8px;
-      box-shadow: 0 0 8px #ffb347aa;
-      transition: transform 0.2s ease;
-      cursor: pointer;
-    }
-    #bungholeGallery img:hover {
-      transform: scale(1.05) rotate(3deg);
-      box-shadow: 0 0 15px #ffb347ee;
-    }
-
-    /* Upload + Delete buttons */
-    .upload-btn, .delete-btn {
-      padding: 12px 30px;
-      font-weight: bold;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      border-radius: 30px;
-      cursor: pointer;
-      user-select: none;
-      margin: 10px 10px 30px;
-      border: none;
-      box-shadow: 0 5px 10px rgba(255,179,71,0.7);
-      transition: transform 0.25s ease, background-color 0.3s ease;
-    }
-    .upload-btn {
-      background: linear-gradient(135deg, #ffd369, #ffb347);
-      color: #422900;
-    }
-    .upload-btn:hover {
-      background: linear-gradient(135deg, #ffb347, #ffd369);
-      transform: scale(1.15) rotate(-5deg);
-      box-shadow: 0 8px 15px rgba(255,179,71,0.9);
-    }
-    .upload-btn:active {
-      transform: scale(0.95) rotate(2deg);
-      box-shadow: 0 3px 6px rgba(255,179,71,0.6);
-    }
-
-    .delete-btn {
-      background: linear-gradient(135deg, #ff6159, #ff2b2a);
-      color: white;
-    }
-    .delete-btn:hover {
-      background: linear-gradient(135deg, #ff2b2a, #ff6159);
-      transform: scale(1.15) rotate(5deg);
-      box-shadow: 0 8px 15px rgba(255,90,85,0.9);
-    }
-    .delete-btn:active {
-      transform: scale(0.95) rotate(-2deg);
-      box-shadow: 0 3px 6px rgba(255,90,85,0.6);
+      margin: 5px;
     }
   </style>
 </head>
 <body>
-  <div class="scrolling-banner">
-    <div class="scrolling-text">
-      👍 Voted BEST Bunghole in North Tonawanda NY 2025 👍
-    </div>
+
+<div class="scrolling-banner">
+  <div class="scrolling-text">👍 Voted BEST Bunghole in North Tonawanda NY 2025 👍</div>
+</div>
+
+<img src="logo.png" id="logo" alt="Drunk Tipsy Bunghole Logo" />
+
+<h1>🥃 Welcome to The Tipsy Bunghole 🥃</h1>
+<p>Where we make pour decisions and the jokes are low like our standards.</p>
+
+<section id="menu">
+  <h2>🥃 Drink Menu</h2>
+  <ul>
+    <li>The Bung'd Up Old Fashioned</li>
+    <li>Peachy Rim Job Runner</li>
+    <li>The Barrel Probe</li>
+    <li>Neat & Naughty</li>
+    <li>The Oak Spanker</li>
+  </ul>
+</section>
+
+<section id="teaser">
+  <p><strong>Do you want to see my bunghole?</strong></p>
+  <p><a href="#" id="showBungholeLink">👉 Yes, Show Me the Goods</a></p>
+</section>
+
+<div id="bungholeGallery" style="display: none; margin-top: 20px;">
+  <h2>📸 Bunghole Gallery</h2>
+  <div id="galleryContainer" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;"></div>
+
+  <div class="photo-buttons" style="margin-top: 20px;">
+    <input type="file" id="photoInput" />
+    <button id="uploadBtn">Upload Your Contribution</button>
   </div>
+  <p id="uploadStatus"></p>
+</div>
 
-  <img src="logo.png" alt="Drunk Tipsy Bunghole Logo" class="logo" />
+<section id="about">
+  <h2>🍻 Our Story</h2>
+  <p>Legend has it The Tipsy Bunghole was born after one too many bourbons and one very regrettable tattoo.</p>
+  <p>Since then, it's been a haven for lovers of brown liquor, bad puns, and mediocre snacks.</p>
+</section>
 
-  <h1>🥃 Welcome to The Tipsy Bunghole 🥃</h1>
-  <p>Where we make pour decisions and the jokes are low like our standards.</p>
+<section id="reservation">
+  <h2>📆 Make a Reservation</h2>
+  <form onsubmit="sendReservation(); return false;">
+    <input type="text" id="name" placeholder="Your Name" required><br>
+    <input type="text" id="date" placeholder="Preferred Date/Time" required><br>
+    <textarea id="notes" placeholder="Anything we should know? Raunchy preferences welcome."></textarea><br>
+    <button type="submit">Reserve My Bunghole</button>
+  </form>
+  <p id="confirmation" style="margin-top: 10px;"></p>
+</section>
 
-  <section id="menu">
-    <h2>🥃 Drink Menu</h2>
-    <ul>
-      <li>The Bung'd Up Old Fashioned</li>
-      <li>Peachy Rim Job Runner</li>
-      <li>The Barrel Probe</li>
-      <li>Neat & Naughty</li>
-      <li>The Oak Spanker</li>
-    </ul>
-  </section>
+<section id="contact">
+  <h2>📞 Contact Us</h2>
+  <p>Email: <a href="mailto:thetipsybunghole@gmail.com">thetipsybunghole@gmail.com</a></p>
+  <p>Carrier pigeon or smoke signals also accepted.</p>
+</section>
 
-  <section id="teaser">
-    <p><strong>Do you want to see my bunghole?</strong></p>
-    <p><a href="#" id="showBungholeLink">👉 Yes, Show Me the Goods</a></p>
-  </section>
+<section id="guestbook-callout" style="margin-top: 60px;">
+  <p>Want to leave your mark on The Tipsy Bunghole? <a href="guestbook.html">📖 Sign the guestbook</a> — but no Sharpies, please.</p>
+</section>
 
-  <div id="bungholeGallery">
-    <h2>📸 Bunghole Gallery</h2>
-    <div id="photoGallery" style="justify-content:center; display:flex; flex-wrap:wrap; gap:10px;">
-      <!-- Uploaded photos will appear here -->
-    </div>
+<footer style="margin-top:60px; font-size:0.9em;">
+  <p>&copy; 2025 The Tipsy Bunghole — No refunds, no regrets.</p>
+</footer>
 
-    <input type="file" id="fileInput" accept="image/*" />
-    <button class="upload-btn" id="uploadBtn">Upload Your Contribution</button>
-    <button class="delete-btn" id="deleteBtn">Delete This Junk</button>
-    <p id="uploadStatus" style="color:#ffb347; font-weight:bold; margin-top:10px;"></p>
-  </div>
+<!-- Firebase SDKs -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+  import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  <section id="about">
-    <h2>🍻 Our Story</h2>
-    <p>Legend has it The Tipsy Bunghole was born after one too many bourbons and one very regrettable tattoo.</p>
-    <p>Since then, it's been a haven for lovers of brown liquor, bad puns, and mediocre snacks.</p>
-  </section>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAdHvy_zumpvAObyIF_o-nVcJwhH2M_q_Q",
+    authDomain: "tipsy-bunghole-photos.firebaseapp.com",
+    projectId: "tipsy-bunghole-photos",
+    storageBucket: "tipsy-bunghole-photos.appspot.com",
+    messagingSenderId: "2480051479",
+    appId: "1:2480051479:web:c89f9cf8f4b3df8cdf1352"
+  };
 
-  <section id="reservation">
-    <h2>📆 Make a Reservation</h2>
-    <form onsubmit="sendReservation(); return false;">
-      <input type="text" id="name" placeholder="Your Name" required /><br />
-      <input type="text" id="date" placeholder="Preferred Date/Time" required /><br />
-      <textarea id="notes" placeholder="Anything we should know? Raunchy preferences welcome."></textarea><br />
-      <button type="submit">Reserve My Bunghole</button>
-    </form>
-    <p id="confirmation" style="margin-top: 10px;"></p>
-  </section>
+  const app = initializeApp(firebaseConfig);
+  const storage = getStorage(app);
+  const firestore = getFirestore(app);
 
-  <section id="contact">
-    <h2>📞 Contact Us</h2>
-    <p>Email: <a href="mailto:thetipsybunghole@gmail.com">thetipsybunghole@gmail.com</a></p>
-    <p>Carrier pigeon or smoke signals also accepted.</p>
-  </section>
+  const uploadBtn = document.getElementById("uploadBtn");
+  const photoInput = document.getElementById("photoInput");
+  const galleryContainer = document.getElementById("galleryContainer");
+  const uploadStatus = document.getElementById("uploadStatus");
 
-  <section id="guestbook-callout" style="margin-top: 60px;">
-    <p>
-      Want to leave your mark on The Tipsy Bunghole? <a href="guestbook.html">📖 Sign the guestbook</a> — but no Sharpies,
-      please.
-    </p>
-  </section>
+  async function loadPhotos() {
+    galleryContainer.innerHTML = "";
+    const querySnapshot = await getDocs(collection(firestore, "photos"));
+    for (const doc of querySnapshot.docs) {
+      const data = doc.data();
+      const img = document.createElement("img");
+      img.src = data.url;
+      img.alt = "Bunghole Submission";
+      img.className = "gallery-img";
+      galleryContainer.appendChild(img);
+    }
+  }
 
-  <footer style="margin-top: 60px; font-size: 0.9em;">
-    <p>&copy; 2025 The Tipsy Bunghole — No refunds, no regrets.</p>
-  </footer>
-
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
-  <script>
-    // Your Firebase config here
-    const firebaseConfig = {
-      apiKey: "AIzaSyAdHvy_zumpvAObyIF_o-nVcJwhH2M_q_Q",
-      authDomain: "tipsy-bunghole-photos.firebaseapp.com",
-      projectId: "tipsy-bunghole-photos",
-      storageBucket: "tipsy-bunghole-photos.firebasestorage.app",
-      messagingSenderId: "2480051479",
-      appId: "1:2480051479:web:c89f9cf8f4b3df8cdf1352",
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const storage = firebase.storage();
-    const firestore = firebase.firestore();
-
-    // Elements
-    const showBungholeLink = document.getElementById("showBungholeLink");
-    const bungholeGallery = document.getElementById("bungholeGallery");
-    const photoGallery = document.getElementById("photoGallery");
-    const fileInput = document.getElementById("fileInput");
-    const uploadBtn = document.getElementById("uploadBtn");
-    const deleteBtn = document.getElementById("deleteBtn");
-    const uploadStatus = document.getElementById("uploadStatus");
-
-    // Toggle gallery display
-    showBungholeLink.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (bungholeGallery.style.display === "none" || bungholeGallery.style.display === "") {
-        bungholeGallery.style.display = "block";
-        loadPhotos();
-      } else {
-        bungholeGallery.style.display = "none";
-      }
-    });
-
-    // Load photos from Firestore and Storage
-    async function loadPhotos() {
-      photoGallery.innerHTML = "";
-      uploadStatus.innerText = "";
-      const snapshot = await firestore.collection("photos").orderBy("timestamp", "desc").get();
-      snapshot.forEach(async (doc) => {
-        const data = doc.data();
-        try {
-          const url = await storage.ref(data.fileName).getDownloadURL();
-          const img = document.createElement("img");
-          img.src = url;
-          img.alt = "User uploaded bourbon photo";
-          photoGallery.appendChild(img);
-        } catch (err) {
-          console.error("Failed to load image URL", err);
-        }
+  uploadBtn.addEventListener("click", async () => {
+    const file = photoInput.files[0];
+    if (!file) {
+      alert("No file selected!");
+      return;
+    }
+    const fileRef = ref(storage, file.name);
+    uploadStatus.innerText = "Uploading...";
+    try {
+      await uploadBytes(fileRef, file);
+      const url = await getDownloadURL(fileRef);
+      await addDoc(collection(firestore, "photos"), {
+        url,
+        timestamp: serverTimestamp(),
+        fileName: file.name
       });
+      uploadStatus.innerText = "Uploaded successfully!";
+      photoInput.value = "";
+      loadPhotos();
+    } catch (error) {
+      console.error(error);
+      uploadStatus.innerText = "Upload failed!";
     }
+  });
 
-    // Upload file
-    uploadBtn.addEventListener("click", async () => {
-      const file = fileInput.files[0];
-      if (!file) {
-        uploadStatus.innerText = "Pick a file first, ya lush!";
-        return;
-      }
-      uploadStatus.innerText = "Uploading your masterpiece...";
-      const fileName = Date.now() + "_" + file.name;
-      const storageRef = storage.ref(fileName);
-      try {
-        await storageRef.put(file);
-        await firestore.collection("photos").add({
-          fileName,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        });
-        uploadStatus.innerText = "Uploaded! Cheers for your contribution 🍻";
-        fileInput.value = "";
-        loadPhotos();
-      } catch (error) {
-        console.error(error);
-        uploadStatus.innerText = "Oops! Something went sideways during upload.";
-      }
-    });
+  loadPhotos();
 
-    // Delete all photos (reset)
-    deleteBtn.addEventListener("click", async () => {
-      if (!confirm("Really wanna trash all the photos? No takebacks!")) return;
-      uploadStatus.innerText = "Deleting all the junk...";
-      try {
-        const snapshot = await firestore.collection("photos").get();
-        const batch = firestore.batch();
-        const deletePromises = [];
-        snapshot.forEach((doc) => {
-          batch.delete(doc.ref);
-          const fileName = doc.data().fileName;
-          deletePromises.push(storage.ref(fileName).delete());
-        });
-        await Promise.all(deletePromises);
-        await batch.commit();
-        uploadStatus.innerText = "All junk deleted. Fresh start!";
-        photoGallery.innerHTML = "";
-      } catch (error) {
-        console.error(error);
-        uploadStatus.innerText = "Can't delete the junk right now.";
-      }
-    });
+  const logo = document.getElementById("logo");
+  logo.addEventListener("click", () => {
+    logo.classList.remove("stagger-on");
+    logo.classList.add("stagger-off");
+    setTimeout(() => {
+      logo.classList.remove("stagger-off");
+      logo.classList.add("stagger-on");
+    }, 4000);
+  });
 
-    // Reservation confirmation
-    function sendReservation() {
-      const name = document.getElementById("name").value;
-      const date = document.getElementById("date").value;
-      const confirmation = document.getElementById("confirmation");
-      confirmation.innerText = `Thanks ${name}! Your bunghole has been tentatively reserved for ${date}. Expect a text from our drunk intern shortly.`;
-    }
-  </script>
+  const link = document.getElementById("showBungholeLink");
+  const gallery = document.getElementById("bungholeGallery");
+  link.addEventListener("click", function (event) {
+    event.preventDefault();
+    gallery.style.display = gallery.style.display === "none" ? "block" : "none";
+  });
+
+  function sendReservation() {
+    const name = document.getElementById("name").value;
+    const date = document.getElementById("date").value;
+    const confirmation = document.getElementById("confirmation");
+    confirmation.innerText = `Thanks ${name}! Your bunghole has been tentatively reserved for ${date}. Expect a text from our drunk intern shortly.`;
+  }
+</script>
+
 </body>
 </html>
