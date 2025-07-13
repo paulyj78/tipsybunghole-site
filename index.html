@@ -6,13 +6,10 @@
   <title>The Tipsy Bunghole</title>
   <style>
     html, body {
-      overflow-x: hidden; /* prevent horizontal scroll during animation */
-    }
-
-    body {
-      font-family: Georgia, serif;
+      overflow-x: hidden;
       background-color: #1e1e1e;
       color: #f5f5f5;
+      font-family: Georgia, serif;
       text-align: center;
       padding: 20px;
     }
@@ -23,34 +20,6 @@
     }
     a:hover {
       text-decoration: underline;
-    }
-    img {
-      border-radius: 8px;
-    }
-    section {
-      margin-top: 40px;
-    }
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    li {
-      margin: 10px 0;
-    }
-    input, textarea {
-      padding: 8px;
-      width: 80%;
-      margin: 10px 0;
-      border-radius: 4px;
-      border: 1px solid #444;
-      background-color: #2a2a2a;
-      color: #f5f5f5;
-      font-size: 1em;
-    }
-    input:focus, textarea:focus {
-      outline: none;
-      border-color: #ffb347;
-      background-color: #3b3b3b;
     }
     button {
       padding: 10px 20px;
@@ -68,23 +37,33 @@
     button:hover {
       background-color: #e6a82a;
       transform: scale(1.1) rotate(-2deg);
-      box-shadow: 0 6px 12px rgba(255, 179, 71, 0.8);
     }
-    button:active {
-      transform: scale(0.95) rotate(2deg);
-      box-shadow: 0 2px 4px rgba(255, 179, 71, 0.5);
+    img {
+      border-radius: 8px;
     }
-
-    /* Scrolling banner */
+    input, textarea {
+      padding: 8px;
+      width: 80%;
+      margin: 10px 0;
+      border-radius: 4px;
+      border: 1px solid #444;
+      background-color: #2a2a2a;
+      color: #f5f5f5;
+      font-size: 1em;
+    }
+    #bungholeGallery img {
+      max-width: 200px;
+      margin: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px #ffb347aa;
+      cursor: pointer;
+    }
     .scrolling-banner {
-      width: 100%;
-      overflow: hidden;
       white-space: nowrap;
       background-color: transparent;
       color: #fff;
       font-weight: bold;
       padding: 10px 0;
-      position: relative;
     }
     .scrolling-text {
       display: inline-block;
@@ -95,288 +74,100 @@
       0% { transform: translateX(0); }
       100% { transform: translateX(-100%); }
     }
-
-    /* Logo animation */
-    .logo {
-      width: 150px;
-      margin: 0 auto 20px;
-      position: relative;
-      animation: stagger-roll-away 8s ease-in-out infinite;
-    }
-    @keyframes stagger-roll-away {
-      0%, 10% {
-        transform: translateX(0) rotate(0deg);
-        opacity: 1;
-      }
-      20%, 30% {
-        transform: translateX(-10px) rotate(-5deg);
-      }
-      40%, 50% {
-        transform: translateX(10px) rotate(5deg);
-      }
-      60% {
-        transform: translateX(0) rotate(0deg);
-        opacity: 1;
-      }
-      70% {
-        opacity: 1;
-      }
-      80% {
-        transform: translateX(120vw) rotate(720deg);
-        opacity: 0;
-      }
-      90%, 100% {
-        transform: translateX(0) rotate(0deg);
-        opacity: 1;
-      }
-    }
-
-    /* Gallery styling */
-    #bungholeGallery {
-      margin-top: 20px;
-      display: none;
-    }
-    #bungholeGallery div {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-    }
-    #bungholeGallery img {
-      max-width: 200px;
-      height: auto;
-      border-radius: 8px;
-      box-shadow: 0 0 8px #ffb347aa;
-      transition: transform 0.2s ease;
-      cursor: pointer;
-    }
-    #bungholeGallery img:hover {
-      transform: scale(1.05) rotate(3deg);
-      box-shadow: 0 0 15px #ffb347ee;
-    }
-
-    /* Upload + Delete buttons */
     .upload-btn, .delete-btn {
-      padding: 12px 30px;
-      font-weight: bold;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
+      margin: 10px;
       border-radius: 30px;
-      cursor: pointer;
-      user-select: none;
-      margin: 10px 10px 30px;
-      border: none;
-      box-shadow: 0 5px 10px rgba(255,179,71,0.7);
-      transition: transform 0.25s ease, background-color 0.3s ease;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
     }
-    .upload-btn {
-      background: linear-gradient(135deg, #ffd369, #ffb347);
-      color: #422900;
-    }
-    .upload-btn:hover {
-      background: linear-gradient(135deg, #ffb347, #ffd369);
-      transform: scale(1.15) rotate(-5deg);
-      box-shadow: 0 8px 15px rgba(255,179,71,0.9);
-    }
-    .upload-btn:active {
-      transform: scale(0.95) rotate(2deg);
-      box-shadow: 0 3px 6px rgba(255,179,71,0.6);
-    }
-
-    .delete-btn {
-      background: linear-gradient(135deg, #ff6159, #ff2b2a);
-      color: white;
-    }
-    .delete-btn:hover {
-      background: linear-gradient(135deg, #ff2b2a, #ff6159);
-      transform: scale(1.15) rotate(5deg);
-      box-shadow: 0 8px 15px rgba(255,90,85,0.9);
-    }
-    .delete-btn:active {
-      transform: scale(0.95) rotate(-2deg);
-      box-shadow: 0 3px 6px rgba(255,90,85,0.6);
-    }
-
-    /* Guestbook entries */
-    #guestbookEntries {
-      margin-top: 20px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      text-align: left;
-      background: #2a2a2a;
+    .guestbook-entry {
+      border: 1px dashed #555;
       border-radius: 8px;
-      padding: 15px;
-      box-shadow: 0 0 15px #ffb347aa;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      color: #ffd369;
-      user-select: text;
-    }
-    #guestbookEntries .entry {
-      border-bottom: 1px solid #ffb34755;
-      padding: 8px 0;
-    }
-    #guestbookEntries .entry:last-child {
-      border-bottom: none;
-    }
-    #guestbookEntries .alias {
-      font-weight: bold;
-      font-size: 1.1em;
-      color: #fff;
-    }
-    #guestbookEntries .favDrink {
-      font-style: italic;
-      color: #ffb347;
-      margin-bottom: 4px;
-    }
-    #guestbookEntries .message {
-      color: #ffd369;
-    }
-
-    /* Guestbook form */
-    #guestbookForm {
-      margin-top: 40px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      text-align: left;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      color: #ffd369;
-      background: #2a2a2a;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 0 15px #ffb347aa;
-    }
-    #guestbookForm label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    #guestbookForm input, #guestbookForm textarea {
-      width: 100%;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      background-color: #1e1e1e;
-      color: #ffd369;
-      border: 1px solid #ffb347;
-      border-radius: 6px;
-      padding: 8px;
-      margin-top: 6px;
-    }
-    #guestbookForm button {
-      margin-top: 15px;
-      width: 100%;
-    }
-    #guestbookStatus {
-      margin-top: 10px;
-      font-weight: bold;
-      color: #ffb347;
-      text-align: center;
+      padding: 10px;
+      margin: 10px auto;
+      width: 80%;
+      background-color: #2a2a2a;
     }
   </style>
 </head>
 <body>
+
   <div class="scrolling-banner">
     <div class="scrolling-text">
       👍 Voted BEST Bunghole in North Tonawanda NY 2025 👍
     </div>
   </div>
 
-  <img src="logo.png" alt="Drunk Tipsy Bunghole Logo" class="logo" />
+  <img src="logo.png" alt="Drunk Tipsy Bunghole Logo" style="width:150px; margin:20px auto;" />
 
   <h1>🥃 Welcome to The Tipsy Bunghole 🥃</h1>
   <p>Where we make pour decisions and the jokes are low like our standards.</p>
 
-  <section id="menu">
-    <h2>🥃 Drink Menu</h2>
-    <ul>
-      <li>The Bung'd Up Old Fashioned</li>
-      <li>Peachy Rim Job Runner</li>
-      <li>The Barrel Probe</li>
-      <li>Neat & Naughty</li>
-      <li>The Oak Spanker</li>
-      <li>Anything YOU bring</li>
-    </ul>
-  </section>
+  <h2>🥃 Drink Menu</h2>
+  <ul>
+    <li>The Bung'd Up Old Fashioned</li>
+    <li>Peachy Rim Job Runner</li>
+    <li>The Barrel Probe</li>
+    <li>Neat & Naughty</li>
+    <li>The Oak Spanker</li>
+    <li>Anything YOU bring</li>
+  </ul>
 
   <section id="teaser">
     <p><strong>Do you want to see my bunghole?</strong></p>
     <p><a href="#" id="showBungholeLink">👉 Yes, Show Me the Goods</a></p>
   </section>
 
-  <div id="bungholeGallery">
+  <div id="bungholeGallery" style="display:none;">
     <h2>📸 Bunghole Gallery</h2>
-    <div id="photoGallery" style="justify-content:center; display:flex; flex-wrap:wrap; gap:10px;">
-      <!-- Uploaded photos will appear here -->
-    </div>
-
+    <div id="photoGallery" style="display:flex; flex-wrap:wrap; justify-content:center;"></div>
     <input type="file" id="fileInput" accept="image/*" />
     <button class="upload-btn" id="uploadBtn">Upload Your Contribution</button>
-    <button class="delete-btn" id="deleteBtn">Delete This Junk</button>
-    <p id="uploadStatus" style="color:#ffb347; font-weight:bold; margin-top:10px;"></p>
+    <p id="uploadStatus"></p>
   </div>
 
-  <section id="about">
-    <h2>🍻 Our Story</h2>
-    <p>Legend has it The Tipsy Bunghole was born after one too many bourbons and a lack of room.</p>
-    <p>Since then, it's been a haven for lovers of brown liquor, bad jokes, and mediocre snacks.</p>
-  </section>
+  <h2>🍻 Our Story</h2>
+  <p>Legend has it The Tipsy Bunghole was born after one too many bourbons and a lack of room.</p>
 
-  <section id="reservation">
-    <h2>📆 Make a Reservation</h2>
-    <form onsubmit="sendReservation(); return false;">
-      <input type="text" id="name" placeholder="Your Name" required /><br />
-      <input type="text" id="date" placeholder="Preferred Date/Time" required /><br />
-      <textarea id="notes" placeholder="Anything we should know? Raunchy preferences welcome."></textarea><br />
-      <button type="submit">Reserve My Bunghole</button>
-    </form>
-    <p id="confirmation" style="margin-top: 10px;"></p>
-  </section>
+  <h2>📆 Make a Reservation</h2>
+  <form onsubmit="sendReservation(); return false;">
+    <input type="text" id="name" placeholder="Your Name" required /><br />
+    <input type="text" id="date" placeholder="Preferred Date/Time" required /><br />
+    <textarea id="notes" placeholder="Anything we should know?"></textarea><br />
+    <button type="submit">Reserve My Bunghole</button>
+    <p id="confirmation"></p>
+  </form>
 
-  <section id="contact">
-    <h2>📞 Contact Us</h2>
-    <p>Email: <a href="mailto:thetipsybunghole@gmail.com">thetipsybunghole@gmail.com</a></p>
-    <p>Carrier pigeon or smoke signals also accepted.</p>
-  </section>
+  <h2>📞 Contact Us</h2>
+  <p>Email: <a href="mailto:thetipsybunghole@gmail.com">thetipsybunghole@gmail.com</a></p>
 
   <section id="guestbook-callout" style="margin-top: 60px;">
     <p>
-      Want to leave your mark on The Tipsy Bunghole? <a href="#guestbookSection">📖 Sign the guestbook</a> — but no Sharpies,
-      please.
+      Want to leave your mark on The Tipsy Bunghole? <a href="#" id="showGuestbookBtn">📖 Sign the guestbook</a> — but no Sharpies, please.
     </p>
   </section>
 
-  <!-- Guestbook section -->
-  <section id="guestbookSection" style="margin-top: 60px;">
-    <h2>📚 The Tipsy Bunghole Guestbook</h2>
-
-    <form id="guestbookForm">
-      <label for="alias">Alias Name</label>
-      <input type="text" id="alias" placeholder="Your cheeky name" required />
-
-      <label for="favDrink">Favorite Drink</label>
-      <input type="text" id="favDrink" placeholder="Your go-to booze" required />
-
-      <label for="cheekyMessage">Cheeky Message</label>
-      <textarea id="cheekyMessage" placeholder="Say something saucy" rows="4" required></textarea>
-
-      <button type="submit">Leave My Mark</button>
-      <p id="guestbookStatus"></p>
+  <!-- Hidden Guestbook Form + Viewer -->
+  <section id="guestbook" style="display:none; margin-top:40px;">
+    <h2>🖊️ The Guestbook</h2>
+    <form onsubmit="submitGuestbook(); return false;">
+      <input type="text" id="alias" placeholder="Your Alias (or stripper name)" required /><br />
+      <input type="text" id="favDrink" placeholder="Favorite Drink" required /><br />
+      <textarea id="message" placeholder="Leave a cheeky message..." required></textarea><br />
+      <button type="submit">Sign It!</button>
     </form>
-
-    <div id="guestbookEntries">
-      <!-- Guestbook entries will load here -->
-    </div>
+    <div id="entries" style="margin-top: 30px;"></div>
   </section>
 
   <footer style="margin-top: 60px; font-size: 0.9em;">
     <p>&copy; 2025 The Tipsy Bunghole — No refunds, no regrets.</p>
   </footer>
 
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
   <script>
-    // Firebase config and init
     const firebaseConfig = {
       apiKey: "AIzaSyAdHvy_zumpvAObyIF_o-nVcJwhH2M_q_Q",
       authDomain: "tipsy-bunghole-photos.firebaseapp.com",
@@ -388,37 +179,99 @@
 
     firebase.initializeApp(firebaseConfig);
     const storage = firebase.storage();
-    const firestore = firebase.firestore();
+    const db = firebase.firestore();
 
-    // Elements for photo gallery
-    const showBungholeLink = document.getElementById("showBungholeLink");
-    const bungholeGallery = document.getElementById("bungholeGallery");
-    const photoGallery = document.getElementById("photoGallery");
-    const fileInput = document.getElementById("fileInput");
-    const uploadBtn = document.getElementById("uploadBtn");
-    const deleteBtn = document.getElementById("deleteBtn");
-    const uploadStatus = document.getElementById("uploadStatus");
-
-    // Elements for guestbook
-    const guestbookForm = document.getElementById("guestbookForm");
-    const guestbookStatus = document.getElementById("guestbookStatus");
-    const guestbookEntriesDiv = document.getElementById("guestbookEntries");
-
-    // Toggle gallery display
-    showBungholeLink.addEventListener("click", (e) => {
+    // Show gallery
+    document.getElementById("showBungholeLink").addEventListener("click", (e) => {
       e.preventDefault();
-      if (bungholeGallery.style.display === "none" || bungholeGallery.style.display === "") {
-        bungholeGallery.style.display = "block";
+      document.getElementById("bungholeGallery").style.display = "block";
+      loadPhotos();
+    });
+
+    // Show guestbook
+    document.getElementById("showGuestbookBtn").addEventListener("click", (e) => {
+      e.preventDefault();
+      document.getElementById("guestbook").style.display = "block";
+      loadGuestbook();
+    });
+
+    // Upload photo
+    document.getElementById("uploadBtn").addEventListener("click", async () => {
+      const file = document.getElementById("fileInput").files[0];
+      const status = document.getElementById("uploadStatus");
+      if (!file) {
+        status.innerText = "Pick a file, ya lush!";
+        return;
+      }
+      const fileName = Date.now() + "_" + file.name;
+      const ref = storage.ref(fileName);
+      try {
+        await ref.put(file);
+        await db.collection("photos").add({ fileName, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+        status.innerText = "Uploaded! Cheers!";
+        document.getElementById("fileInput").value = "";
         loadPhotos();
-      } else {
-        bungholeGallery.style.display = "none";
+      } catch (err) {
+        status.innerText = "Upload failed!";
+        console.error(err);
       }
     });
 
-    // Load photos from Firestore and Storage
+    // Load photos
     async function loadPhotos() {
-      photoGallery.innerHTML = "";
-      uploadStatus.innerText = "";
-      try {
-        const snapshot = await firestore.collection("photos").orderBy("timestamp", "desc").get();
-        snapshot.forEach(async (doc) =>
+      const gallery = document.getElementById("photoGallery");
+      gallery.innerHTML = "";
+      const snapshot = await db.collection("photos").orderBy("timestamp", "desc").get();
+      snapshot.forEach(async (doc) => {
+        const fileName = doc.data().fileName;
+        try {
+          const url = await storage.ref(fileName).getDownloadURL();
+          const img = document.createElement("img");
+          img.src = url;
+          gallery.appendChild(img);
+        } catch (err) {
+          console.error("Image load failed", err);
+        }
+      });
+    }
+
+    // Reservation confirm
+    function sendReservation() {
+      const name = document.getElementById("name").value;
+      const date = document.getElementById("date").value;
+      document.getElementById("confirmation").innerText = `Thanks ${name}! Your bunghole is reserved for ${date}. Our drunk intern will text you shortly.`;
+    }
+
+    // Guestbook submission
+    async function submitGuestbook() {
+      const alias = document.getElementById("alias").value;
+      const drink = document.getElementById("favDrink").value;
+      const message = document.getElementById("message").value;
+      await db.collection("guestbook").add({
+        alias,
+        drink,
+        message,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      document.getElementById("alias").value = "";
+      document.getElementById("favDrink").value = "";
+      document.getElementById("message").value = "";
+      loadGuestbook();
+    }
+
+    // Load guestbook entries
+    async function loadGuestbook() {
+      const entries = document.getElementById("entries");
+      entries.innerHTML = "";
+      const snapshot = await db.collection("guestbook").orderBy("timestamp", "desc").get();
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.classList.add("guestbook-entry");
+        div.innerHTML = `<strong>${data.alias}</strong> sipping <em>${data.drink}</em><br/>"${data.message}"`;
+        entries.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
