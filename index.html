@@ -25,7 +25,7 @@
       border-radius: 8px;
     }
     section {
-      margin-top: 40px;
+      margin-top: 50px;
     }
     ul {
       list-style-type: none;
@@ -45,18 +45,17 @@
       border: none;
       font-weight: bold;
       cursor: pointer;
-      border-radius: 5px;
+      color: #000;
     }
 
     .scrolling-banner {
       width: 100%;
       overflow: hidden;
       white-space: nowrap;
-      color: white;
+      color: #ffffff;
       font-weight: bold;
       padding: 10px 0;
-      position: relative;
-      font-size: 1.2em;
+      font-size: 1.1em;
     }
 
     .scrolling-text {
@@ -71,51 +70,47 @@
     }
 
     #logo {
-      width: 120px;
-      margin: 40px auto 10px;
+      width: 100px;
+      margin: 20px auto 40px;
       display: block;
-      animation: stagger 6s infinite alternate ease-in-out;
+      animation: stagger 3s ease-in-out infinite alternate;
     }
 
     @keyframes stagger {
-      0%   { transform: translateX(0) rotate(-2deg); }
-      25%  { transform: translateX(-10px) rotate(1deg); }
-      50%  { transform: translateX(10px) rotate(-1deg); }
-      75%  { transform: translateX(-5px) rotate(1.5deg); }
-      100% { transform: translateX(0) rotate(-2deg); }
+      0% { transform: rotate(-5deg) translateX(-3px); }
+      50% { transform: rotate(5deg) translateX(3px); }
+      100% { transform: rotate(-5deg) translateX(-3px); }
     }
 
-    .upload-container {
-      margin-top: 20px;
-    }
-
-    .upload-container input[type="file"] {
-      display: block;
-      margin: 10px auto;
-    }
-
-    .photo-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 20px;
-    }
-
-    .photo-grid img {
+    .gallery img {
       width: 200px;
-      height: auto;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .upload-section {
+      margin-top: 20px;
+    }
+
+    .upload-section input {
+      color: #000;
+      background: #fff;
+      border: none;
+      margin-bottom: 10px;
+    }
+
+    .upload-section button {
+      background-color: #ffb347;
+      color: #000;
     }
   </style>
 </head>
 <body>
   <div class="scrolling-banner">
-    <div class="scrolling-text">
-      👍 Voted BEST Bunghole in North Tonawanda NY 2025 👍
-    </div>
+    <div class="scrolling-text">👍 Voted BEST Bunghole in North Tonawanda NY 2025 👍</div>
   </div>
 
-  <img id="logo" src="logo.png" alt="The Tipsy Bunghole Logo" />
+  <img src="logo.png" alt="Drunk Tipsy Bunghole Logo" id="logo"/>
 
   <h1>🥃 Welcome to The Tipsy Bunghole 🥃</h1>
   <p>Where we make pour decisions and the jokes are low like our standards.</p>
@@ -128,26 +123,26 @@
       <li>The Barrel Probe</li>
       <li>Neat & Naughty</li>
       <li>The Oak Spanker</li>
-      <li>Whatever YOU bring</li>
     </ul>
   </section>
 
-  <section id="teaser">
-    <h2>Do you want to see my bunghole?</h2>
+  <section id="gallery-toggle">
+    <h2><strong>Do you want to see my bunghole?</strong></h2>
     <p><a href="#" id="showBungholeLink">👉 Yes, Show Me the Goods</a></p>
   </section>
 
   <div id="bungholeGallery" style="display: none;">
-    <div class="upload-container">
-      <input type="file" id="photoUpload" />
-      <button onclick="uploadPhoto()">📸 Upload Your Contribution</button>
+    <h2>📸 Bunghole Gallery</h2>
+    <div id="photoContainer" class="gallery" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;"></div>
+    <div class="upload-section">
+      <input type="file" id="photoInput" accept="image/*"/>
+      <button onclick="uploadPhoto()">📤 Upload Your Contribution</button>
     </div>
-    <div id="photoGrid" class="photo-grid"></div>
   </div>
 
   <section id="about">
     <h2>🍻 Our Story</h2>
-    <p>Legend has it The Tipsy Bunghole was born after one too many bourbons and a lack of space.</p>
+    <p>Legend has it The Tipsy Bunghole was born after one too many bourbons and one very regrettable tattoo.</p>
     <p>Since then, it's been a haven for lovers of brown liquor, bad puns, and mediocre snacks.</p>
   </section>
 
@@ -176,7 +171,7 @@
     <p>&copy; 2025 The Tipsy Bunghole — No refunds, no regrets.</p>
   </footer>
 
-  <!-- Firebase + Upload Script -->
+  <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getStorage, ref, uploadBytes, listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
@@ -192,37 +187,35 @@
 
     const app = initializeApp(firebaseConfig);
     const storage = getStorage(app);
+    const galleryRef = ref(storage, 'gallery');
 
-    document.getElementById("showBungholeLink").addEventListener("click", function (event) {
-      event.preventDefault();
-      const gallery = document.getElementById("bungholeGallery");
-      gallery.style.display = (gallery.style.display === "none") ? "block" : "none";
-      if (gallery.style.display === "block") loadPhotos();
+    document.getElementById("showBungholeLink").addEventListener("click", (e) => {
+      e.preventDefault();
+      document.getElementById("bungholeGallery").style.display = "block";
+      loadGallery();
     });
 
     async function uploadPhoto() {
-      const fileInput = document.getElementById("photoUpload");
+      const fileInput = document.getElementById('photoInput');
       const file = fileInput.files[0];
-      if (!file) return alert("Pick a damn file, pal!");
+      if (!file) return alert("Pick a pic, ya goof!");
 
-      const storageRef = ref(storage, 'uploads/' + Date.now() + '_' + file.name);
-      await uploadBytes(storageRef, file);
-      loadPhotos();
-      fileInput.value = '';
+      const fileRef = ref(galleryRef, `${Date.now()}_${file.name}`);
+      await uploadBytes(fileRef, file);
+      alert("Nice shot! Your photo is in the bunghole.");
+      loadGallery();
     }
 
-    async function loadPhotos() {
-      const photoGrid = document.getElementById("photoGrid");
-      photoGrid.innerHTML = "";
-
-      const listRef = ref(storage, 'uploads');
-      const res = await listAll(listRef);
-
-      for (const itemRef of res.items) {
-        const url = await getDownloadURL(itemRef);
+    async function loadGallery() {
+      const container = document.getElementById("photoContainer");
+      container.innerHTML = "";
+      const res = await listAll(galleryRef);
+      for (let item of res.items) {
+        const url = await getDownloadURL(item);
         const img = document.createElement("img");
         img.src = url;
-        photoGrid.appendChild(img);
+        img.alt = "User uploaded bunghole pic";
+        container.appendChild(img);
       }
     }
 
