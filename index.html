@@ -355,26 +355,7 @@
      }
    });
 
-   // Delete all photos (reset)
-   deleteBtn.addEventListener("click", async () => {
-     if (!confirm("Really wanna trash all the photos? No takebacks!")) return;
-     uploadStatus.innerText = "Deleting all the junk...";
-     try {
-       const snapshot = await firestore.collection("photos").get();
-       const batch = firestore.batch();
-       const deletePromises = [];
-       snapshot.forEach((doc) => {
-         batch.delete(doc.ref);
-         const fileName = doc.data().fileName;
-         deletePromises.push(storage.ref(fileName).delete());
-       });
-       await Promise.all(deletePromises);
-       await batch.commit();
-       uploadStatus.innerText = "All junk deleted. Fresh start!";
-       photoGallery.innerHTML = "";
-     } catch (error) {
-       console.error(error);
-       uploadStatus.innerText = "Can't delete the junk right now.";
+   
      }
    });
 
