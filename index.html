@@ -11,9 +11,6 @@
       color: #f5f5f5;
       text-align: center;
       padding: 20px;
-      position: relative;
-      min-height: 100vh;
-      margin: 0;
     }
     a {
       color: #ffb347;
@@ -50,16 +47,15 @@
       cursor: pointer;
     }
 
-    /* Scrolling banner */
     .scrolling-banner {
       width: 100%;
       overflow: hidden;
       white-space: nowrap;
-      color: #fff; /* white text */
+      color: #fff;
       font-weight: bold;
       padding: 10px 0;
-      position: relative;
-      font-size: 1.1em;
+      margin-bottom: 25px; /* Added margin below banner */
+      user-select: none;
     }
 
     .scrolling-text {
@@ -77,39 +73,46 @@
       }
     }
 
-    /* Logo styling and animation */
-    #drunkLogo {
-      position: absolute;
-      top: 70px;
-      left: 0;
-      width: 100px;
-      z-index: 10;
-      transition: transform 2s ease-in-out, opacity 1s;
-      cursor: pointer;
+    /* Logo sway animation */
+    #logo {
+      margin-bottom: 25px; /* spacing below logo */
+      width: 150px;
+      animation: sway 4s ease-in-out infinite;
+      transform-origin: center bottom;
     }
 
-    .fall-over {
-      transform: rotate(90deg) translateX(100px) translateY(100px);
-      opacity: 0.5;
+    @keyframes sway {
+      0% {
+        transform: translateX(0) rotate(0deg);
+      }
+      25% {
+        transform: translateX(5px) rotate(3deg);
+      }
+      50% {
+        transform: translateX(0) rotate(0deg);
+      }
+      75% {
+        transform: translateX(-5px) rotate(-3deg);
+      }
+      100% {
+        transform: translateX(0) rotate(0deg);
+      }
     }
   </style>
 </head>
 <body>
-  <!-- Scrolling banner -->
-  <div class="scrolling-banner">
+  <div class="scrolling-banner" aria-label="Scrolling Announcement">
     <div class="scrolling-text">👍 Voted BEST Bunghole in North Tonawanda NY 2025 👍</div>
   </div>
 
-  <!-- Animated logo -->
-  <audio
-    id="fallSound"
-    src="https://freesound.org/data/previews/256/256113_3263906-lq.mp3"
-    preload="auto"
-  ></audio>
-  <img src="logo.png" id="drunkLogo" alt="Tipsy Logo" title="The Tipsy Bunghole Logo" />
+  <img
+    src="logo.png"
+    alt="Tipsy Bunghole Logo"
+    id="logo"
+    aria-label="Animated Tipsy Bunghole Logo"
+  />
 
-  <!-- Main content -->
-  <h1 style="margin-top: 140px;">🥃 Welcome to The Tipsy Bunghole 🥃</h1>
+  <h1>🥃 Welcome to The Tipsy Bunghole 🥃</h1>
   <p>Where we make pour decisions and the jokes are low like our standards.</p>
 
   <section id="menu">
@@ -129,42 +132,25 @@
     <p><a href="#" id="showBungholeLink">👉 Yes, Show Me the Goods</a></p>
   </section>
 
-  <div
-    id="bungholeGallery"
-    style="display: none; margin-top: 20px;"
-  >
+  <div id="bungholeGallery" style="display: none; margin-top: 20px;">
     <h2>📸 Bunghole Gallery</h2>
     <div
-      style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;"
+      style="
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+      "
     >
-      <img
-        src="https://via.placeholder.com/200x150?text=Bottle+1"
-        alt="Bourbon 1"
-      />
-      <img
-        src="https://via.placeholder.com/200x150?text=Bottle+2"
-        alt="Bourbon 2"
-      />
-      <img
-        src="https://via.placeholder.com/200x150?text=Bar+Setup"
-        alt="Bar Setup"
-      />
-      <img
-        src="https://via.placeholder.com/200x150?text=Shady+Corner"
-        alt="Shady Corner"
-      />
-      <img
-        src="https://via.placeholder.com/200x150?text=VIP+Bunghole"
-        alt="VIP Bunghole"
-      />
+      <!-- Photos dynamically loaded here from Firebase -->
     </div>
   </div>
 
   <section id="about">
     <h2>🍻 Our Story</h2>
     <p>
-      Legend has it The Tipsy Bunghole was born after one too many bourbons
-      and one very regrettable tattoo.
+      Legend has it The Tipsy Bunghole was born after one too many bourbons and
+      one very regrettable tattoo.
     </p>
     <p>
       Since then, it's been a haven for lovers of brown liquor, bad puns, and
@@ -214,25 +200,6 @@
   </footer>
 
   <script>
-    // Logo fall animation with sound
-    function fallOverLogo() {
-      const logo = document.getElementById("drunkLogo");
-      const sound = document.getElementById("fallSound");
-      logo.classList.add("fall-over");
-      sound.currentTime = 0;
-      sound.play();
-
-      setTimeout(() => {
-        logo.classList.remove("fall-over");
-      }, 6000); // Back upright after 6 seconds
-    }
-
-    window.addEventListener("load", () => {
-      fallOverLogo();
-      setInterval(fallOverLogo, 20000);
-    });
-
-    // Show / hide bunghole gallery
     document.addEventListener("DOMContentLoaded", function () {
       const link = document.getElementById("showBungholeLink");
       const gallery = document.getElementById("bungholeGallery");
@@ -243,7 +210,6 @@
       });
     });
 
-    // Reservation confirmation message
     function sendReservation() {
       const name = document.getElementById("name").value;
       const date = document.getElementById("date").value;
