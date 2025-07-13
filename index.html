@@ -76,18 +76,27 @@
       100% { transform: translateX(-100%); }
     }
 
-    /* DRUNK LOGO ANIMATIONS */
+    /* DRUNK LOGO & BOTTLE ANIMATIONS */
     .stagger-logo {
       text-align: center;
       margin-bottom: 10px;
-      overflow: hidden;
+      position: relative;
     }
 
-    .stagger-logo img {
+    .stagger-logo img.logo {
       max-width: 200px;
       display: inline-block;
       transform-origin: center;
       animation: staggerAway 6s ease-in-out forwards;
+    }
+
+    .bourbon-bottle {
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      opacity: 0.9;
     }
 
     @keyframes staggerAway {
@@ -99,113 +108,114 @@
       100% { transform: translateX(150vw) rotate(720deg); opacity: 0; }
     }
 
-    @keyframes stumbleBack {
+    @keyframes stumbleBackAndTrip {
       0%   { transform: translateX(-150vw) rotate(-720deg); opacity: 0; }
-      20%  { transform: translateX(-20px) rotate(5deg); opacity: 0.5; }
-      40%  { transform: translateX(10px) rotate(-4deg); }
-      60%  { transform: translateX(-5px) rotate(3deg); }
-      80%  { transform: translateX(0px) rotate(1deg); }
-      100% { transform: translateX(0px) rotate(0deg); opacity: 1; }
+      40%  { transform: translateX(-10px) rotate(4deg); opacity: 0.6; }
+      70%  { transform: translateX(5px) rotate(-3deg); }
+      85%  { transform: translateY(-15px) rotate(10deg); }
+      90%  { transform: translateY(5px) rotate(-10deg); }
+      100% { transform: translateY(0px) rotate(0deg); opacity: 1; }
     }
   </style>
 </head>
 <body>
-  <div class="scrolling-banner">
-    <div class="scrolling-text">
-      👍 Voted BEST Bunghole in North Tonawanda NY 2025 👍
-    </div>
+<div class="scrolling-banner">
+  <div class="scrolling-text">
+    👍 Voted BEST Bunghole in North Tonawanda NY 2025 👍
   </div>
+</div>
 
-  <!-- Drunk Logo -->
-  <div class="stagger-logo" id="logoWrapper">
-    <img src="logo.png" id="drunkLogo" alt="The Tipsy Bunghole Logo" />
+<!-- Drunk Logo Area -->
+<div class="stagger-logo" id="logoWrapper">
+  <img src="logo.png" class="logo" id="drunkLogo" alt="The Tipsy Bunghole Logo" />
+  <img src="https://cdn-icons-png.flaticon.com/512/4151/4151640.png" alt="bourbon bottle" class="bourbon-bottle">
+</div>
+
+<h1>🥃 Welcome to The Tipsy Bunghole 🥃</h1>
+<p>Where we make pour decisions and the jokes are low like our standards.</p>
+
+<section id="menu">
+  <h2>🥃 Drink Menu</h2>
+  <ul>
+    <li>The Bung'd Up Old Fashioned</li>
+    <li>Peachy Rim Job Runner</li>
+    <li>The Barrel Probe</li>
+    <li>Neat & Naughty</li>
+    <li>The Oak Spanker</li>
+  </ul>
+</section>
+
+<section id="teaser">
+  <h2>📸 Teaser</h2>
+  <p><strong>Do you want to see my bunghole?</strong></p>
+  <p><a href="#" id="showBungholeLink">👉 Yes, Show Me the Goods</a></p>
+</section>
+
+<div id="bungholeGallery" style="display: none; margin-top: 20px;">
+  <h2>📸 Bunghole Gallery</h2>
+  <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+    <img src="https://via.placeholder.com/200x150?text=Bottle+1" alt="Bourbon 1">
+    <img src="https://via.placeholder.com/200x150?text=Bottle+2" alt="Bourbon 2">
+    <img src="https://via.placeholder.com/200x150?text=Bar+Setup" alt="Bar Setup">
+    <img src="https://via.placeholder.com/200x150?text=Shady+Corner" alt="Shady Corner">
+    <img src="https://via.placeholder.com/200x150?text=VIP+Bunghole" alt="VIP Bunghole">
   </div>
+</div>
 
-  <h1>🥃 Welcome to The Tipsy Bunghole 🥃</h1>
-  <p>Where we make pour decisions and the jokes are low like our standards.</p>
+<section id="about">
+  <h2>🍻 Our Story</h2>
+  <p>Legend has it The Tipsy Bunghole was born after one too many bourbons and one very regrettable tattoo.</p>
+  <p>Since then, it's been a haven for lovers of brown liquor, bad puns, and mediocre snacks.</p>
+</section>
 
-  <section id="menu">
-    <h2>🥃 Drink Menu</h2>
-    <ul>
-      <li>The Bung'd Up Old Fashioned</li>
-      <li>Peachy Rim Job Runner</li>
-      <li>The Barrel Probe</li>
-      <li>Neat & Naughty</li>
-      <li>The Oak Spanker</li>
-    </ul>
-  </section>
+<section id="reservation">
+  <h2>📆 Make a Reservation</h2>
+  <form onsubmit="sendReservation(); return false;">
+    <input type="text" id="name" placeholder="Your Name" required><br>
+    <input type="text" id="date" placeholder="Preferred Date/Time" required><br>
+    <textarea id="notes" placeholder="Anything we should know? Raunchy preferences welcome."></textarea><br>
+    <button type="submit">Reserve My Bunghole</button>
+  </form>
+  <p id="confirmation" style="margin-top: 10px;"></p>
+</section>
 
-  <section id="teaser">
-    <h2>📸 Teaser</h2>
-    <p><strong>Do you want to see my bunghole?</strong></p>
-    <p><a href="#" id="showBungholeLink">👉 Yes, Show Me the Goods</a></p>
-  </section>
+<section id="contact">
+  <h2>📞 Contact Us</h2>
+  <p>Email: <a href="mailto:thetipsybunghole@gmail.com">thetipsybunghole@gmail.com</a></p>
+  <p>Carrier pigeon or smoke signals also accepted.</p>
+</section>
 
-  <div id="bungholeGallery" style="display: none; margin-top: 20px;">
-    <h2>📸 Bunghole Gallery</h2>
-    <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
-      <img src="https://via.placeholder.com/200x150?text=Bottle+1" alt="Bourbon 1">
-      <img src="https://via.placeholder.com/200x150?text=Bottle+2" alt="Bourbon 2">
-      <img src="https://via.placeholder.com/200x150?text=Bar+Setup" alt="Bar Setup">
-      <img src="https://via.placeholder.com/200x150?text=Shady+Corner" alt="Shady Corner">
-      <img src="https://via.placeholder.com/200x150?text=VIP+Bunghole" alt="VIP Bunghole">
-    </div>
-  </div>
+<section id="guestbook-callout" style="margin-top: 60px;">
+  <p>Want to leave your mark on The Tipsy Bunghole? <a href="guestbook.html">📖 Sign the guestbook</a> — but no Sharpies, please.</p>
+</section>
 
-  <section id="about">
-    <h2>🍻 Our Story</h2>
-    <p>Legend has it The Tipsy Bunghole was born after one too many bourbons and one very regrettable tattoo.</p>
-    <p>Since then, it's been a haven for lovers of brown liquor, bad puns, and mediocre snacks.</p>
-  </section>
+<footer style="margin-top:60px; font-size:0.9em;">
+  <p>&copy; 2025 The Tipsy Bunghole — No refunds, no regrets.</p>
+</footer>
 
-  <section id="reservation">
-    <h2>📆 Make a Reservation</h2>
-    <form onsubmit="sendReservation(); return false;">
-      <input type="text" id="name" placeholder="Your Name" required><br>
-      <input type="text" id="date" placeholder="Preferred Date/Time" required><br>
-      <textarea id="notes" placeholder="Anything we should know? Raunchy preferences welcome."></textarea><br>
-      <button type="submit">Reserve My Bunghole</button>
-    </form>
-    <p id="confirmation" style="margin-top: 10px;"></p>
-  </section>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const link = document.getElementById("showBungholeLink");
+    const gallery = document.getElementById("bungholeGallery");
 
-  <section id="contact">
-    <h2>📞 Contact Us</h2>
-    <p>Email: <a href="mailto:thetipsybunghole@gmail.com">thetipsybunghole@gmail.com</a></p>
-    <p>Carrier pigeon or smoke signals also accepted.</p>
-  </section>
-
-  <section id="guestbook-callout" style="margin-top: 60px;">
-    <p>Want to leave your mark on The Tipsy Bunghole? <a href="guestbook.html">📖 Sign the guestbook</a> — but no Sharpies, please.</p>
-  </section>
-
-  <footer style="margin-top:60px; font-size:0.9em;">
-    <p>&copy; 2025 The Tipsy Bunghole — No refunds, no regrets.</p>
-  </footer>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const link = document.getElementById("showBungholeLink");
-      const gallery = document.getElementById("bungholeGallery");
-
-      link.addEventListener("click", function (event) {
-        event.preventDefault();
-        gallery.style.display = (gallery.style.display === "none") ? "block" : "none";
-      });
-
-      // Bring back the logo after it staggers away
-      setTimeout(() => {
-        const logo = document.getElementById("drunkLogo");
-        logo.style.animation = "stumbleBack 5s ease-in-out forwards";
-      }, 6500); // Wait for staggerAway to complete
+    link.addEventListener("click", function (event) {
+      event.preventDefault();
+      gallery.style.display = (gallery.style.display === "none") ? "block" : "none";
     });
 
-    function sendReservation() {
-      const name = document.getElementById("name").value;
-      const date = document.getElementById("date").value;
-      const confirmation = document.getElementById("confirmation");
-      confirmation.innerText = `Thanks ${name}! Your bunghole has been tentatively reserved for ${date}. Expect a text from our drunk intern shortly.`;
-    }
-  </script>
+    // Logo stumble return
+    setTimeout(() => {
+      const logo = document.getElementById("drunkLogo");
+      logo.style.animation = "stumbleBackAndTrip 5s ease-in-out forwards";
+    }, 6500); // Matches end of staggerAway
+  });
+
+  function sendReservation() {
+    const name = document.getElementById("name").value;
+    const date = document.getElementById("date").value;
+    const confirmation = document.getElementById("confirmation");
+    confirmation.innerText = `Thanks ${name}! Your bunghole has been tentatively reserved for ${date}. Expect a text from our drunk intern shortly.`;
+  }
+</script>
 </body>
 </html>
