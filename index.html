@@ -195,6 +195,37 @@
       transform: scale(0.95) rotate(-2deg);
       box-shadow: 0 3px 6px rgba(255,90,85,0.6);
     }
+
+    /* Guestbook entries styling */
+    #guestbookEntries {
+      margin-top: 20px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+      background: #2a2a2a;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 12px #ffb347aa;
+    }
+    .entry {
+      border-bottom: 1px solid #444;
+      padding: 12px 0;
+    }
+    .entry:last-child {
+      border-bottom: none;
+    }
+    .entry .alias {
+      font-weight: bold;
+      color: #ffb347;
+    }
+    .entry .favDrink {
+      font-style: italic;
+      color: #d1a054;
+    }
+    .entry .message {
+      margin-top: 6px;
+    }
   </style>
 </head>
 <body>
@@ -261,9 +292,23 @@
     <p>Carrier pigeon or smoke signals also accepted.</p>
   </section>
 
+  <!-- New Guestbook Section -->
+  <section id="guestbook" style="margin-top: 60px;">
+    <h2>📖 Leave Your Mark</h2>
+    <form id="guestbookForm">
+      <input type="text" id="alias" placeholder="Your Alias (not your real name)" required /><br />
+      <input type="text" id="favDrink" placeholder="Your Favorite Drink" required /><br />
+      <textarea id="cheekyMessage" placeholder="Leave your cheekiest message here..." required></textarea><br />
+      <button type="submit">Sign the Bunghole</button>
+    </form>
+    <p id="guestbookStatus" style="color:#ffb347; font-weight:bold; margin-top:10px;"></p>
+
+    <div id="guestbookEntries"></div>
+  </section>
+
   <section id="guestbook-callout" style="margin-top: 60px;">
     <p>
-      Want to leave your mark on The Tipsy Bunghole? <a href="guestbook.html">📖 Sign the guestbook</a> — but no Sharpies,
+      Want to leave your mark on The Tipsy Bunghole? <a href="#guestbook">📖 Sign the guestbook</a> — but no Sharpies,
       please.
     </p>
   </section>
@@ -291,7 +336,7 @@
     const storage = firebase.storage();
     const firestore = firebase.firestore();
 
-    // Elements
+    // Elements for photo gallery
     const showBungholeLink = document.getElementById("showBungholeLink");
     const bungholeGallery = document.getElementById("bungholeGallery");
     const photoGallery = document.getElementById("photoGallery");
@@ -299,6 +344,11 @@
     const uploadBtn = document.getElementById("uploadBtn");
     const deleteBtn = document.getElementById("deleteBtn");
     const uploadStatus = document.getElementById("uploadStatus");
+
+    // Elements for guestbook
+    const guestbookForm = document.getElementById("guestbookForm");
+    const guestbookStatus = document.getElementById("guestbookStatus");
+    const guestbookEntriesDiv = document.getElementById("guestbookEntries");
 
     // Toggle gallery display
     showBungholeLink.addEventListener("click", (e) => {
@@ -385,6 +435,39 @@
       const confirmation = document.getElementById("confirmation");
       confirmation.innerText = `Thanks ${name}! Your bunghole has been tentatively reserved for ${date}. Expect a text from our drunk intern shortly.`;
     }
-  </script>
-</body>
-</html>
+
+    // Guestbook submission handler
+    guestbookForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const alias = document.getElementById("alias").value.trim();
+      const favDrink = document.getElementById("favDrink").value.trim();
+      const cheekyMessage = document.getElementById("cheekyMessage").value.trim();
+
+      if (!alias || !favDrink || !cheekyMessage) {
+        guestbookStatus.innerText = "Fill all fields, ya lush!";
+        return;
+      }
+
+      guestbookStatus.innerText = "Saving your cheeky words...";
+
+      try {
+        await firestore.collection("guestbook").add({
+          alias,
+          favDrink,
+          cheekyMessage,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+
+        guestbookStatus.innerText = "Cheers! Your words are forever part of The Tipsy Bunghole 🍻";
+
+        guestbookForm.reset();
+
+        loadGuestbookEntries();
+      } catch (error) {
+        console.error(error);
+        guestbookStatus.innerText = "Uh oh! Couldn't save your masterpiece.";
+      }
+    });
+
+    // Load
