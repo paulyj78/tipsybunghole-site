@@ -7,9 +7,9 @@
   <style>
     html, body {
       overflow-x: hidden;
+      font-family: Georgia, serif;
       background-color: #1e1e1e;
       color: #f5f5f5;
-      font-family: Georgia, serif;
       text-align: center;
       padding: 20px;
     }
@@ -21,25 +21,19 @@
     a:hover {
       text-decoration: underline;
     }
-    button {
-      padding: 10px 20px;
-      background-color: #ffb347;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-      border-radius: 20px;
-      box-shadow: 0 3px 6px rgba(255, 179, 71, 0.6);
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      letter-spacing: 1.2px;
-      user-select: none;
-    }
-    button:hover {
-      background-color: #e6a82a;
-      transform: scale(1.1) rotate(-2deg);
-    }
     img {
       border-radius: 8px;
+    }
+    section {
+      margin-top: 40px;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    li {
+      margin: 10px 0;
     }
     input, textarea {
       padding: 8px;
@@ -49,16 +43,25 @@
       border: 1px solid #444;
       background-color: #2a2a2a;
       color: #f5f5f5;
-      font-size: 1em;
     }
-    #bungholeGallery img {
-      max-width: 200px;
-      margin: 10px;
-      border-radius: 8px;
-      box-shadow: 0 0 8px #ffb347aa;
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #ffb347;
+      background-color: #3b3b3b;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #ffb347;
+      border: none;
+      font-weight: bold;
       cursor: pointer;
+      border-radius: 20px;
+      font-family: 'Comic Sans MS', cursive;
     }
+
     .scrolling-banner {
+      width: 100%;
+      overflow: hidden;
       white-space: nowrap;
       background-color: transparent;
       color: #fff;
@@ -74,91 +77,123 @@
       0% { transform: translateX(0); }
       100% { transform: translateX(-100%); }
     }
-    .upload-btn, .delete-btn {
-      margin: 10px;
-      border-radius: 30px;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
+
+    .logo {
+      width: 150px;
+      margin: 0 auto 20px;
+      animation: roll 8s infinite ease-in-out;
     }
-    .guestbook-entry {
-      border: 1px dashed #555;
+
+    @keyframes roll {
+      0% { transform: rotate(0); }
+      50% { transform: rotate(360deg); }
+      100% { transform: rotate(0); }
+    }
+
+    #bungholeGallery {
+      display: none;
+      margin-top: 30px;
+    }
+    #bungholeGallery img {
+      max-width: 200px;
+      margin: 10px;
       border-radius: 8px;
-      padding: 10px;
+      box-shadow: 0 0 10px #ffb347aa;
+    }
+
+    .upload-btn, .delete-btn {
+      padding: 10px 20px;
+      border-radius: 20px;
+      margin: 10px;
+    }
+
+    #guestbookForm, #guestbookEntries {
+      display: none;
+      margin-top: 30px;
+    }
+
+    .entry {
+      background-color: #2c2c2c;
+      padding: 15px;
+      border-radius: 10px;
       margin: 10px auto;
-      width: 80%;
-      background-color: #2a2a2a;
+      max-width: 500px;
+      box-shadow: 0 0 8px #ffb347aa;
     }
   </style>
 </head>
 <body>
 
   <div class="scrolling-banner">
-    <div class="scrolling-text">
-      👍 Voted BEST Bunghole in North Tonawanda NY 2025 👍
-    </div>
+    <div class="scrolling-text">👍 Voted BEST Bunghole in North Tonawanda NY 2025 👍</div>
   </div>
 
-  <img src="logo.png" alt="Drunk Tipsy Bunghole Logo" style="width:150px; margin:20px auto;" />
-
+  <img src="logo.png" alt="Tipsy Bunghole Logo" class="logo" />
   <h1>🥃 Welcome to The Tipsy Bunghole 🥃</h1>
   <p>Where we make pour decisions and the jokes are low like our standards.</p>
 
-  <h2>🥃 Drink Menu</h2>
-  <ul>
-    <li>The Bung'd Up Old Fashioned</li>
-    <li>Peachy Rim Job Runner</li>
-    <li>The Barrel Probe</li>
-    <li>Neat & Naughty</li>
-    <li>The Oak Spanker</li>
-    <li>Anything YOU bring</li>
-  </ul>
+  <section>
+    <h2>🥃 Drink Menu</h2>
+    <ul>
+      <li>The Bung'd Up Old Fashioned</li>
+      <li>Peachy Rim Job Runner</li>
+      <li>The Barrel Probe</li>
+      <li>Neat & Naughty</li>
+      <li>The Oak Spanker</li>
+      <li>Anything YOU bring</li>
+    </ul>
+  </section>
 
   <section id="teaser">
     <p><strong>Do you want to see my bunghole?</strong></p>
     <p><a href="#" id="showBungholeLink">👉 Yes, Show Me the Goods</a></p>
   </section>
 
-  <div id="bungholeGallery" style="display:none;">
+  <div id="bungholeGallery">
     <h2>📸 Bunghole Gallery</h2>
-    <div id="photoGallery" style="display:flex; flex-wrap:wrap; justify-content:center;"></div>
+    <div id="photoGallery"></div>
     <input type="file" id="fileInput" accept="image/*" />
     <button class="upload-btn" id="uploadBtn">Upload Your Contribution</button>
+    <button class="delete-btn" id="deleteBtn">Delete This Junk</button>
     <p id="uploadStatus"></p>
   </div>
 
-  <h2>🍻 Our Story</h2>
-  <p>Legend has it The Tipsy Bunghole was born after one too many bourbons and a lack of room.</p>
-
-  <h2>📆 Make a Reservation</h2>
-  <form onsubmit="sendReservation(); return false;">
-    <input type="text" id="name" placeholder="Your Name" required /><br />
-    <input type="text" id="date" placeholder="Preferred Date/Time" required /><br />
-    <textarea id="notes" placeholder="Anything we should know?"></textarea><br />
-    <button type="submit">Reserve My Bunghole</button>
-    <p id="confirmation"></p>
-  </form>
-
-  <h2>📞 Contact Us</h2>
-  <p>Email: <a href="mailto:thetipsybunghole@gmail.com">thetipsybunghole@gmail.com</a></p>
-
-  <section id="guestbook-callout" style="margin-top: 60px;">
-    <p>
-      Want to leave your mark on The Tipsy Bunghole? <a href="#" id="showGuestbookBtn">📖 Sign the guestbook</a> — but no Sharpies, please.
-    </p>
+  <section id="about">
+    <h2>🍻 Our Story</h2>
+    <p>Born after one too many bourbons and a lack of room, The Tipsy Bunghole is a haven for lovers of brown liquor, bad jokes, and mediocre snacks.</p>
   </section>
 
-  <!-- Hidden Guestbook Form + Viewer -->
-  <section id="guestbook" style="display:none; margin-top:40px;">
-    <h2>🖊️ The Guestbook</h2>
+  <section id="reservation">
+    <h2>📆 Make a Reservation</h2>
+    <form onsubmit="sendReservation(); return false;">
+      <input type="text" id="name" placeholder="Your Name" required><br>
+      <input type="text" id="date" placeholder="Preferred Date/Time" required><br>
+      <textarea id="notes" placeholder="Anything we should know? Raunchy preferences welcome."></textarea><br>
+      <button type="submit">Reserve My Bunghole</button>
+    </form>
+    <p id="confirmation"></p>
+  </section>
+
+  <section id="guestbook-callout">
+    <p>Want to leave your mark on The Tipsy Bunghole? <a href="#" id="openGuestbook">📖 Sign the guestbook</a> — but no Sharpies, please.</p>
+  </section>
+
+  <section id="guestbookForm">
+    <h2>📖 Guestbook</h2>
     <form onsubmit="submitGuestbook(); return false;">
-      <input type="text" id="alias" placeholder="Your Alias (or stripper name)" required /><br />
-      <input type="text" id="favDrink" placeholder="Favorite Drink" required /><br />
-      <textarea id="message" placeholder="Leave a cheeky message..." required></textarea><br />
+      <input type="text" id="guestAlias" placeholder="Alias name" required><br>
+      <input type="text" id="guestDrink" placeholder="Favorite drink" required><br>
+      <textarea id="guestMessage" placeholder="Leave a cheeky message..." required></textarea><br>
       <button type="submit">Sign It!</button>
     </form>
-    <div id="entries" style="margin-top: 30px;"></div>
   </section>
 
-  <footer style="margin-top: 60px; font-size: 0.9em;">
+  <section id="guestbookEntries">
+    <h3>🍹 What Our Boozy Guests Are Saying</h3>
+    <div id="entriesContainer"></div>
+  </section>
+
+  <footer style="margin-top: 60px;">
     <p>&copy; 2025 The Tipsy Bunghole — No refunds, no regrets.</p>
   </footer>
 
@@ -176,101 +211,102 @@
       messagingSenderId: "2480051479",
       appId: "1:2480051479:web:c89f9cf8f4b3df8cdf1352",
     };
-
     firebase.initializeApp(firebaseConfig);
     const storage = firebase.storage();
-    const db = firebase.firestore();
+    const firestore = firebase.firestore();
 
-    // Show gallery
-    document.getElementById("showBungholeLink").addEventListener("click", (e) => {
+    // Photo Gallery
+    document.getElementById("showBungholeLink").onclick = async (e) => {
       e.preventDefault();
-      document.getElementById("bungholeGallery").style.display = "block";
-      loadPhotos();
-    });
+      const gallery = document.getElementById("bungholeGallery");
+      gallery.style.display = gallery.style.display === "none" ? "block" : "none";
+      if (gallery.style.display === "block") loadPhotos();
+    };
 
-    // Show guestbook
-    document.getElementById("showGuestbookBtn").addEventListener("click", (e) => {
-      e.preventDefault();
-      document.getElementById("guestbook").style.display = "block";
-      loadGuestbook();
-    });
+    async function loadPhotos() {
+      const container = document.getElementById("photoGallery");
+      container.innerHTML = "";
+      const snapshot = await firestore.collection("photos").orderBy("timestamp", "desc").get();
+      for (const doc of snapshot.docs) {
+        const data = doc.data();
+        const url = await storage.ref(data.fileName).getDownloadURL();
+        const img = document.createElement("img");
+        img.src = url;
+        container.appendChild(img);
+      }
+    }
 
-    // Upload photo
-    document.getElementById("uploadBtn").addEventListener("click", async () => {
+    document.getElementById("uploadBtn").onclick = async () => {
       const file = document.getElementById("fileInput").files[0];
       const status = document.getElementById("uploadStatus");
-      if (!file) {
-        status.innerText = "Pick a file, ya lush!";
-        return;
-      }
+      if (!file) return status.innerText = "Pick a file first, ya lush!";
       const fileName = Date.now() + "_" + file.name;
-      const ref = storage.ref(fileName);
       try {
-        await ref.put(file);
-        await db.collection("photos").add({ fileName, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-        status.innerText = "Uploaded! Cheers!";
-        document.getElementById("fileInput").value = "";
+        await storage.ref(fileName).put(file);
+        await firestore.collection("photos").add({ fileName, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+        status.innerText = "Uploaded! Cheers 🍻";
         loadPhotos();
-      } catch (err) {
-        status.innerText = "Upload failed!";
-        console.error(err);
+      } catch (e) {
+        console.error(e);
+        status.innerText = "Something went sideways.";
       }
-    });
+    };
 
-    // Load photos
-    async function loadPhotos() {
-      const gallery = document.getElementById("photoGallery");
-      gallery.innerHTML = "";
-      const snapshot = await db.collection("photos").orderBy("timestamp", "desc").get();
-      snapshot.forEach(async (doc) => {
-        const fileName = doc.data().fileName;
-        try {
-          const url = await storage.ref(fileName).getDownloadURL();
-          const img = document.createElement("img");
-          img.src = url;
-          gallery.appendChild(img);
-        } catch (err) {
-          console.error("Image load failed", err);
-        }
-      });
-    }
+    document.getElementById("deleteBtn").onclick = async () => {
+      if (!confirm("Really delete everything?")) return;
+      const status = document.getElementById("uploadStatus");
+      const snapshot = await firestore.collection("photos").get();
+      for (const doc of snapshot.docs) {
+        const data = doc.data();
+        await storage.ref(data.fileName).delete();
+        await doc.ref.delete();
+      }
+      status.innerText = "Wiped clean!";
+      loadPhotos();
+    };
 
-    // Reservation confirm
-    function sendReservation() {
-      const name = document.getElementById("name").value;
-      const date = document.getElementById("date").value;
-      document.getElementById("confirmation").innerText = `Thanks ${name}! Your bunghole is reserved for ${date}. Our drunk intern will text you shortly.`;
-    }
+    // Guestbook
+    document.getElementById("openGuestbook").onclick = (e) => {
+      e.preventDefault();
+      document.getElementById("guestbookForm").style.display = "block";
+      document.getElementById("guestbookEntries").style.display = "block";
+      loadGuestbook();
+    };
 
-    // Guestbook submission
     async function submitGuestbook() {
-      const alias = document.getElementById("alias").value;
-      const drink = document.getElementById("favDrink").value;
-      const message = document.getElementById("message").value;
-      await db.collection("guestbook").add({
+      const alias = document.getElementById("guestAlias").value;
+      const drink = document.getElementById("guestDrink").value;
+      const message = document.getElementById("guestMessage").value;
+      await firestore.collection("guestbook").add({
         alias,
         drink,
         message,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       });
-      document.getElementById("alias").value = "";
-      document.getElementById("favDrink").value = "";
-      document.getElementById("message").value = "";
+      document.getElementById("guestAlias").value = "";
+      document.getElementById("guestDrink").value = "";
+      document.getElementById("guestMessage").value = "";
       loadGuestbook();
     }
 
-    // Load guestbook entries
     async function loadGuestbook() {
-      const entries = document.getElementById("entries");
-      entries.innerHTML = "";
-      const snapshot = await db.collection("guestbook").orderBy("timestamp", "desc").get();
+      const container = document.getElementById("entriesContainer");
+      container.innerHTML = "";
+      const snapshot = await firestore.collection("guestbook").orderBy("timestamp", "desc").get();
       snapshot.forEach(doc => {
         const data = doc.data();
         const div = document.createElement("div");
-        div.classList.add("guestbook-entry");
-        div.innerHTML = `<strong>${data.alias}</strong> sipping <em>${data.drink}</em><br/>"${data.message}"`;
-        entries.appendChild(div);
+        div.className = "entry";
+        div.innerHTML = `<strong>${data.alias}</strong> sipping on <em>${data.drink}</em><br><q>${data.message}</q>`;
+        container.appendChild(div);
       });
+    }
+
+    // Reservation Confirmation
+    function sendReservation() {
+      const name = document.getElementById("name").value;
+      const date = document.getElementById("date").value;
+      document.getElementById("confirmation").innerText = `Thanks ${name}! Your bunghole has been tentatively reserved for ${date}.`;
     }
   </script>
 </body>
