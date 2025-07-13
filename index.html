@@ -46,7 +46,6 @@
       font-weight: bold;
       cursor: pointer;
     }
-
     .scrolling-banner {
       width: 100%;
       overflow: hidden;
@@ -57,24 +56,56 @@
       padding: 10px 0;
       position: relative;
     }
-
     .scrolling-text {
       display: inline-block;
       padding-left: 100%;
       animation: scroll-left 12s linear infinite;
     }
-
     @keyframes scroll-left {
       0% { transform: translateX(0); }
       100% { transform: translateX(-100%); }
     }
+
+    /* DRUNK LOGO */
+    .stagger-logo {
+      text-align: center;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    .stagger-logo img {
+      max-width: 200px;
+      display: inline-block;
+      animation: staggerAway 6s ease-in-out forwards;
+      transform-origin: center;
+    }
+
+    @keyframes staggerAway {
+      0%   { transform: translateX(0) rotate(0deg);     opacity: 1; }
+      20%  { transform: translateX(-10px) rotate(-5deg);}
+      40%  { transform: translateX(15px) rotate(6deg); }
+      60%  { transform: translateX(-20px) rotate(-8deg);}
+      80%  { transform: translateX(25px) rotate(10deg); opacity: 0.8;}
+      100% { transform: translateX(150vw) rotate(720deg); opacity: 0;}
+    }
   </style>
 </head>
 <body>
+
 <div class="scrolling-banner">
   <div class="scrolling-text">
     👍 Voted BEST Bunghole in North Tonawanda NY 2025 👍
   </div>
+</div>
+
+<!-- DRUNK LOGO -->
+<div class="stagger-logo" id="logoWrapper">
+  <img src="logo.png" alt="The Tipsy Bunghole Logo">
+</div>
+
+<!-- RESET BUTTON -->
+<div style="margin-top: 10px;">
+  <button onclick="resetLogo()">🚖 Call the Logo an Uber</button>
 </div>
 
 <h1>🥃 Welcome to The Tipsy Bunghole 🥃</h1>
@@ -156,10 +187,23 @@
     const confirmation = document.getElementById("confirmation");
     confirmation.innerText = `Thanks ${name}! Your bunghole has been tentatively reserved for ${date}. Expect a text from our drunk intern shortly.`;
   }
+
+  function resetLogo() {
+    const wrapper = document.getElementById("logoWrapper");
+    const oldLogo = wrapper.querySelector("img");
+    if (oldLogo) wrapper.removeChild(oldLogo);
+
+    const newLogo = document.createElement("img");
+    newLogo.src = "logo.png";
+    newLogo.alt = "The Tipsy Bunghole Logo";
+    newLogo.style.maxWidth = "200px";
+    newLogo.style.display = "inline-block";
+    newLogo.style.transformOrigin = "center";
+    newLogo.style.animation = "staggerAway 6s ease-in-out forwards";
+
+    wrapper.appendChild(newLogo);
+  }
 </script>
 
 </body>
 </html>
-    
-
-  
