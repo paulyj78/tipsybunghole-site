@@ -76,7 +76,7 @@
       100% { transform: translateX(-100%); }
     }
 
-    /* DRUNK LOGO & BOTTLE ANIMATIONS */
+    /* DRUNK LOGO ANIMATIONS */
     .stagger-logo {
       text-align: center;
       margin-bottom: 10px;
@@ -88,15 +88,6 @@
       display: inline-block;
       transform-origin: center;
       animation: staggerAway 6s ease-in-out forwards;
-    }
-
-    .bourbon-bottle {
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 50px;
-      opacity: 0.9;
     }
 
     @keyframes staggerAway {
@@ -125,10 +116,9 @@
   </div>
 </div>
 
-<!-- Drunk Logo Area -->
+<!-- Drunk Logo Area (no bottle) -->
 <div class="stagger-logo" id="logoWrapper">
   <img src="logo.png" class="logo" id="drunkLogo" alt="The Tipsy Bunghole Logo" />
-  <img src="https://cdn-icons-png.flaticon.com/512/4151/4151640.png" alt="bourbon bottle" class="bourbon-bottle">
 </div>
 
 <h1>🥃 Welcome to The Tipsy Bunghole 🥃</h1>
@@ -207,7 +197,7 @@
     setTimeout(() => {
       const logo = document.getElementById("drunkLogo");
       logo.style.animation = "stumbleBackAndTrip 5s ease-in-out forwards";
-    }, 6500); // Matches end of staggerAway
+    }, 6500);
   });
 
   function sendReservation() {
