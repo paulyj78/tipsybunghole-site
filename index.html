@@ -196,7 +196,7 @@
       box-shadow: 0 3px 6px rgba(255,90,85,0.6);
     }
 
-    /* Guestbook entries styling */
+    /* Guestbook entries */
     #guestbookEntries {
       margin-top: 20px;
       max-width: 600px;
@@ -205,26 +205,71 @@
       text-align: left;
       background: #2a2a2a;
       border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 0 12px #ffb347aa;
+      padding: 15px;
+      box-shadow: 0 0 15px #ffb347aa;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      color: #ffd369;
+      user-select: text;
     }
-    .entry {
-      border-bottom: 1px solid #444;
-      padding: 12px 0;
+    #guestbookEntries .entry {
+      border-bottom: 1px solid #ffb34755;
+      padding: 8px 0;
     }
-    .entry:last-child {
+    #guestbookEntries .entry:last-child {
       border-bottom: none;
     }
-    .entry .alias {
+    #guestbookEntries .alias {
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #fff;
+    }
+    #guestbookEntries .favDrink {
+      font-style: italic;
+      color: #ffb347;
+      margin-bottom: 4px;
+    }
+    #guestbookEntries .message {
+      color: #ffd369;
+    }
+
+    /* Guestbook form */
+    #guestbookForm {
+      margin-top: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      color: #ffd369;
+      background: #2a2a2a;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 15px #ffb347aa;
+    }
+    #guestbookForm label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    #guestbookForm input, #guestbookForm textarea {
+      width: 100%;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background-color: #1e1e1e;
+      color: #ffd369;
+      border: 1px solid #ffb347;
+      border-radius: 6px;
+      padding: 8px;
+      margin-top: 6px;
+    }
+    #guestbookForm button {
+      margin-top: 15px;
+      width: 100%;
+    }
+    #guestbookStatus {
+      margin-top: 10px;
       font-weight: bold;
       color: #ffb347;
-    }
-    .entry .favDrink {
-      font-style: italic;
-      color: #d1a054;
-    }
-    .entry .message {
-      margin-top: 6px;
+      text-align: center;
     }
   </style>
 </head>
@@ -292,25 +337,34 @@
     <p>Carrier pigeon or smoke signals also accepted.</p>
   </section>
 
-  <!-- New Guestbook Section -->
-  <section id="guestbook" style="margin-top: 60px;">
-    <h2>📖 Leave Your Mark</h2>
-    <form id="guestbookForm">
-      <input type="text" id="alias" placeholder="Your Alias (not your real name)" required /><br />
-      <input type="text" id="favDrink" placeholder="Your Favorite Drink" required /><br />
-      <textarea id="cheekyMessage" placeholder="Leave your cheekiest message here..." required></textarea><br />
-      <button type="submit">Sign the Bunghole</button>
-    </form>
-    <p id="guestbookStatus" style="color:#ffb347; font-weight:bold; margin-top:10px;"></p>
-
-    <div id="guestbookEntries"></div>
-  </section>
-
   <section id="guestbook-callout" style="margin-top: 60px;">
     <p>
-      Want to leave your mark on The Tipsy Bunghole? <a href="#guestbook">📖 Sign the guestbook</a> — but no Sharpies,
+      Want to leave your mark on The Tipsy Bunghole? <a href="#guestbookSection">📖 Sign the guestbook</a> — but no Sharpies,
       please.
     </p>
+  </section>
+
+  <!-- Guestbook section -->
+  <section id="guestbookSection" style="margin-top: 60px;">
+    <h2>📚 The Tipsy Bunghole Guestbook</h2>
+
+    <form id="guestbookForm">
+      <label for="alias">Alias Name</label>
+      <input type="text" id="alias" placeholder="Your cheeky name" required />
+
+      <label for="favDrink">Favorite Drink</label>
+      <input type="text" id="favDrink" placeholder="Your go-to booze" required />
+
+      <label for="cheekyMessage">Cheeky Message</label>
+      <textarea id="cheekyMessage" placeholder="Say something saucy" rows="4" required></textarea>
+
+      <button type="submit">Leave My Mark</button>
+      <p id="guestbookStatus"></p>
+    </form>
+
+    <div id="guestbookEntries">
+      <!-- Guestbook entries will load here -->
+    </div>
   </section>
 
   <footer style="margin-top: 60px; font-size: 0.9em;">
@@ -322,12 +376,12 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
   <script>
-    // Your Firebase config here
+    // Firebase config and init
     const firebaseConfig = {
       apiKey: "AIzaSyAdHvy_zumpvAObyIF_o-nVcJwhH2M_q_Q",
       authDomain: "tipsy-bunghole-photos.firebaseapp.com",
       projectId: "tipsy-bunghole-photos",
-      storageBucket: "tipsy-bunghole-photos.firebasestorage.app",
+      storageBucket: "tipsy-bunghole-photos.appspot.com",
       messagingSenderId: "2480051479",
       appId: "1:2480051479:web:c89f9cf8f4b3df8cdf1352",
     };
@@ -365,109 +419,6 @@
     async function loadPhotos() {
       photoGallery.innerHTML = "";
       uploadStatus.innerText = "";
-      const snapshot = await firestore.collection("photos").orderBy("timestamp", "desc").get();
-      snapshot.forEach(async (doc) => {
-        const data = doc.data();
-        try {
-          const url = await storage.ref(data.fileName).getDownloadURL();
-          const img = document.createElement("img");
-          img.src = url;
-          img.alt = "User uploaded bourbon photo";
-          photoGallery.appendChild(img);
-        } catch (err) {
-          console.error("Failed to load image URL", err);
-        }
-      });
-    }
-
-    // Upload file
-    uploadBtn.addEventListener("click", async () => {
-      const file = fileInput.files[0];
-      if (!file) {
-        uploadStatus.innerText = "Pick a file first, ya lush!";
-        return;
-      }
-      uploadStatus.innerText = "Uploading your masterpiece...";
-      const fileName = Date.now() + "_" + file.name;
-      const storageRef = storage.ref(fileName);
       try {
-        await storageRef.put(file);
-        await firestore.collection("photos").add({
-          fileName,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        });
-        uploadStatus.innerText = "Uploaded! Cheers for your contribution 🍻";
-        fileInput.value = "";
-        loadPhotos();
-      } catch (error) {
-        console.error(error);
-        uploadStatus.innerText = "Oops! Something went sideways during upload.";
-      }
-    });
-
-    // Delete all photos (reset)
-    deleteBtn.addEventListener("click", async () => {
-      if (!confirm("Really wanna trash all the photos? No takebacks!")) return;
-      uploadStatus.innerText = "Deleting all the junk...";
-      try {
-        const snapshot = await firestore.collection("photos").get();
-        const batch = firestore.batch();
-        const deletePromises = [];
-        snapshot.forEach((doc) => {
-          batch.delete(doc.ref);
-          const fileName = doc.data().fileName;
-          deletePromises.push(storage.ref(fileName).delete());
-        });
-        await Promise.all(deletePromises);
-        await batch.commit();
-        uploadStatus.innerText = "All junk deleted. Fresh start!";
-        photoGallery.innerHTML = "";
-      } catch (error) {
-        console.error(error);
-        uploadStatus.innerText = "Can't delete the junk right now.";
-      }
-    });
-
-    // Reservation confirmation
-    function sendReservation() {
-      const name = document.getElementById("name").value;
-      const date = document.getElementById("date").value;
-      const confirmation = document.getElementById("confirmation");
-      confirmation.innerText = `Thanks ${name}! Your bunghole has been tentatively reserved for ${date}. Expect a text from our drunk intern shortly.`;
-    }
-
-    // Guestbook submission handler
-    guestbookForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const alias = document.getElementById("alias").value.trim();
-      const favDrink = document.getElementById("favDrink").value.trim();
-      const cheekyMessage = document.getElementById("cheekyMessage").value.trim();
-
-      if (!alias || !favDrink || !cheekyMessage) {
-        guestbookStatus.innerText = "Fill all fields, ya lush!";
-        return;
-      }
-
-      guestbookStatus.innerText = "Saving your cheeky words...";
-
-      try {
-        await firestore.collection("guestbook").add({
-          alias,
-          favDrink,
-          cheekyMessage,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        });
-
-        guestbookStatus.innerText = "Cheers! Your words are forever part of The Tipsy Bunghole 🍻";
-
-        guestbookForm.reset();
-
-        loadGuestbookEntries();
-      } catch (error) {
-        console.error(error);
-        guestbookStatus.innerText = "Uh oh! Couldn't save your masterpiece.";
-      }
-    });
-
-    // Load
+        const snapshot = await firestore.collection("photos").orderBy("timestamp", "desc").get();
+        snapshot.forEach(async (doc) =>
