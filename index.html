@@ -12,40 +12,34 @@
       text-align: center;
       padding: 20px;
     }
-
     a {
       color: #ffb347;
       text-decoration: none;
       font-weight: bold;
     }
-
     a:hover {
       text-decoration: underline;
     }
-
-    img {
+    img.gallery-image {
+      width: 200px;
+      height: auto;
       border-radius: 8px;
     }
-
     section {
       margin-top: 40px;
     }
-
     ul {
       list-style-type: none;
       padding: 0;
     }
-
     li {
       margin: 10px 0;
     }
-
     input, textarea {
       padding: 8px;
       width: 80%;
       margin: 10px 0;
     }
-
     button {
       padding: 10px 20px;
       background-color: #ffb347;
@@ -53,7 +47,6 @@
       font-weight: bold;
       cursor: pointer;
     }
-
     .scrolling-banner {
       width: 100%;
       overflow: hidden;
@@ -64,148 +57,186 @@
       padding: 10px 0;
       position: relative;
     }
-
     .scrolling-text {
       display: inline-block;
       padding-left: 100%;
       animation: scroll-left 12s linear infinite;
     }
-
     @keyframes scroll-left {
       0% { transform: translateX(0); }
       100% { transform: translateX(-100%); }
     }
-
-    /* DRUNK LOGO ANIMATIONS */
-    .stagger-logo {
-      text-align: center;
-      margin-bottom: 10px;
-      position: relative;
-    }
-
-    .stagger-logo img.logo {
-      max-width: 200px;
-      display: inline-block;
-      transform-origin: center;
-      animation: staggerAway 6s ease-in-out forwards;
-    }
-
-    @keyframes staggerAway {
-      0%   { transform: translateX(0) rotate(0deg);     opacity: 1; }
-      20%  { transform: translateX(-10px) rotate(-5deg);}
-      40%  { transform: translateX(15px) rotate(6deg); }
-      60%  { transform: translateX(-20px) rotate(-8deg);}
-      80%  { transform: translateX(25px) rotate(10deg); opacity: 0.8;}
-      100% { transform: translateX(150vw) rotate(720deg); opacity: 0; }
-    }
-
-    @keyframes stumbleBackAndTrip {
-      0%   { transform: translateX(-150vw) rotate(-720deg); opacity: 0; }
-      40%  { transform: translateX(-10px) rotate(4deg); opacity: 0.6; }
-      70%  { transform: translateX(5px) rotate(-3deg); }
-      85%  { transform: translateY(-15px) rotate(10deg); }
-      90%  { transform: translateY(5px) rotate(-10deg); }
-      100% { transform: translateY(0px) rotate(0deg); opacity: 1; }
-    }
   </style>
 </head>
 <body>
-<div class="scrolling-banner">
-  <div class="scrolling-text">
-    👍 Voted BEST Bunghole in North Tonawanda NY 2025 👍
+  <div class="scrolling-banner">
+    <div class="scrolling-text">
+      👍 Voted BEST Bunghole in North Tonawanda NY 2025 👍
+    </div>
   </div>
-</div>
 
-<!-- Drunk Logo Area (no bottle) -->
-<div class="stagger-logo" id="logoWrapper">
-  <img src="logo.png" class="logo" id="drunkLogo" alt="The Tipsy Bunghole Logo" />
-</div>
+  <h1>🥃 Welcome to The Tipsy Bunghole 🥃</h1>
+  <p>Where we make pour decisions and the jokes are low like our standards.</p>
 
-<h1>🥃 Welcome to The Tipsy Bunghole 🥃</h1>
-<p>Where we make pour decisions and the jokes are low like our standards.</p>
+  <section id="menu">
+    <h2>🥃 Drink Menu</h2>
+    <ul>
+      <li>The Bung'd Up Old Fashioned</li>
+      <li>Peachy Rim Job Runner</li>
+      <li>The Barrel Probe</li>
+      <li>Neat & Naughty</li>
+      <li>The Oak Spanker</li>
+    </ul>
+  </section>
 
-<section id="menu">
-  <h2>🥃 Drink Menu</h2>
-  <ul>
-    <li>The Bung'd Up Old Fashioned</li>
-    <li>Peachy Rim Job Runner</li>
-    <li>The Barrel Probe</li>
-    <li>Neat & Naughty</li>
-    <li>The Oak Spanker</li>
-  </ul>
-</section>
+  <section id="teaser">
+    <h2>📸 Teaser</h2>
+    <p><strong>Do you want to see my bunghole?</strong></p>
+    <p><a href="#" id="showBungholeLink">👉 Yes, Show Me the Goods</a></p>
+  </section>
 
-<section id="teaser">
-  <h2>📸 Teaser</h2>
-  <p><strong>Do you want to see my bunghole?</strong></p>
-  <p><a href="#" id="showBungholeLink">👉 Yes, Show Me the Goods</a></p>
-</section>
-
-<div id="bungholeGallery" style="display: none; margin-top: 20px;">
-  <h2>📸 Bunghole Gallery</h2>
-  <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
-    <img src="https://via.placeholder.com/200x150?text=Bottle+1" alt="Bourbon 1">
-    <img src="https://via.placeholder.com/200x150?text=Bottle+2" alt="Bourbon 2">
-    <img src="https://via.placeholder.com/200x150?text=Bar+Setup" alt="Bar Setup">
-    <img src="https://via.placeholder.com/200x150?text=Shady+Corner" alt="Shady Corner">
-    <img src="https://via.placeholder.com/200x150?text=VIP+Bunghole" alt="VIP Bunghole">
+  <div id="bungholeGallery" style="display: none; margin-top: 20px;">
+    <h2>📸 Bunghole Gallery</h2>
+    <input type="file" id="photoInput" />
+    <button onclick="uploadPhoto()">Upload Your Contribution 🍑</button>
+    <p id="uploadStatus"></p>
+    <div id="galleryContainer" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;"></div>
   </div>
-</div>
 
-<section id="about">
-  <h2>🍻 Our Story</h2>
-  <p>Legend has it The Tipsy Bunghole was born after one too many bourbons and one very regrettable tattoo.</p>
-  <p>Since then, it's been a haven for lovers of brown liquor, bad puns, and mediocre snacks.</p>
-</section>
+  <section id="about">
+    <h2>🍻 Our Story</h2>
+    <p>Legend has it The Tipsy Bunghole was born after one too many bourbons and one very regrettable tattoo.</p>
+    <p>Since then, it's been a haven for lovers of brown liquor, bad puns, and mediocre snacks.</p>
+  </section>
 
-<section id="reservation">
-  <h2>📆 Make a Reservation</h2>
-  <form onsubmit="sendReservation(); return false;">
-    <input type="text" id="name" placeholder="Your Name" required><br>
-    <input type="text" id="date" placeholder="Preferred Date/Time" required><br>
-    <textarea id="notes" placeholder="Anything we should know? Raunchy preferences welcome."></textarea><br>
-    <button type="submit">Reserve My Bunghole</button>
-  </form>
-  <p id="confirmation" style="margin-top: 10px;"></p>
-</section>
+  <section id="reservation">
+    <h2>📆 Make a Reservation</h2>
+    <form onsubmit="sendReservation(); return false;">
+      <input type="text" id="name" placeholder="Your Name" required><br>
+      <input type="text" id="date" placeholder="Preferred Date/Time" required><br>
+      <textarea id="notes" placeholder="Anything we should know? Raunchy preferences welcome."></textarea><br>
+      <button type="submit">Reserve My Bunghole</button>
+    </form>
+    <p id="confirmation" style="margin-top: 10px;"></p>
+  </section>
 
-<section id="contact">
-  <h2>📞 Contact Us</h2>
-  <p>Email: <a href="mailto:thetipsybunghole@gmail.com">thetipsybunghole@gmail.com</a></p>
-  <p>Carrier pigeon or smoke signals also accepted.</p>
-</section>
+  <section id="contact">
+    <h2>📞 Contact Us</h2>
+    <p>Email: <a href="mailto:thetipsybunghole@gmail.com">thetipsybunghole@gmail.com</a></p>
+    <p>Carrier pigeon or smoke signals also accepted.</p>
+  </section>
 
-<section id="guestbook-callout" style="margin-top: 60px;">
-  <p>Want to leave your mark on The Tipsy Bunghole? <a href="guestbook.html">📖 Sign the guestbook</a> — but no Sharpies, please.</p>
-</section>
+  <section id="guestbook-callout" style="margin-top: 60px;">
+    <p>Want to leave your mark on The Tipsy Bunghole? <a href="guestbook.html">📖 Sign the guestbook</a> — but no Sharpies, please.</p>
+  </section>
 
-<footer style="margin-top:60px; font-size:0.9em;">
-  <p>&copy; 2025 The Tipsy Bunghole — No refunds, no regrets.</p>
-</footer>
+  <footer style="margin-top:60px; font-size:0.9em;">
+    <p>&copy; 2025 The Tipsy Bunghole — No refunds, no regrets.</p>
+  </footer>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const link = document.getElementById("showBungholeLink");
-    const gallery = document.getElementById("bungholeGallery");
+  <!-- Firebase Upload Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL, listAll, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
-    link.addEventListener("click", function (event) {
-      event.preventDefault();
-      gallery.style.display = (gallery.style.display === "none") ? "block" : "none";
+    const firebaseConfig = {
+      apiKey: "AIzaSyAdHvy_zumpvAObyIF_o-nVcJwhH2M_q_Q",
+      authDomain: "tipsy-bunghole-photos.firebaseapp.com",
+      projectId: "tipsy-bunghole-photos",
+      storageBucket: "tipsy-bunghole-photos.appspot.com",
+      messagingSenderId: "2480051479",
+      appId: "1:2480051479:web:c89f9cf8f4b3df8cdf1352"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const storage = getStorage(app);
+
+    async function uploadPhoto() {
+      const input = document.getElementById("photoInput");
+      const file = input.files[0];
+      if (!file) return;
+
+      const status = document.getElementById("uploadStatus");
+      const storageRef = ref(storage, "gallery/" + Date.now() + "_" + file.name);
+
+      try {
+        await uploadBytes(storageRef, file);
+        status.textContent = "Upload successful!";
+        input.value = "";
+        loadGallery();
+      } catch (error) {
+        status.textContent = "Upload failed: " + error;
+      }
+    }
+
+    async function loadGallery() {
+      const container = document.getElementById("galleryContainer");
+      container.innerHTML = "";
+      const listRef = ref(storage, "gallery/");
+      const res = await listAll(listRef);
+
+      for (const itemRef of res.items) {
+        const url = await getDownloadURL(itemRef);
+        const wrapper = document.createElement("div");
+        wrapper.style.margin = "10px";
+        wrapper.style.display = "inline-block";
+
+        const img = document.createElement("img");
+        img.src = url;
+        img.className = "gallery-image";
+
+        const delButton = document.createElement("button");
+        delButton.textContent = "🗑️ Delete This Junk";
+        delButton.style.display = "block";
+        delButton.style.marginTop = "5px";
+        delButton.style.backgroundColor = "#e74c3c";
+        delButton.style.color = "white";
+        delButton.style.border = "none";
+        delButton.style.cursor = "pointer";
+        delButton.style.padding = "5px 10px";
+
+        delButton.onclick = async () => {
+          if (confirm("Are you sure you want to delete this fine piece of art?")) {
+            try {
+              await deleteObject(itemRef);
+              loadGallery();
+            } catch (error) {
+              alert("Failed to delete: " + error.message);
+            }
+          }
+        };
+
+        wrapper.appendChild(img);
+        wrapper.appendChild(delButton);
+        container.appendChild(wrapper);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const link = document.getElementById("showBungholeLink");
+      const gallery = document.getElementById("bungholeGallery");
+
+      link.addEventListener("click", function (event) {
+        event.preventDefault();
+        if (gallery.style.display === "none") {
+          gallery.style.display = "block";
+          loadGallery();
+        } else {
+          gallery.style.display = "none";
+        }
+      });
     });
 
-    // Logo stumble return
-    setTimeout(() => {
-      const logo = document.getElementById("drunkLogo");
-      logo.style.animation = "stumbleBackAndTrip 5s ease-in-out forwards";
-    }, 6500);
-  });
+    window.uploadPhoto = uploadPhoto;
+  </script>
 
-  function sendReservation() {
-    const name = document.getElementById("name").value;
-    const date = document.getElementById("date").value;
-    const confirmation = document.getElementById("confirmation");
-    confirmation.innerText = `Thanks ${name}! Your bunghole has been tentatively reserved for ${date}. Expect a text from our drunk intern shortly.`;
-  }
-</script>
+  <script>
+    function sendReservation() {
+      const name = document.getElementById("name").value;
+      const date = document.getElementById("date").value;
+      const confirmation = document.getElementById("confirmation");
+      confirmation.innerText = `Thanks ${name}! Your bunghole has been tentatively reserved for ${date}. Expect a text from our drunk intern shortly.`;
+    }
+  </script>
 </body>
 </html>
