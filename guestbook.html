@@ -124,17 +124,23 @@
   <br />
 <button onclick="window.location.href='index.html'" style="
   margin-top: 40px;
-  padding: 12px 28px;
-  background-color: #ffb347;
-  color: #1e1e1e;
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  padding: 12px 30px;
   font-weight: bold;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
   border-radius: 30px;
-  border: none;
-  box-shadow: 0 5px 10px rgba(255,179,71,0.6);
   cursor: pointer;
-  transition: all 0.2s ease;
-">
+  user-select: none;
+  border: none;
+  box-shadow: 0 5px 10px rgba(255,179,71,0.7);
+  background: linear-gradient(135deg, #ffd369, #ffb347);
+  color: #422900;
+  transition: transform 0.25s ease, background-color 0.3s ease;
+"
+onmouseover="this.style.transform='scale(1.15) rotate(-5deg)'; this.style.boxShadow='0 8px 15px rgba(255,179,71,0.9)'"
+onmouseout="this.style.transform='none'; this.style.boxShadow='0 5px 10px rgba(255,179,71,0.7)'"
+onmousedown="this.style.transform='scale(0.95) rotate(2deg)'"
+onmouseup="this.style.transform='scale(1.15) rotate(-5deg)'"
+>
   Take Me Back to the Bunghole
 </button>
 </body>
