@@ -1,77 +1,125 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Guestbook – The Tipsy Bunghole</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign The Guestbook – The Tipsy Bunghole</title>
   <style>
     body {
-      font-family: Georgia, serif;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
       background-color: #1e1e1e;
       color: #f5f5f5;
       text-align: center;
-      padding: 20px;
+      padding: 40px 20px;
     }
-    a {
+    h1 {
       color: #ffb347;
-      font-weight: bold;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
     }
     input, textarea {
       width: 80%;
       padding: 10px;
       margin: 10px 0;
-      border-radius: 5px;
-      border: none;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background-color: #2a2a2a;
+      color: #fff;
+      font-size: 1em;
     }
     button {
-      padding: 10px 20px;
+      padding: 12px 24px;
       background-color: #ffb347;
       border: none;
       font-weight: bold;
+      border-radius: 30px;
       cursor: pointer;
+      box-shadow: 0 5px 10px rgba(255,179,71,0.6);
+      transition: transform 0.2s ease;
+    }
+    button:hover {
+      transform: scale(1.05);
     }
     .entry {
-      background-color: #333;
-      margin: 10px auto;
-      padding: 10px;
-      border-radius: 8px;
-      width: 80%;
-      text-align: left;
+      margin-top: 30px;
+      background-color: #2e2e2e;
+      padding: 15px;
+      border-radius: 10px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 0 8px #ffb34799;
+    }
+    .entry h3 {
+      color: #ffd369;
+      margin: 0;
+    }
+    .entry p {
+      margin: 5px 0;
     }
   </style>
 </head>
 <body>
-  <h1>📖 The Guestbook</h1>
-  <p>Let the world know you dared enter The Tipsy Bunghole...</p>
-
-  <form onsubmit="saveEntry(); return false;">
-    <input type="text" id="name" placeholder="Your Name" required><br>
-    <textarea id="message" placeholder="Say something filthy or flattering..." required></textarea><br>
-    <button type="submit">Leave My Mark</button>
+  <h1>📖 Sign the Guestbook</h1>
+  <form id="guestbookForm">
+    <input type="text" id="alias" placeholder="Alias / Nickname" required /><br />
+    <input type="text" id="drink" placeholder="Favorite Drink" required /><br />
+    <textarea id="message" rows="4" placeholder="Leave a cheeky message..." required></textarea><br />
+    <button type="submit">Leave My Mark 🍻</button>
   </form>
 
-  <div id="entries"></div>
+  <div id="entriesContainer"></div>
 
-  <p style="margin-top: 40px;">
-    <a href="index.html">⬅️ Back to the Bunghole</a>
-  </p>
-
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script>
-    function saveEntry() {
-      const name = document.getElementById('name').value;
-      const message = document.getElementById('message').value;
-      const entry = document.createElement('div');
-      entry.classList.add('entry');
-      entry.innerHTML = `<strong>${name}</strong>:<br>${message}`;
-      document.getElementById('entries').prepend(entry);
-      document.getElementById('name').value = '';
-      document.getElementById('message').value = '';
+    const firebaseConfig = {
+      apiKey: "AIzaSyAdHvy_zumpvAObyIF_o-nVcJwhH2M_q_Q",
+      authDomain: "tipsy-bunghole-photos.firebaseapp.com",
+      projectId: "tipsy-bunghole-photos",
+      storageBucket: "tipsy-bunghole-photos.appspot.com",
+      messagingSenderId: "2480051479",
+      appId: "1:2480051479:web:c89f9cf8f4b3df8cdf1352"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const form = document.getElementById("guestbookForm");
+    const entriesContainer = document.getElementById("entriesContainer");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const alias = document.getElementById("alias").value;
+      const drink = document.getElementById("drink").value;
+      const message = document.getElementById("message").value;
+
+      await db.collection("guestbook").add({
+        alias,
+        drink,
+        message,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      form.reset();
+      loadEntries();
+    });
+
+    async function loadEntries() {
+      entriesContainer.innerHTML = "";
+      const snapshot = await db.collection("guestbook").orderBy("timestamp", "desc").get();
+      snapshot.forEach(doc => {
+        const entry = doc.data();
+        const div = document.createElement("div");
+        div.className = "entry";
+        div.innerHTML = `
+          <h3>${entry.alias}</h3>
+          <p><strong>🍸 Fav Drink:</strong> ${entry.drink}</p>
+          <p>${entry.message}</p>
+        `;
+        entriesContainer.appendChild(div);
+      });
     }
+
+    loadEntries();
   </script>
 </body>
 </html>
