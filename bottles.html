@@ -2,61 +2,144 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bottle List | The Tipsy Bunghole</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>📦 Bottle List - The Tipsy Bunghole</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <style>
     body {
-      font-family: 'Georgia', serif;
       background-color: #1e1e1e;
       color: #f5f5f5;
-      text-align: center;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
       padding: 20px;
+      text-align: center;
     }
-    a {
-      color: #ffb347;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    h1 {
-      color: #ffb347;
-      margin-bottom: 20px;
-    }
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    li {
-      margin: 10px 0;
-      background-color: #2a2a2a;
-      padding: 10px;
+
+    #reader {
+      width: 300px;
+      margin: 20px auto;
+      border: 2px solid #ffb347;
       border-radius: 8px;
-      box-shadow: 0 0 6px rgba(255, 179, 71, 0.3);
+      padding: 10px;
     }
-    footer {
-      margin-top: 50px;
-      font-size: 0.9em;
-      color: #999;
+
+    input, button {
+      padding: 10px;
+      font-size: 1em;
+      margin: 10px;
+      border-radius: 6px;
+      border: none;
+    }
+
+    input {
+      width: 80%;
+      background-color: #2a2a2a;
+      color: white;
+    }
+
+    button {
+      background-color: #ffb347;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #e6a82a;
+    }
+
+    .bottle-form {
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
   <h1>📚 Bottle List</h1>
-  <p>Every glorious pour we've logged:</p>
+  <p>Scan a bottle to add it to the collection 🍾</p>
 
-  <ul id="bottle-list">
-    <li>Blanton’s Single Barrel Bourbon</li>
-    <li>Buffalo Trace</li>
-    <li>Elijah Craig Small Batch</li>
-    <li>Old Forester 1920 Prohibition Style</li>
-    <li>Woodford Reserve Double Oaked</li>
-  </ul>
+  <div id="reader"></div>
 
-  <footer>
-    <p>&larr; <a href="index.html">Back to The Tipsy Bunghole</a></p>
-    <p>&copy; 2025 The Tipsy Bunghole</p>
-  </footer>
+  <div class="bottle-form">
+    <input type="text" id="upc" placeholder="UPC Code" readonly /><br/>
+    <input type="text" id="name" placeholder="Bottle Name" required /><br/>
+    <input type="text" id="type" placeholder="Type (e.g., Bourbon, Rye)" /><br/>
+    <input type="text" id="proof" placeholder="Proof (optional)" /><br/>
+    <button onclick="saveBottle()">💾 Save Bottle</button>
+    <p id="saveStatus"></p>
+  </div>
+
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Start QR code scanner
+    const html5QrCode = new Html5Qrcode("reader");
+
+    function startScanner() {
+      Html5Qrcode.getCameras().then(devices => {
+        if (devices && devices.length) {
+          const cameraId = devices[0].id;
+          html5QrCode.start(
+            cameraId,
+            { fps: 10, qrbox: 250 },
+            (decodedText, decodedResult) => {
+              document.getElementById("upc").value = decodedText;
+              html5QrCode.stop();
+              document.getElementById("saveStatus").textContent = `Scanned UPC: ${decodedText}`;
+            },
+            error => {
+              // Ignore scan errors
+            }
+          );
+        }
+      }).catch(err => {
+        console.error("Camera access error", err);
+      });
+    }
+
+    startScanner();
+
+    // Save bottle to Firestore
+    function saveBottle() {
+      const upc = document.getElementById("upc").value;
+      const name = document.getElementById("name").value;
+      const type = document.getElementById("type").value;
+      const proof = document.getElementById("proof").value;
+
+      if (!upc || !name) {
+        document.getElementById("saveStatus").textContent = "UPC and name are required!";
+        return;
+      }
+
+      db.collection("bottles").add({
+        upc,
+        name,
+        type,
+        proof,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        document.getElementById("saveStatus").textContent = "🍻 Bottle saved!";
+        document.getElementById("name").value = "";
+        document.getElementById("type").value = "";
+        document.getElementById("proof").value = "";
+        document.getElementById("upc").value = "";
+        startScanner();
+      }).catch(err => {
+        console.error("Error saving bottle:", err);
+        document.getElementById("saveStatus").textContent = "Error saving bottle.";
+      });
+    }
+  </script>
 </body>
 </html>
