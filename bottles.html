@@ -12,11 +12,9 @@
       text-align: center;
       padding: 40px 20px;
     }
-
     h1 {
       color: #ffa95e;
     }
-
     input, textarea {
       width: 80%;
       padding: 10px;
@@ -27,7 +25,6 @@
       color: #fff;
       font-size: 1em;
     }
-
     .fun-button {
       padding: 12px 30px;
       font-weight: bold;
@@ -35,20 +32,17 @@
       font-family: 'Comic Sans MS', cursive, sans-serif;
       border-radius: 30px;
       cursor: pointer;
-      user-select: none;
       border: none;
       box-shadow: 0 5px 10px rgba(255,179,71,0.7);
       background: linear-gradient(135deg, #ffd369, #ffb347);
       color: #422900;
       transition: transform 0.25s ease, background-color 0.3s ease;
     }
-
     .fun-button:hover {
       background: linear-gradient(135deg, #ffb347, #ffd369);
       transform: scale(1.1);
       box-shadow: 0 8px 15px rgba(255,179,71,0.9);
     }
-
     .bottle-list {
       margin-top: 30px;
       max-width: 700px;
@@ -56,7 +50,6 @@
       margin-right: auto;
       text-align: left;
     }
-
     .bottle-entry {
       background-color: #2e2e2e;
       margin-bottom: 20px;
@@ -64,7 +57,6 @@
       border-radius: 10px;
       box-shadow: 0 0 8px #ffb34799;
     }
-
     .bottle-entry h3 {
       margin: 0 0 5px;
       color: #ffd369;
@@ -86,27 +78,49 @@
   <br />
   <button onclick="window.location.href='index.html'" class="fun-button">Back to the Bunghole</button>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  <script>
-    // Initialize Firebase
+    // ✅ Use your actual Firebase config for the photos project
     const firebaseConfig = {
-      apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
-      authDomain: "tipsy-bunghole-guest-book.firebaseapp.com",
-      projectId: "tipsy-bunghole-guest-book",
-      storageBucket: "tipsy-bunghole-guest-book.appspot.com",
-      messagingSenderId: "152050189848",
-      appId: "1:152050189848:web:9ba719e8d2ad24c138e56d"
+      apiKey: "AIzaSyBOp5M7OfLJAgNeNdHsnhPqjy2CqhSACAQ",
+      authDomain: "tipsy-bunghole-photos.firebaseapp.com",
+      projectId: "tipsy-bunghole-photos",
+      storageBucket: "tipsy-bunghole-photos.appspot.com",
+      messagingSenderId: "588143053213",
+      appId: "1:588143053213:web:1487c9b1aa773d3d240774"
     };
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
     const form = document.getElementById('bottleForm');
     const list = document.getElementById('bottleList');
 
-    // Save new bottle to Firestore
+    // Load existing bottles
+    async function loadBottles() {
+      list.innerHTML = "";
+      const q = query(collection(db, "bottles"), orderBy("timestamp", "desc"));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const entry = document.createElement("div");
+        entry.className = "bottle-entry";
+        entry.innerHTML = `
+          <h3>${data.name}</h3>
+          <p><strong>🏭 Distillery:</strong> ${data.distillery}</p>
+          <p><strong>🔥 Proof:</strong> ${data.proof}</p>
+          <p>${data.notes || ""}</p>
+        `;
+        list.appendChild(entry);
+      });
+    }
+
+    loadBottles();
+
+    // Save bottle entry
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const name = document.getElementById('bottleName').value.trim();
@@ -116,41 +130,17 @@
 
       if (!name || !distillery || !proof) return;
 
-      try {
-        await db.collection("bottles").add({
-          name,
-          distillery,
-          proof,
-          notes,
-          timestamp: Date.now()
-        });
-        form.reset();
-        loadBottles();
-      } catch (error) {
-        console.error("Error adding bottle:", error);
-      }
-    });
-
-    // Load bottles from Firestore
-    async function loadBottles() {
-      list.innerHTML = '';
-      const snapshot = await db.collection("bottles").orderBy("timestamp", "desc").get();
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const entry = document.createElement('div');
-        entry.className = 'bottle-entry';
-        entry.innerHTML = `
-          <h3>${data.name}</h3>
-          <p><strong>🏭 Distillery:</strong> ${data.distillery}</p>
-          <p><strong>🔥 Proof:</strong> ${data.proof}</p>
-          <p>${data.notes || ''}</p>
-        `;
-        list.appendChild(entry);
+      await addDoc(collection(db, "bottles"), {
+        name,
+        distillery,
+        proof,
+        notes,
+        timestamp: new Date()
       });
-    }
 
-    // Initial load
-    loadBottles();
+      form.reset();
+      loadBottles();
+    });
   </script>
 </body>
 </html>
