@@ -1,1 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bottle Inventory – The Tipsy Bunghole</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: radial-gradient(ellipse at center, #3a2c1a, #1e1e1e);
+      color: #f8e7c8;
+      text-align: center;
+      padding: 40px 20px;
+    }
 
+    h1 {
+      color: #ffa95e;
+    }
+
+    input, textarea {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background-color: #2a2a2a;
+      color: #fff;
+      font-size: 1em;
+    }
+
+    .fun-button {
+      padding: 12px 30px;
+      font-weight: bold;
+      font-size: 1.1em;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      border-radius: 30px;
+      cursor: pointer;
+      user-select: none;
+      border: none;
+      box-shadow: 0 5px 10px rgba(255,179,71,0.7);
+      background: linear-gradient(135deg, #ffd369, #ffb347);
+      color: #422900;
+      transition: transform 0.25s ease, background-color 0.3s ease;
+    }
+
+    .fun-button:hover {
+      background: linear-gradient(135deg, #ffb347, #ffd369);
+      transform: scale(1.1);
+      box-shadow: 0 8px 15px rgba(255,179,71,0.9);
+    }
+
+    .bottle-list {
+      margin-top: 30px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+    }
+
+    .bottle-entry {
+      background-color: #2e2e2e;
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px #ffb34799;
+    }
+
+    .bottle-entry h3 {
+      margin: 0 0 5px;
+      color: #ffd369;
+    }
+  </style>
+</head>
+<body>
+  <h1>🥃 Bottle Inventory</h1>
+  <form id="bottleForm">
+    <input type="text" id="bottleName" placeholder="Bottle Name" required /><br />
+    <input type="text" id="distillery" placeholder="Distillery" required /><br />
+    <input type="text" id="proof" placeholder="Proof" required /><br />
+    <textarea id="notes" rows="3" placeholder="Tasting Notes / Comments"></textarea><br />
+    <button type="submit" class="fun-button">Add Bottle</button>
+  </form>
+
+  <div class="bottle-list" id="bottleList"></div>
+
+  <br />
+  <button onclick="window.location.href='index.html'" class="fun-button">Back to the Bunghole</button>
+
+  <script>
+    const form = document.getElementById('bottleForm');
+    const list = document.getElementById('bottleList');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('bottleName').value.trim();
+      const distillery = document.getElementById('distillery').value.trim();
+      const proof = document.getElementById('proof').value.trim();
+      const notes = document.getElementById('notes').value.trim();
+
+      if (!name || !distillery || !proof) return;
+
+      const entry = document.createElement('div');
+      entry.className = 'bottle-entry';
+      entry.innerHTML = `
+        <h3>${name}</h3>
+        <p><strong>🏭 Distillery:</strong> ${distillery}</p>
+        <p><strong>🔥 Proof:</strong> ${proof}</p>
+        <p>${notes}</p>
+      `;
+      list.prepend(entry);
+
+      form.reset();
+    });
+  </script>
+</body>
+</html>
