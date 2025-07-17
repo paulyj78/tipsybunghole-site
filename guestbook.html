@@ -7,10 +7,16 @@
   <style>
     body {
       font-family: 'Comic Sans MS', cursive, sans-serif;
-      background-color: #1e1e1e;
       color: #f5f5f5;
       text-align: center;
       padding: 40px 20px;
+
+      /* Copper vignette background */
+      background:
+        radial-gradient(circle at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.7) 100%),
+        linear-gradient(135deg, #5e3b1e, #c27b45, #3d2a1a);
+      background-attachment: fixed;
+      background-size: cover;
     }
     h1 {
       color: #ffb347;
