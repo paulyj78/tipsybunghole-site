@@ -86,11 +86,28 @@
   <br />
   <button onclick="window.location.href='index.html'" class="fun-button">Back to the Bunghole</button>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+
   <script>
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
+      authDomain: "tipsy-bunghole-guest-book.firebaseapp.com",
+      projectId: "tipsy-bunghole-guest-book",
+      storageBucket: "tipsy-bunghole-guest-book.appspot.com",
+      messagingSenderId: "152050189848",
+      appId: "1:152050189848:web:9ba719e8d2ad24c138e56d"
+    };
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     const form = document.getElementById('bottleForm');
     const list = document.getElementById('bottleList');
 
-    form.addEventListener('submit', (e) => {
+    // Save new bottle to Firestore
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const name = document.getElementById('bottleName').value.trim();
       const distillery = document.getElementById('distillery').value.trim();
@@ -99,18 +116,41 @@
 
       if (!name || !distillery || !proof) return;
 
-      const entry = document.createElement('div');
-      entry.className = 'bottle-entry';
-      entry.innerHTML = `
-        <h3>${name}</h3>
-        <p><strong>🏭 Distillery:</strong> ${distillery}</p>
-        <p><strong>🔥 Proof:</strong> ${proof}</p>
-        <p>${notes}</p>
-      `;
-      list.prepend(entry);
-
-      form.reset();
+      try {
+        await db.collection("bottles").add({
+          name,
+          distillery,
+          proof,
+          notes,
+          timestamp: Date.now()
+        });
+        form.reset();
+        loadBottles();
+      } catch (error) {
+        console.error("Error adding bottle:", error);
+      }
     });
+
+    // Load bottles from Firestore
+    async function loadBottles() {
+      list.innerHTML = '';
+      const snapshot = await db.collection("bottles").orderBy("timestamp", "desc").get();
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const entry = document.createElement('div');
+        entry.className = 'bottle-entry';
+        entry.innerHTML = `
+          <h3>${data.name}</h3>
+          <p><strong>🏭 Distillery:</strong> ${data.distillery}</p>
+          <p><strong>🔥 Proof:</strong> ${data.proof}</p>
+          <p>${data.notes || ''}</p>
+        `;
+        list.appendChild(entry);
+      });
+    }
+
+    // Initial load
+    loadBottles();
   </script>
 </body>
 </html>
