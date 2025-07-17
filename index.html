@@ -234,7 +234,6 @@
 
    <input type="file" id="fileInput" accept="image/*" />
    <button class="upload-btn" id="uploadBtn">Upload Your Contribution</button>
-   <button class="delete-btn" id="deleteBtn">Delete This Junk</button>
    <p id="uploadStatus" style="color:#ffb347; font-weight:bold; margin-top:10px;"></p>
  </div>
 
@@ -297,7 +296,6 @@
    const photoGallery = document.getElementById("photoGallery");
    const fileInput = document.getElementById("fileInput");
    const uploadBtn = document.getElementById("uploadBtn");
-   const deleteBtn = document.getElementById("deleteBtn");
    const uploadStatus = document.getElementById("uploadStatus");
 
    // Toggle gallery display
@@ -354,30 +352,7 @@
        uploadStatus.innerText = "Oops! Something went sideways during upload.";
      }
    });
-
-   // Delete all photos (reset)
-   deleteBtn.addEventListener("click", async () => {
-     if (!confirm("Really wanna trash all the photos? No takebacks!")) return;
-     uploadStatus.innerText = "Deleting all the junk...";
-     try {
-       const snapshot = await firestore.collection("photos").get();
-       const batch = firestore.batch();
-       const deletePromises = [];
-       snapshot.forEach((doc) => {
-         batch.delete(doc.ref);
-         const fileName = doc.data().fileName;
-         deletePromises.push(storage.ref(fileName).delete());
-       });
-       await Promise.all(deletePromises);
-       await batch.commit();
-       uploadStatus.innerText = "All junk deleted. Fresh start!";
-       photoGallery.innerHTML = "";
-     } catch (error) {
-       console.error(error);
-       uploadStatus.innerText = "Can't delete the junk right now.";
-     }
-   });
-
+  
    // Reservation confirmation
    function sendReservation() {
      const name = document.getElementById("name").value;
