@@ -12,10 +12,12 @@
       text-align: center;
       padding: 40px 20px;
     }
+
     h1 {
       color: #ffa95e;
     }
-    input, textarea {
+
+    input, textarea, select {
       width: 80%;
       padding: 10px;
       margin: 10px 0;
@@ -25,6 +27,7 @@
       color: #fff;
       font-size: 1em;
     }
+
     .fun-button {
       padding: 12px 30px;
       font-weight: bold;
@@ -33,16 +36,11 @@
       border-radius: 30px;
       cursor: pointer;
       border: none;
-      box-shadow: 0 5px 10px rgba(255,179,71,0.7);
       background: linear-gradient(135deg, #ffd369, #ffb347);
       color: #422900;
-      transition: transform 0.25s ease, background-color 0.3s ease;
+      margin: 5px;
     }
-    .fun-button:hover {
-      background: linear-gradient(135deg, #ffb347, #ffd369);
-      transform: scale(1.1);
-      box-shadow: 0 8px 15px rgba(255,179,71,0.9);
-    }
+
     .bottle-list {
       margin-top: 30px;
       max-width: 700px;
@@ -50,6 +48,7 @@
       margin-right: auto;
       text-align: left;
     }
+
     .bottle-entry {
       background-color: #2e2e2e;
       margin-bottom: 20px;
@@ -57,19 +56,29 @@
       border-radius: 10px;
       box-shadow: 0 0 8px #ffb34799;
     }
-    .bottle-entry h3 {
-      margin: 0 0 5px;
-      color: #ffd369;
+
+    .killed {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    .edit-area {
+      margin-top: 5px;
     }
   </style>
 </head>
 <body>
   <h1>🥃 Bottle Inventory</h1>
   <form id="bottleForm">
-    <input type="text" id="bottleName" placeholder="Bottle Name" required /><br />
-    <input type="text" id="distillery" placeholder="Distillery" required /><br />
-    <input type="text" id="proof" placeholder="Proof" required /><br />
-    <textarea id="notes" rows="3" placeholder="Tasting Notes / Comments"></textarea><br />
+    <input type="text" id="bottleName" placeholder="Bottle Name" required />
+    <input type="text" id="distillery" placeholder="Distillery" required />
+    <input type="text" id="proof" placeholder="Proof" required />
+    <textarea id="notes" rows="3" placeholder="Tasting Notes / Comments"></textarea>
     <button type="submit" class="fun-button">Add Bottle</button>
   </form>
 
@@ -78,49 +87,47 @@
   <br />
   <button onclick="window.location.href='index.html'" class="fun-button">Back to the Bunghole</button>
 
-  <!-- Firebase SDKs -->
   <script type="module">
+    // Firebase setup for tipsy-bunghole-photos
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // ✅ Use your actual Firebase config for the photos project
     const firebaseConfig = {
-      apiKey: "AIzaSyBOp5M7OfLJAgNeNdHsnhPqjy2CqhSACAQ",
-      authDomain: "tipsy-bunghole-photos.firebaseapp.com",
+      apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
+      authDomain: "tipsy-bunghole-guest-book.firebaseapp.com",
       projectId: "tipsy-bunghole-photos",
       storageBucket: "tipsy-bunghole-photos.appspot.com",
-      messagingSenderId: "588143053213",
-      appId: "1:588143053213:web:1487c9b1aa773d3d240774"
+      messagingSenderId: "152050189848",
+      appId: "1:152050189848:web:9ba719e8d2ad24c138e56d"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const bottlesRef = collection(db, "bottles");
 
     const form = document.getElementById('bottleForm');
     const list = document.getElementById('bottleList');
 
-    // Load existing bottles
     async function loadBottles() {
-      list.innerHTML = "";
-      const q = query(collection(db, "bottles"), orderBy("timestamp", "desc"));
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        const entry = document.createElement("div");
-        entry.className = "bottle-entry";
+      list.innerHTML = '';
+      const snapshot = await getDocs(bottlesRef);
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const entry = document.createElement('div');
+        entry.className = 'bottle-entry' + (data.killed ? ' killed' : '');
         entry.innerHTML = `
           <h3>${data.name}</h3>
           <p><strong>🏭 Distillery:</strong> ${data.distillery}</p>
           <p><strong>🔥 Proof:</strong> ${data.proof}</p>
-          <p>${data.notes || ""}</p>
+          <p>${data.notes}</p>
+          <label><input type="checkbox" ${data.killed ? 'checked' : ''} data-id="${docSnap.id}" class="killToggle"> Mark as Killed</label>
+          <button class="fun-button editBtn" data-id="${docSnap.id}">Edit</button>
+          <button class="fun-button deleteBtn" data-id="${docSnap.id}">Delete</button>
         `;
         list.appendChild(entry);
       });
     }
 
-    loadBottles();
-
-    // Save bottle entry
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const name = document.getElementById('bottleName').value.trim();
@@ -128,19 +135,55 @@
       const proof = document.getElementById('proof').value.trim();
       const notes = document.getElementById('notes').value.trim();
 
-      if (!name || !distillery || !proof) return;
-
-      await addDoc(collection(db, "bottles"), {
-        name,
-        distillery,
-        proof,
-        notes,
-        timestamp: new Date()
+      await addDoc(bottlesRef, {
+        name, distillery, proof, notes, killed: false
       });
 
       form.reset();
       loadBottles();
     });
+
+    list.addEventListener('click', async (e) => {
+      const id = e.target.dataset.id;
+      if (e.target.classList.contains('deleteBtn')) {
+        if (confirm('Delete this bottle?')) {
+          await deleteDoc(doc(bottlesRef, id));
+          loadBottles();
+        }
+      }
+
+      if (e.target.classList.contains('editBtn')) {
+        const entryDiv = e.target.parentElement;
+        const snapshot = await getDocs(bottlesRef);
+        const targetDoc = snapshot.docs.find(d => d.id === id);
+        const data = targetDoc.data();
+
+        const newName = prompt("Bottle Name:", data.name);
+        const newDistillery = prompt("Distillery:", data.distillery);
+        const newProof = prompt("Proof:", data.proof);
+        const newNotes = prompt("Notes:", data.notes);
+
+        if (newName && newDistillery && newProof) {
+          await updateDoc(doc(bottlesRef, id), {
+            name: newName,
+            distillery: newDistillery,
+            proof: newProof,
+            notes: newNotes
+          });
+          loadBottles();
+        }
+      }
+    });
+
+    list.addEventListener('change', async (e) => {
+      if (e.target.classList.contains('killToggle')) {
+        const id = e.target.dataset.id;
+        await updateDoc(doc(bottlesRef, id), { killed: e.target.checked });
+        loadBottles();
+      }
+    });
+
+    loadBottles();
   </script>
 </body>
 </html>
