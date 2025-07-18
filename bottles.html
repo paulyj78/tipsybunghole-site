@@ -86,17 +86,18 @@
       border-radius: 15px;
       min-width: 80px;
     }
-@media (max-width: 480px) {
-  .entry-actions {
-    display: flex;
-    flex-direction: column;
-    align-items:center;
-  }
-  .entry-actions button {
-    margin: 6px 0;
-    width: 80%;
-  }
-}  
+
+    @media (max-width: 480px) {
+      .entry-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .entry-actions button {
+        margin: 6px 0;
+        width: 80%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -114,22 +115,21 @@
   <br />
   <button onclick="window.location.href='index.html'" class="fun-button">Back to the Bunghole</button>
 
-  
-  </script>
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-    };
   <script>
     // Firebase config for tipsy-bunghole-photos project
     const firebaseConfig = {
-      apikey:"AIzaSyD_aRCYrDfu--AaY5tIKJp5JchVsWeSllU"
+      apiKey: "AIzaSyD_aRCYrDfu--AaY5tIKJp5JchVsWeSllU",
       authDomain: "tipsy-bunghole-guest-book.firebaseapp.com",
       projectId: "tipsy-bunghole-photos",
       storageBucket: "tipsy-bunghole-photos.appspot.com",
       messagingSenderId: "152050189848",
       appId: "1:152050189848:web:9ba719e8d2ad24c138e56d"
+    };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
@@ -221,5 +221,6 @@
 
     form.onsubmit = handleAdd;
     loadBottles();
+  </script>
 </body>
 </html>
