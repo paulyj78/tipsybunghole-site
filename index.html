@@ -356,8 +356,8 @@
          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
        });
        uploadStatus.innerText = "Uploaded! Cheers for your contribution 🍻";
-       fileInput.value =
-        loadPhotos();
+       fileInput.value = "";
+await loadPhotos();
      } catch (error) {
        console.error(error);
        uploadStatus.innerText = "Oops! Something went sideways during upload.";
