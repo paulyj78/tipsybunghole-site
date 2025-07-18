@@ -11,7 +11,7 @@
 
    body {
      font-family: Georgia, serif;
-    background: linear-gradient(135deg,#5e3b1e, #a65e2e, #3d2a1a);
+     background: linear-gradient(135deg,#5e3b1e, #a65e2e, #3d2a1a);
      color: #f8e3c6;
      text-align: center;
      padding: 20px;
@@ -287,6 +287,7 @@
      appId: "1:2480051479:web:c89f9cf8f4b3df8cdf1352",
    };
 
+   // Initialize Firebase
    firebase.initializeApp(firebaseConfig);
    const storage = firebase.storage();
    const firestore = firebase.firestore();
@@ -314,31 +315,40 @@
    async function loadPhotos() {
      photoGallery.innerHTML = "";
      uploadStatus.innerText = "";
-     const snapshot = await firestore.collection("photos").orderBy("timestamp", "desc").get();
-     snapshot.forEach(async (doc) => {
-       const data = doc.data();
-       try {
-         const url = await storage.ref(data.fileName).getDownloadURL();
-         const img = document.createElement("img");
-         img.src = url;
-         img.alt = "User uploaded bourbon photo";
-         photoGallery.appendChild(img);
-       } catch (err) {
-         console.error("Failed to load image URL", err);
-       }
-     });
+     try {
+       const snapshot = await firestore.collection("photos").orderBy("timestamp", "desc").get();
+       // Use Promise.all to await all image URL fetches
+       const photoPromises = snapshot.docs.map(async (doc) => {
+         const data = doc.data();
+         try {
+           // Get download URL for each image
+           const url = await storage.ref().child(data.fileName).getDownloadURL();
+           const img = document.createElement("img");
+           img.src = url;
+           img.alt = "User uploaded bourbon photo";
+           photoGallery.appendChild(img);
+         } catch (urlErr) {
+           console.error("Failed to load image URL", urlErr);
+         }
+       });
+       await Promise.all(photoPromises);
+     } catch (err) {
+       console.error("Error loading photos from Firestore", err);
+       uploadStatus.innerText = "Failed to load photos.";
+     }
    }
 
-   // Upload file
+   // Upload file handler
    uploadBtn.addEventListener("click", async () => {
      const file = fileInput.files[0];
      if (!file) {
        uploadStatus.innerText = "Pick a file first, ya lush!";
        return;
      }
+     uploadBtn.disabled = true;  // disable to prevent multiple clicks
      uploadStatus.innerText = "Uploading your masterpiece...";
      const fileName = Date.now() + "_" + file.name;
-     const storageRef = storage.ref(fileName);
+     const storageRef = storage.ref().child(fileName);
      try {
        await storageRef.put(file);
        await firestore.collection("photos").add({
@@ -346,21 +356,4 @@
          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
        });
        uploadStatus.innerText = "Uploaded! Cheers for your contribution 🍻";
-       fileInput.value = "";
-       loadPhotos();
-     } catch (error) {
-       console.error(error);
-       uploadStatus.innerText = "Oops! Something went sideways during upload.";
-     }
-   });
-  
-   // Reservation confirmation
-   function sendReservation() {
-     const name = document.getElementById("name").value;
-     const date = document.getElementById("date").value;
-     const confirmation = document.getElementById("confirmation");
-     confirmation.innerText = `Thanks ${name}! Your bunghole has been tentatively reserved for ${date}. Expect a text from our drunk intern shortly.`;
-   }
- </script>
-</body>
-</html>
+       fileInput.value =
