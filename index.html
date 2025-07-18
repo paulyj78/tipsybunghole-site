@@ -357,3 +357,20 @@
        });
        uploadStatus.innerText = "Uploaded! Cheers for your contribution 🍻";
        fileInput.value =
+        loadPhotos();
+     } catch (error) {
+       console.error(error);
+       uploadStatus.innerText = "Oops! Something went sideways during upload.";
+     }
+   });
+ 
+   // Reservation confirmation
+   function sendReservation() {
+     const name = document.getElementById("name").value;
+     const date = document.getElementById("date").value;
+     const confirmation = document.getElementById("confirmation");
+     confirmation.innerText = `Thanks ${name}! Your bunghole has been tentatively reserved for ${date}. Expect a text from our drunk intern shortly.`;
+   }
+ </script>
+</body>
+</html>
