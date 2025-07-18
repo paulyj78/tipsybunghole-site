@@ -151,20 +151,7 @@
       list.appendChild(entry);
     }
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const name = document.getElementById('bottleName').value.trim();
-      const distillery = document.getElementById('distillery').value.trim();
-      const proof = document.getElementById('proof').value.trim();
-      const notes = document.getElementById('notes').value.trim();
-
-      if (!name || !distillery || !proof) return;
-
-      const newDoc = await db.collection("bottles").add({
-        name, distillery, proof, notes,
-        killed: false,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      });
+    form.onsubmit = handleadd;
 
       list.innerHTML = '';
       loadBottles();
