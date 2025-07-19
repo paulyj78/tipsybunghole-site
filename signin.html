@@ -1,274 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>The Tipsy Bunghole Speakeasy Entry</title>
-<style>
-  html, body {
-    margin: 0; padding: 0; height: 100%;
-    background: url('https://cdn.pixabay.com/photo/2017/06/07/22/45/door-2385230_1280.jpg') no-repeat center center fixed;
-    background-size: cover;
-    font-family: "Georgia", serif;
-    color: #f8e3c6;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Enter The Tipsy Bunghole</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Georgia', serif;
+      background: url('8AB16A18-4722-4B00-BF33-ECBAE98BD8C4.jpeg') no-repeat center center;
+      background-size: cover;
+    }
 
-  #door-container {
-    position: relative;
-    width: 320px;
-    height: 480px;
-    box-shadow: 0 0 40px #b97216aa;
-    border: 6px solid #422900;
-    border-radius: 12px;
-    background: transparent;
-    overflow: hidden;
-  }
+    .hatch {
+      position: absolute;
+      width: 200px;
+      height: 80px;
+      top: 40%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2b1d10;
+      border: 4px solid #444;
+      border-radius: 5px;
+      box-shadow: inset 0 0 10px #000;
+      overflow: hidden;
+      transition: top 0.8s ease;
+    }
 
-  /* Hatch (sliding door) */
-  #hatch {
-    position: absolute;
-    top: 180px;
-    left: 0;
-    width: 320px;
-    height: 100px;
-    background: url('https://cdn.pixabay.com/photo/2017/02/12/11/10/door-2059810_1280.jpg') no-repeat center center;
-    background-size: cover;
-    box-shadow: inset 0 0 30px #422900cc;
-    transition: transform 1s ease-in-out;
-    transform: translateX(0);
-    cursor: pointer;
-    z-index: 10;
-    border-radius: 6px 6px 6px 6px;
-  }
+    .hatch.open {
+      top: 30%;
+    }
 
-  /* Eye behind the hatch */
-  #eye-container {
-    position: absolute;
-    top: 190px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120px;
-    height: 80px;
-    overflow: hidden;
-    border-radius: 50% / 70%;
-    box-shadow: 0 0 15px 5px #ffb347cc;
-    opacity: 0;
-    transition: opacity 0.6s ease 1s;
-    z-index: 5;
-  }
-  #eye-container img {
-    width: 120px;
-    height: auto;
-    user-select: none;
-    pointer-events: none;
-  }
+    .eye {
+      display: none;
+      text-align: center;
+      color: white;
+      font-size: 1.5rem;
+      margin-top: 15px;
+    }
 
-  /* Knock button */
-  #knockBtn {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(135deg, #ffd369, #ffb347);
-    border: none;
-    padding: 14px 32px;
-    border-radius: 25px;
-    font-weight: bold;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    font-size: 1.2rem;
-    cursor: pointer;
-    box-shadow: 0 5px 15px #ffb347cc;
-    user-select: none;
-    transition: transform 0.2s ease;
-  }
-  #knockBtn:hover {
-    transform: scale(1.1) rotate(-3deg);
-    box-shadow: 0 8px 20px #ffb347ee;
-  }
-  #knockBtn:active {
-    transform: scale(0.95) rotate(2deg);
-  }
+    .prompt {
+      text-align: center;
+      color: white;
+      font-size: 1.4rem;
+      margin-top: 20px;
+    }
 
-  /* Password input */
-  #passwordContainer {
-    position: absolute;
-    bottom: 100px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    width: 70%;
-  }
-  #passwordInput {
-    padding: 10px 15px;
-    font-size: 1.1rem;
-    border-radius: 12px;
-    border: 2px solid #ffb347;
-    background-color: #2a2a2a;
-    color: #f8e3c6;
-    text-align: center;
-    font-family: "Georgia", serif;
-    width: 100%;
-  }
-  #submitPasswordBtn {
-    background: linear-gradient(135deg, #ffb347, #ffd369);
-    border: none;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    box-shadow: 0 5px 10px #b97312aa;
-    transition: background-color 0.3s ease;
-  }
-  #submitPasswordBtn:hover {
-    background: linear-gradient(135deg, #ffd369, #ffb347);
-  }
+    .input-container {
+      display: none;
+      text-align: center;
+      margin-top: 10px;
+    }
 
-  /* Error shake animation */
-  @keyframes shake {
-    0% { transform: translateX(0); }
-    20% { transform: translateX(-10px); }
-    40% { transform: translateX(10px); }
-    60% { transform: translateX(-10px); }
-    80% { transform: translateX(10px); }
-    100% { transform: translateX(0); }
-  }
-  .shake {
-    animation: shake 0.4s;
-  }
+    input {
+      padding: 8px;
+      font-size: 1.1rem;
+      border-radius: 5px;
+      border: none;
+    }
 
-  /* Message */
-  #message {
-    position: absolute;
-    bottom: 160px;
-    width: 100%;
-    text-align: center;
-    font-style: italic;
-    font-size: 1.1rem;
-    color: #ffb347;
-    min-height: 24px;
-  }
-</style>
+    button {
+      padding: 8px 14px;
+      margin-left: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      background-color: #7a5e3b;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+  </style>
 </head>
 <body>
 
-<div id="door-container">
-  <div id="eye-container">
-    <img src="https://cdn.pixabay.com/photo/2016/03/27/07/08/eye-1281661_1280.jpg" alt="Peeking Eye" />
-  </div>
-  <div id="hatch" title="Click to close"></div>
-
-  <button id="knockBtn">Knock Knock</button>
-
-  <div id="passwordContainer">
-    <input type="password" id="passwordInput" placeholder="Password, pal?" autocomplete="off" />
-    <button id="submitPasswordBtn">Enter</button>
+  <div class="hatch" id="hatch">
+    <div class="eye" id="eye">👁️</div>
   </div>
 
-  <div id="message"></div>
-</div>
+  <div class="prompt" id="prompt" style="display:none;">Password, pal?</div>
+  <div class="input-container" id="inputContainer">
+    <input type="password" id="passwordInput" placeholder="Enter password" />
+    <button onclick="checkPassword()">Enter</button>
+  </div>
 
-<audio id="knockSound" src="https://actions.google.com/sounds/v1/doors/wooden_door_knock.ogg" preload="auto"></audio>
-<audio id="slideOpenSound" src="https://actions.google.com/sounds/v1/doors/door_slide.ogg" preload="auto"></audio>
-<audio id="slideCloseSound" src="https://actions.google.com/sounds/v1/doors/door_slide.ogg" preload="auto"></audio>
-<audio id="voicePrompt" src="https://cdn.freesound.org/previews/537/537181_10585448-lq.mp3" preload="auto"></audio>
+  <audio id="knockSound" src="https://cdn.pixabay.com/audio/2021/08/04/audio_f9cbfddd04.mp3"></audio>
+  <audio id="slideSound" src="https://cdn.pixabay.com/audio/2022/03/22/audio_8d1ff2343a.mp3"></audio>
+  <audio id="slamSound" src="https://cdn.pixabay.com/audio/2022/03/21/audio_7b498ab830.mp3"></audio>
 
-<script>
-  const knockBtn = document.getElementById("knockBtn");
-  const hatch = document.getElementById("hatch");
-  const eyeContainer = document.getElementById("eye-container");
-  const passwordContainer = document.getElementById("passwordContainer");
-  const passwordInput = document.getElementById("passwordInput");
-  const submitPasswordBtn = document.getElementById("submitPasswordBtn");
-  const message = document.getElementById("message");
+  <script>
+    const hatch = document.getElementById('hatch');
+    const eye = document.getElementById('eye');
+    const prompt = document.getElementById('prompt');
+    const inputContainer = document.getElementById('inputContainer');
+    const knockSound = document.getElementById('knockSound');
+    const slideSound = document.getElementById('slideSound');
+    const slamSound = document.getElementById('slamSound');
 
-  const knockSound = document.getElementById("knockSound");
-  const slideOpenSound = document.getElementById("slideOpenSound");
-  const slideCloseSound = document.getElementById("slideCloseSound");
-  const voicePrompt = document.getElementById("voicePrompt");
-
-  let hatchOpen = false;
-  const correctPassword = "bunghole123";
-
-  // When knock button clicked
-  knockBtn.addEventListener("click", () => {
-    if(hatchOpen) return; // ignore if already open
-    message.textContent = "";
-    knockSound.currentTime = 0;
-    knockSound.play();
-
-    setTimeout(() => {
-      // Slide hatch open
-      hatch.style.transform = "translateX(320px)";
-      slideOpenSound.currentTime = 0;
-      slideOpenSound.play();
-
-      // Show eye
-      eyeContainer.style.opacity = 1;
-
-      hatchOpen = true;
-
-      // After slide open, play voice and show input
+    // Trigger opening animation
+    window.onload = () => {
+      knockSound.play();
       setTimeout(() => {
-        voicePrompt.currentTime = 0;
-        voicePrompt.play();
-        passwordContainer.style.display = "flex";
-        passwordInput.focus();
+        slideSound.play();
+        hatch.classList.add('open');
+        setTimeout(() => {
+          eye.style.display = 'block';
+          setTimeout(() => {
+            eye.style.display = 'none';
+            prompt.style.display = 'block';
+            inputContainer.style.display = 'block';
+          }, 1500);
+        }, 1200);
       }, 1000);
+    };
 
-    }, 600);
-  });
-
-  // Clicking hatch closes it (only if open)
-  hatch.addEventListener("click", () => {
-    if(!hatchOpen) return;
-    closeHatch();
-  });
-
-  // Submit password
-  submitPasswordBtn.addEventListener("click", checkPassword);
-  passwordInput.addEventListener("keydown", (e) => {
-    if(e.key === "Enter") checkPassword();
-  });
-
-  function checkPassword() {
-    const input = passwordInput.value.trim();
-    if(input === correctPassword) {
-      message.style.color = "#a4ff7f";
-      message.textContent = "Welcome, friend! Opening the bunghole...";
-      setTimeout(() => {
-        alert("Access granted! Load your site here.");
-        // Redirect or reveal site content here
-      }, 800);
-    } else {
-      message.style.color = "#ff6159";
-      message.textContent = "Wrong password! The hatch slams shut!";
-      passwordContainer.classList.add("shake");
-      setTimeout(() => passwordContainer.classList.remove("shake"), 400);
-
-      // Close hatch with slide close sound
-      closeHatch();
+    function checkPassword() {
+      const input = document.getElementById('passwordInput').value;
+      if (input === "barrelproof69") {
+        window.location.href = "index.html";
+      } else {
+        slamSound.play();
+        hatch.classList.remove('open');
+        prompt.innerText = "Wrong. Try again.";
+        inputContainer.style.display = 'none';
+        setTimeout(() => {
+          prompt.innerText = "Password, pal?";
+          inputContainer.style.display = 'block';
+        }, 2000);
+      }
     }
-  }
-
-  function closeHatch() {
-    slideCloseSound.currentTime = 0;
-    slideCloseSound.play();
-
-    hatch.style.transform = "translateX(0)";
-    eyeContainer.style.opacity = 0;
-    passwordContainer.style.display = "none";
-    passwordInput.value = "";
-    hatchOpen = false;
-    message.textContent = "";
-  }
-</script>
-
+  </script>
 </body>
 </html>
