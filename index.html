@@ -274,6 +274,13 @@
 
 <footer style="margin-top: 60px; font-size: 0.9em;">
   <p>&copy; 2025 The Tipsy Bunghole — No refunds, no regrets.</p>
+  <button onclick="logout()">Log Out</button>
+<script>
+  function logout() {
+    localStorage.removeItem("bungholeAccess");
+    window.location.href = "signin.html";
+  }
+</script>
 </footer>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
