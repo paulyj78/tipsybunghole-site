@@ -61,23 +61,40 @@
       margin-right: auto;
       text-align: left;
     }
-
-    .bottle-entry {
+.bottle-entry {
   font-family: 'Courier Prime', monospace;
-  background-color: #f5e6c4; /* warm parchment base */
+  background-color: #f5e6c4;
   background-image:
-    linear-gradient(to bottom, rgba(100, 80, 40, 0.3) 1px, transparent 22px),
-    url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAADtikdSAAAAMklEQVQYV2NggAIYYOUDGJDv5P//n5+ff19vWl6s1gD3BRBA0jHIYHQyyQGASOB2F2BaA8yL0C7RY9AZCnZBoXADrEBdIWSxanAAAAAElFTkSuQmCC");
+    linear-gradient(to bottom, rgba(100, 80, 40, 0.3) 1px, transparent 24px),
+    url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAADtikdSAAAAMklEQVQYV2NggAIYYOUDGJDv5P//n5+ff19vWl6s1gD3BRBA0jHIYHQyyQGASOB2F2BaA8yL0C7RY9AZCnZBoXADrEBdIWSxanAAAAAElFTkSuQmCC"); /* parchment texture */
   background-repeat: repeat;
   background-size: 100% 24px, auto;
-  margin-bottom: 20px;
-  padding: 20px 15px;
+  padding: 20px 15px 20px 40px; /* left padding for red line and holes */
+  border-left: 3px solid red; /* red notebook margin */
   border-radius: 12px;
   box-shadow: 0 0 15px #ffb347bb;
+  margin-bottom: 20px;
+  position: relative;
   color: #4a3b1a;
   font-size: 16px;
-  position: relative;
-    }
+}
+
+/* Binder ring holes (left side circles) */
+.bottle-entry::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 15px;
+  width: 10px;
+  height: 10px;
+  background-color: #aaa;
+  border-radius: 50%;
+  box-shadow:
+    0 30px #aaa,
+    0 60px #aaa,
+    0 90px #aaa;
+  {
+ 
 
     .bottle-entry.killed {
       opacity: 0.5;
