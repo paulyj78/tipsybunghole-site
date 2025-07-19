@@ -11,7 +11,7 @@
 
   body {
     font-family: Georgia, serif;
-    background: linear-gradient(135deg,#5e3b1e, #a65e2e, #3d2a1a);
+   background: linear-gradient(135deg,#5e3b1e, #a65e2e, #3d2a1a);
     color: #f8e3c6;
     text-align: center;
     padding: 20px;
@@ -281,7 +281,7 @@
     apiKey: "AIzaSyAdHvy_zumpvAObyIF_o-nVcJwhH2M_q_Q",
     authDomain: "tipsy-bunghole-photos.firebaseapp.com",
     projectId: "tipsy-bunghole-photos",
-    storageBucket: "tipsy-bunghole-photos.appspot.com",
+    storageBucket: "tipsy-bunghole-photos.firebasestorage.app",
     messagingSenderId: "2480051479",
     appId: "1:2480051479:web:c89f9cf8f4b3df8cdf1352",
   };
@@ -314,8 +314,7 @@
     photoGallery.innerHTML = "";
     uploadStatus.innerText = "";
     const snapshot = await firestore.collection("photos").orderBy("timestamp", "desc").get();
-
-    for (const doc of snapshot.docs) {
+    snapshot.forEach(async (doc) => {
       const data = doc.data();
       try {
         const url = await storage.ref(data.fileName).getDownloadURL();
@@ -326,7 +325,7 @@
       } catch (err) {
         console.error("Failed to load image URL", err);
       }
-    }
+    });
   }
 
   // Upload file
@@ -337,7 +336,6 @@
       return;
     }
     uploadStatus.innerText = "Uploading your masterpiece...";
-    uploadBtn.disabled = true; // disable to prevent multiple clicks
     const fileName = Date.now() + "_" + file.name;
     const storageRef = storage.ref(fileName);
     try {
@@ -353,7 +351,6 @@
       console.error(error);
       uploadStatus.innerText = "Oops! Something went sideways during upload.";
     }
-    uploadBtn.disabled = false;
   });
 
   // Reservation confirmation
