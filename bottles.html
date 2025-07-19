@@ -63,17 +63,20 @@
     }
 
     .bottle-entry {
-      font-family: 'Courier Prime', monospace;
-      background-color: #f5e6c4; /* warm parchment base color */
-      background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAADtikdSAAAAMklEQVQYV2NggAIYYOUDGJDv5P//n5+ff19vWl6s1gD3BRBA0jHIYHQyyQGASOB2F2BaA8yL0C7RY9AZCnZBoXADrEBdIWSxanAAAAAElFTkSuQmCC");
-      background-repeat: repeat;
-      margin-bottom: 20px;
-      padding: 20px 15px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px #ffb347bb;
-      color: #4a3b1a;
-      font-size: 16px;
-      position: relative;
+  font-family: 'Courier Prime', monospace;
+  background-color: #f5e6c4; /* warm parchment base */
+  background-image:
+    linear-gradient(to bottom, rgba(100, 80, 40, 0.3) 1px, transparent 22px),
+    url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAADtikdSAAAAMklEQVQYV2NggAIYYOUDGJDv5P//n5+ff19vWl6s1gD3BRBA0jHIYHQyyQGASOB2F2BaA8yL0C7RY9AZCnZBoXADrEBdIWSxanAAAAAElFTkSuQmCC");
+  background-repeat: repeat;
+  background-size: 100% 24px, auto;
+  margin-bottom: 20px;
+  padding: 20px 15px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px #ffb347bb;
+  color: #4a3b1a;
+  font-size: 16px;
+  position: relative;
     }
 
     .bottle-entry.killed {
