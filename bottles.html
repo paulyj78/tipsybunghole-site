@@ -6,7 +6,7 @@
   <title>Bottle Inventory – The Tipsy Bunghole</title>
 
   <!-- Typewriter-style font -->
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet" />
 
   <style>
     body {
@@ -21,7 +21,8 @@
       color: #ffa95e;
     }
 
-    input, textarea {
+    input,
+    textarea {
       width: 80%;
       padding: 10px;
       margin: 10px 0;
@@ -41,7 +42,7 @@
       cursor: pointer;
       user-select: none;
       border: none;
-      box-shadow: 0 5px 10px rgba(255,179,71,0.7);
+      box-shadow: 0 5px 10px rgba(255, 179, 71, 0.7);
       background: linear-gradient(135deg, #ffd369, #ffb347);
       color: #422900;
       transition: transform 0.25s ease, background-color 0.3s ease;
@@ -50,7 +51,7 @@
     .fun-button:hover {
       background: linear-gradient(135deg, #ffb347, #ffd369);
       transform: scale(1.1);
-      box-shadow: 0 8px 15px rgba(255,179,71,0.9);
+      box-shadow: 0 8px 15px rgba(255, 179, 71, 0.9);
     }
 
     .bottle-list {
@@ -63,18 +64,16 @@
 
     .bottle-entry {
       font-family: 'Courier Prime', monospace;
-      background-color: #2e2e2e;
+      background-color: #f5e6c4; /* warm parchment base color */
+      background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAADtikdSAAAAMklEQVQYV2NggAIYYOUDGJDv5P//n5+ff19vWl6s1gD3BRBA0jHIYHQyyQGASOB2F2BaA8yL0C7RY9AZCnZBoXADrEBdIWSxanAAAAAElFTkSuQmCC");
+      background-repeat: repeat;
       margin-bottom: 20px;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 0 8px #ffb34799;
-      color: #e3d8c1;
+      padding: 20px 15px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px #ffb347bb;
+      color: #4a3b1a;
       font-size: 16px;
-    }
-
-    .bottle-entry h3 {
-      margin: 0 0 5px;
-      color: #ffd369;
+      position: relative;
     }
 
     .bottle-entry.killed {
@@ -82,8 +81,22 @@
       text-decoration: line-through;
     }
 
+    .bottle-entry.rare::before {
+      content: "🦄";
+      position: absolute;
+      top: 12px;
+      right: 15px;
+      font-size: 28px;
+      filter: drop-shadow(1px 1px 1px #aa7700);
+    }
+
+    .bottle-entry h3 {
+      margin: 0 0 8px;
+      color: #c47f00;
+    }
+
     .entry-actions {
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     .entry-actions button {
@@ -116,6 +129,18 @@
     <input type="text" id="distillery" placeholder="Distillery" required /><br />
     <input type="text" id="proof" placeholder="Proof" required /><br />
     <textarea id="notes" rows="3" placeholder="Tasting Notes / Comments"></textarea><br />
+
+    <label>
+      <input type="checkbox" id="killedCheckbox" />
+      Mark as Killed
+    </label>
+    <br />
+    <label>
+      <input type="checkbox" id="rareCheckbox" />
+      Mark as Rare (Unicorn 🦄)
+    </label>
+    <br /><br />
+
     <button type="submit" class="fun-button">Add Bottle</button>
   </form>
 
@@ -135,37 +160,41 @@
       projectId: "tipsy-bunghole-photos",
       storageBucket: "tipsy-bunghole-photos.appspot.com",
       messagingSenderId: "152050189848",
-      appId: "1:152050189848:web:9ba719e8d2ad24c138e56d"
+      appId: "1:152050189848:web:9ba719e8d2ad24c138e56d",
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const form = document.getElementById('bottleForm');
-    const list = document.getElementById('bottleList');
+    const form = document.getElementById("bottleForm");
+    const list = document.getElementById("bottleList");
 
     async function loadBottles() {
-      list.innerHTML = '';
+      list.innerHTML = "";
       const snapshot = await db.collection("bottles").orderBy("timestamp", "desc").get();
-      snapshot.forEach(doc => {
+      snapshot.forEach((doc) => {
         renderBottle(doc.id, doc.data());
       });
     }
 
     function renderBottle(id, data) {
-      const entry = document.createElement('div');
-      entry.className = 'bottle-entry';
-      if (data.killed) entry.classList.add('killed');
+      const entry = document.createElement("div");
+      entry.className = "bottle-entry";
+      if (data.killed) entry.classList.add("killed");
+      if (data.rare) entry.classList.add("rare");
 
       entry.innerHTML = `
         <h3>${data.name}</h3>
         <p><strong>🏭 Distillery:</strong> ${data.distillery}</p>
         <p><strong>🔥 Proof:</strong> ${data.proof}</p>
-        <p>${data.notes || ''}</p>
+        <p>${data.notes || ""}</p>
         <div class="entry-actions">
           <button class="fun-button" onclick="editBottle('${id}')">Edit</button>
           <button class="fun-button" onclick="toggleKilled('${id}', ${!!data.killed})">
-            ${data.killed ? 'Unkill' : 'Mark as Killed'}
+            ${data.killed ? "Unkill" : "Mark as Killed"}
+          </button>
+          <button class="fun-button" onclick="toggleRare('${id}', ${!!data.rare})">
+            ${data.rare ? "Unmark Rare" : "Mark as Rare"}
           </button>
           <button class="fun-button" onclick="confirmDelete('${id}')">Delete</button>
         </div>
@@ -178,6 +207,11 @@
       loadBottles();
     }
 
+    async function toggleRare(id, isRare) {
+      await db.collection("bottles").doc(id).update({ rare: !isRare });
+      loadBottles();
+    }
+
     function confirmDelete(id) {
       if (confirm("Are you sure you want to delete this bottle? This action cannot be undone.")) {
         db.collection("bottles").doc(id).delete().then(loadBottles);
@@ -185,41 +219,54 @@
     }
 
     function editBottle(id) {
-      db.collection("bottles").doc(id).get().then(doc => {
-        const data = doc.data();
-        document.getElementById('bottleName').value = data.name;
-        document.getElementById('distillery').value = data.distillery;
-        document.getElementById('proof').value = data.proof;
-        document.getElementById('notes').value = data.notes || '';
+      db.collection("bottles")
+        .doc(id)
+        .get()
+        .then((doc) => {
+          const data = doc.data();
+          document.getElementById("bottleName").value = data.name;
+          document.getElementById("distillery").value = data.distillery;
+          document.getElementById("proof").value = data.proof;
+          document.getElementById("notes").value = data.notes || "";
+          document.getElementById("killedCheckbox").checked = !!data.killed;
+          document.getElementById("rareCheckbox").checked = !!data.rare;
 
-        form.onsubmit = async (e) => {
-          e.preventDefault();
-          await db.collection("bottles").doc(id).update({
-            name: document.getElementById('bottleName').value.trim(),
-            distillery: document.getElementById('distillery').value.trim(),
-            proof: document.getElementById('proof').value.trim(),
-            notes: document.getElementById('notes').value.trim()
-          });
-          form.reset();
-          form.onsubmit = handleAdd;
-          loadBottles();
-        };
-      });
+          form.onsubmit = async (e) => {
+            e.preventDefault();
+            await db.collection("bottles").doc(id).update({
+              name: document.getElementById("bottleName").value.trim(),
+              distillery: document.getElementById("distillery").value.trim(),
+              proof: document.getElementById("proof").value.trim(),
+              notes: document.getElementById("notes").value.trim(),
+              killed: document.getElementById("killedCheckbox").checked,
+              rare: document.getElementById("rareCheckbox").checked,
+            });
+            form.reset();
+            form.onsubmit = handleAdd;
+            loadBottles();
+          };
+        });
     }
 
     async function handleAdd(e) {
       e.preventDefault();
-      const name = document.getElementById('bottleName').value.trim();
-      const distillery = document.getElementById('distillery').value.trim();
-      const proof = document.getElementById('proof').value.trim();
-      const notes = document.getElementById('notes').value.trim();
+      const name = document.getElementById("bottleName").value.trim();
+      const distillery = document.getElementById("distillery").value.trim();
+      const proof = document.getElementById("proof").value.trim();
+      const notes = document.getElementById("notes").value.trim();
+      const killed = document.getElementById("killedCheckbox").checked;
+      const rare = document.getElementById("rareCheckbox").checked;
 
       if (!name || !distillery || !proof) return;
 
       await db.collection("bottles").add({
-        name, distillery, proof, notes,
-        killed: false,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        name,
+        distillery,
+        proof,
+        notes,
+        killed,
+        rare,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
       form.reset();
