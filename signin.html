@@ -84,9 +84,11 @@
     const passwordInput = document.getElementById('passwordInput');
     const submitBtn = document.getElementById('submitBtn');
     const door = document.getElementById('door');
+    const message = document.getElementById('message');
 
     submitBtn.addEventListener('click', () => {
-      console.log('Password entered:', `"${passwordInput.value}"`, 'length:', passwordInput.value.length);
+      // Show entered password and length on the page for debugging on iPad
+      message.textContent = 'Entered: "' + passwordInput.value + '" length: ' + passwordInput.value.length;
       
       if (passwordInput.value.trim() === correctPassword) {
         window.location.href = 'index.html';
