@@ -3,134 +3,104 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Enter The Tipsy Bunghole</title>
+  <title>Welcome to The Tipsy Bunghole</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden;
-      font-family: 'Georgia', serif;
-      background: url('8AB16A18-4722-4B00-BF33-ECBAE98BD8C4.jpeg') no-repeat center center;
+      background: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.firebasestorage.app/o/IMG_0035.webp?alt=media&token=4573bdc6-43e9-4cdf-bff9-bd7ffe9d29fd') no-repeat center center fixed;
       background-size: cover;
+      font-family: 'Georgia', serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    .hatch {
-      position: absolute;
-      width: 200px;
-      height: 80px;
-      top: 40%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #2b1d10;
-      border: 4px solid #444;
-      border-radius: 5px;
-      box-shadow: inset 0 0 10px #000;
-      overflow: hidden;
-      transition: top 0.8s ease;
-    }
-
-    .hatch.open {
-      top: 30%;
-    }
-
-    .eye {
-      display: none;
+    #door {
+      width: 280px;
+      height: 160px;
+      background-color: rgba(0, 0, 0, 0.75);
+      border: 4px solid #6b4c2e;
+      border-radius: 10px;
+      position: relative;
       text-align: center;
-      color: white;
-      font-size: 1.5rem;
-      margin-top: 15px;
+      padding: 20px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.8);
     }
 
-    .prompt {
-      text-align: center;
-      color: white;
-      font-size: 1.4rem;
-      margin-top: 20px;
+    #message {
+      color: #fff;
+      font-size: 18px;
+      margin-bottom: 15px;
     }
 
-    .input-container {
-      display: none;
-      text-align: center;
-      margin-top: 10px;
-    }
-
-    input {
+    #passwordInput {
       padding: 8px;
-      font-size: 1.1rem;
-      border-radius: 5px;
-      border: none;
-    }
-
-    button {
-      padding: 8px 14px;
-      margin-left: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      background-color: #7a5e3b;
-      color: white;
+      width: 80%;
       border: none;
       border-radius: 4px;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    #submitBtn {
+      margin-top: 10px;
+      padding: 8px 16px;
+      font-size: 16px;
+      border: none;
+      background-color: #a67c52;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #submitBtn:hover {
+      background-color: #8b5e3c;
+    }
+
+    .shake {
+      animation: shake 0.4s;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
     }
   </style>
 </head>
 <body>
-
-  <div class="hatch" id="hatch">
-    <div class="eye" id="eye">👁️</div>
+  <div id="door">
+    <div id="message">👁️ "Password, pal?"</div>
+    <input type="password" id="passwordInput" placeholder="••••••••••" />
+    <button id="submitBtn">Enter</button>
   </div>
-
-  <div class="prompt" id="prompt" style="display:none;">Password, pal?</div>
-  <div class="input-container" id="inputContainer">
-    <input type="password" id="passwordInput" placeholder="Enter password" />
-    <button onclick="checkPassword()">Enter</button>
-  </div>
-
-  <audio id="knockSound" src="https://cdn.pixabay.com/audio/2021/08/04/audio_f9cbfddd04.mp3"></audio>
-  <audio id="slideSound" src="https://cdn.pixabay.com/audio/2022/03/22/audio_8d1ff2343a.mp3"></audio>
-  <audio id="slamSound" src="https://cdn.pixabay.com/audio/2022/03/21/audio_7b498ab830.mp3"></audio>
 
   <script>
-    const hatch = document.getElementById('hatch');
-    const eye = document.getElementById('eye');
-    const prompt = document.getElementById('prompt');
-    const inputContainer = document.getElementById('inputContainer');
-    const knockSound = document.getElementById('knockSound');
-    const slideSound = document.getElementById('slideSound');
-    const slamSound = document.getElementById('slamSound');
+    const correctPassword = 'barrelproof69';
+    const passwordInput = document.getElementById('passwordInput');
+    const submitBtn = document.getElementById('submitBtn');
+    const door = document.getElementById('door');
 
-    // Trigger opening animation
-    window.onload = () => {
-      knockSound.play();
-      setTimeout(() => {
-        slideSound.play();
-        hatch.classList.add('open');
-        setTimeout(() => {
-          eye.style.display = 'block';
-          setTimeout(() => {
-            eye.style.display = 'none';
-            prompt.style.display = 'block';
-            inputContainer.style.display = 'block';
-          }, 1500);
-        }, 1200);
-      }, 1000);
-    };
-
-    function checkPassword() {
-      const input = document.getElementById('passwordInput').value;
-      if (input === "barrelproof69") {
-        window.location.href = "index.html";
+    submitBtn.addEventListener('click', () => {
+      if (passwordInput.value === correctPassword) {
+        window.location.href = 'index.html';
       } else {
-        slamSound.play();
-        hatch.classList.remove('open');
-        prompt.innerText = "Wrong. Try again.";
-        inputContainer.style.display = 'none';
-        setTimeout(() => {
-          prompt.innerText = "Password, pal?";
-          inputContainer.style.display = 'block';
-        }, 2000);
+        door.classList.add('shake');
+        setTimeout(() => door.classList.remove('shake'), 400);
+        passwordInput.value = '';
+        passwordInput.placeholder = "Try again, wise guy";
       }
-    }
+    });
+
+    passwordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        submitBtn.click();
+      }
+    });
   </script>
 </body>
 </html>
