@@ -86,7 +86,9 @@
     const door = document.getElementById('door');
 
     submitBtn.addEventListener('click', () => {
-      if (passwordInput.value === correctPassword) {
+      console.log('Password entered:', `"${passwordInput.value}"`, 'length:', passwordInput.value.length);
+      
+      if (passwordInput.value.trim() === correctPassword) {
         window.location.href = 'index.html';
       } else {
         door.classList.add('shake');
