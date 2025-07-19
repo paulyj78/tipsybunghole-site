@@ -1,156 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>The Tipsy Bunghole – Speakeasy Login</title>
+  <meta charset="UTF-8" />
+  <title>The Tipsy Bunghole – Exclusive Entry</title>
   <style>
     body {
-      background: #1a140f;
+      background: #1f1b18;
       margin: 0;
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       font-family: 'Georgia', serif;
-      color: #f5e8c7;
+      color: #e0d8c3;
     }
     .door {
+      position: relative;
       width: 320px;
       height: 420px;
-      background: #3b2e25;
-      border: 8px solid #2a1e16;
-      box-shadow: 0 0 30px rgba(0,0,0,0.8);
-      position: relative;
+      background: #3b322d url('') center/cover;
+      border: 6px solid #2c2420;
+      box-shadow: 0 0 40px rgba(0,0,0,0.7);
       overflow: hidden;
-      text-align: center;
-      padding-top: 240px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
     }
-    .hatch {
+    .viewer {
       position: absolute;
-      top: 60px;
-      left: calc(50% - 110px);
-      width: 220px;
-      height: 60px;
-      background: #6a4e3f;
-      border: 4px solid #442d1f;
-      transition: height 0.6s ease;
-      overflow: hidden;
-    }
-    .hatch.open {
-      height: 200px;
-    }
-    .hatch-content {
-      opacity: 0;
-      transition: opacity 0.4s ease 0.6s;
-      position: relative;
-      top: 20px;
-    }
-    .hatch.open .hatch-content {
-      opacity: 1;
-    }
-    #peekEye {
-      width: 200px;
-      height: 100px;
-      background: url('https://images.unsplash.com/photo-1593642532973-d31b6557fa68?fit=crop&w=200&q=80') no-repeat center center;
-      background-size: 40px;
-      position: absolute;
-      top: 5px;
+      top: 80px;
       left: 50%;
       transform: translateX(-50%);
-      opacity: 0;
-      transition: opacity 0.5s ease 0.7s;
+      width: 180px;
+      height: 90px;
+      background: url('vintage_peep_hole.png') no-repeat center/contain;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: height 0.6s ease;
     }
-    .hatch.open #peekEye {
+    .viewer.open {
+      height: 220px;
+    }
+    .eye {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #444 30%, #000 90%);
+      opacity: 0;
+      animation: blink 4s infinite;
+    }
+    .viewer.open .eye {
       opacity: 1;
+    }
+    @keyframes blink {
+      0%, 20%, 40%, 60%, 100% { opacity: 1; }
+      10%, 50%, 90% { opacity: 0; }
     }
     .peek-button {
-      position: absolute;
-      top: 330px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #c19a6b;
+      margin-bottom: 30px;
+      padding: 10px 22px;
+      background: #b6945b;
       border: none;
-      padding: 10px 24px;
       font-size: 18px;
-      cursor: pointer;
       font-weight: bold;
-    }
-    input {
-      margin-top: 12px;
-      padding: 8px;
-      width: 85%;
-      font-size: 16px;
-      border: 2px solid #999;
+      cursor: pointer;
       border-radius: 4px;
-      background: #5e4c3b;
-      color: #fff;
     }
-    .submit-btn {
-      margin-top: 12px;
+    .controls {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+    }
+    .viewer.open .controls {
+      display: flex;
+    }
+    .controls input {
+      padding: 6px;
+      width: 160px;
+      margin: 10px 0;
+      border: 2px solid #8b7a63;
+      border-radius: 4px;
+      background: #2f2924;
+      color: #ddd;
+    }
+    .controls button {
       padding: 8px 16px;
-      font-size: 16px;
-      background: #4a3b2d;
-      color: #fff;
+      background: #4e4339;
+      color: #f4f0e6;
       border: none;
       cursor: pointer;
     }
     .error {
-      color: #ff7777;
       margin-top: 8px;
-      font-size: 14px;
+      color: #ff8c7f;
       min-height: 1em;
     }
   </style>
 </head>
 <body>
   <div class="door">
-    <div class="hatch" id="hatch">
-      <div id="peekEye"></div>
-      <div class="hatch-content" id="hatchContent">
+    <div class="viewer" id="viewer">
+      <div class="eye"></div>
+      <div class="controls" id="controls">
         <p>Password, pal?</p>
         <input type="password" id="secretCode" placeholder="••••••••" autocomplete="off" />
-        <br>
-        <button class="submit-btn" onclick="checkCode()">Let Me In</button>
+        <button onclick="checkCode()">Let Me In</button>
         <div class="error" id="errorMsg"></div>
       </div>
     </div>
-    <button class="peek-button" onclick="openHatch()">Who sent ya?</button>
+    <button class="peek-button" onclick="openViewer()">Who sent ya?</button>
   </div>
 
-  <audio id="knockSound" src="https://www.myinstants.com/media/sounds/door-knock-sound-effect.mp3"></audio>
-  <audio id="slideSound" src="https://www.myinstants.com/media/sounds/door-open.mp3"></audio>
+  <audio id="knock" src="https://actions.google.com/sounds/v1/doors/wooden_door_knock.ogg"></audio>
+  <audio id="slide" src="https://actions.google.com/sounds/v1/doors/door_slide.ogg"></audio>
 
   <script>
-    const CORRECT_CODE = "barrelproof69";
-    const hatch = document.getElementById('hatch');
-    const content = document.getElementById('hatchContent');
-    const eye = document.getElementById('peekEye');
-    const errorMsg = document.getElementById('errorMsg');
-    const knock = document.getElementById('knockSound');
-    const slide = document.getElementById('slideSound');
+    const CORRECT = "barrelproof69";
+    const viewer = document.getElementById('viewer');
+    const knock = document.getElementById('knock');
+    const slide = document.getElementById('slide');
+    const error = document.getElementById('errorMsg');
 
-    function openHatch() {
+    function openViewer() {
       knock.play();
       setTimeout(() => {
-        hatch.classList.add('open');
+        viewer.classList.add('open');
         slide.play();
       }, 400);
     }
 
-    function closeHatch() {
-      hatch.classList.remove('open');
+    function closeViewer() {
+      viewer.classList.remove('open');
     }
 
     function checkCode() {
       const val = document.getElementById('secretCode').value.trim();
-      if (val === CORRECT_CODE) {
+      if (val === CORRECT) {
         localStorage.setItem("bungholeAccess", "granted");
         window.location.href = "index.html";
       } else {
-        errorMsg.textContent = "That ain't it, chief.";
+        error.textContent = "Wrong code, bub.";
         setTimeout(() => {
-          errorMsg.textContent = "";
-          closeHatch();
+          error.textContent = "";
+          closeViewer();
         }, 1500);
       }
     }
