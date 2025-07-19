@@ -9,7 +9,7 @@
       margin: 0;
       padding: 0;
       height: 100%;
-      background: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0035.webp?alt=media&token=4573bdc6-43e9-4cdf-bff9-bd7ffe9d29fd') no-repeat center center fixed;
+      background: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.firebasestorage.app/o/IMG_0035.webp?alt=media&token=4573bdc6-43e9-4cdf-bff9-bd7ffe9d29fd') no-repeat center center fixed;
       background-size: cover;
       font-family: 'Georgia', serif;
       display: flex;
@@ -18,48 +18,49 @@
     }
 
     #door {
-      width: 320px;
-      padding: 30px;
+      width: 300px;
+      padding: 25px;
       border-radius: 20px;
       text-align: center;
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.85);
-      background: linear-gradient(to bottom right, #5b3e31, #7c6749, #4e6e60);
-      background-image: url('https://www.transparenttextures.com/patterns/metallic-fabric.png');
-      background-size: cover;
-      border: 3px solid #52796f;
-      color: #f4f4f4;
+      box-shadow: 0 0 30px rgba(0,0,0,0.8);
+      border: 4px solid #6b4c2e;
+      background: linear-gradient(135deg, #5a3e36, #7a5e4b, #b8a27e, #a3c1ad);
+      background-blend-mode: overlay;
+      background-image: url('https://www.transparenttextures.com/patterns/dark-denim-3.png');
+      color: #fff;
     }
 
     #message {
       font-size: 18px;
       margin-bottom: 15px;
+      color: #f4f4f4;
     }
 
     #passwordInput {
       padding: 10px;
       width: 85%;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       font-size: 16px;
       text-align: center;
-      background-color: #fdf6e3;
-      color: #333;
+      background-color: #f0e6d2;
+      color: #2f2f2f;
     }
 
     #submitBtn {
-      margin-top: 15px;
-      padding: 10px 20px;
+      margin-top: 12px;
+      padding: 10px 18px;
       font-size: 16px;
       border: none;
-      background-color: #b87333; /* copper tone */
+      background-color: #a67c52;
       color: white;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
       transition: background-color 0.2s ease;
     }
 
     #submitBtn:hover {
-      background-color: #a15f29;
+      background-color: #8b5e3c;
     }
 
     .shake {
@@ -78,7 +79,7 @@
 <body>
   <div id="door">
     <div id="message">What's the secret code?</div>
-    <input type="password" id="passwordInput" placeholder="••••••••" />
+    <input type="password" id="passwordInput" placeholder="••••••••••" />
     <br />
     <button id="submitBtn">Enter</button>
   </div>
