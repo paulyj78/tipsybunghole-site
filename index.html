@@ -11,7 +11,7 @@
 
   body {
     font-family: Georgia, serif;
-   background: linear-gradient(135deg,#5e3b1e, #a65e2e, #3d2a1a);
+    background: linear-gradient(135deg,#5e3b1e, #a65e2e, #3d2a1a);
     color: #f8e3c6;
     text-align: center;
     padding: 20px;
@@ -314,7 +314,8 @@
     photoGallery.innerHTML = "";
     uploadStatus.innerText = "";
     const snapshot = await firestore.collection("photos").orderBy("timestamp", "desc").get();
-    snapshot.forEach(async (doc) => {
+
+    for (const doc of snapshot.docs) {
       const data = doc.data();
       try {
         const url = await storage.ref(data.fileName).getDownloadURL();
@@ -325,7 +326,7 @@
       } catch (err) {
         console.error("Failed to load image URL", err);
       }
-    });
+    }
   }
 
   // Upload file
@@ -336,6 +337,7 @@
       return;
     }
     uploadStatus.innerText = "Uploading your masterpiece...";
+    uploadBtn.disabled = true; // disable to prevent multiple clicks
     const fileName = Date.now() + "_" + file.name;
     const storageRef = storage.ref(fileName);
     try {
@@ -351,6 +353,7 @@
       console.error(error);
       uploadStatus.innerText = "Oops! Something went sideways during upload.";
     }
+    uploadBtn.disabled = false;
   });
 
   // Reservation confirmation
