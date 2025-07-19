@@ -130,17 +130,6 @@
     <input type="text" id="proof" placeholder="Proof" required /><br />
     <textarea id="notes" rows="3" placeholder="Tasting Notes / Comments"></textarea><br />
 
-    <label>
-      <input type="checkbox" id="killedCheckbox" />
-      Mark as Killed
-    </label>
-    <br />
-    <label>
-      <input type="checkbox" id="rareCheckbox" />
-      Mark as Rare (Unicorn 🦄)
-    </label>
-    <br /><br />
-
     <button type="submit" class="fun-button">Add Bottle</button>
   </form>
 
@@ -228,9 +217,8 @@
           document.getElementById("distillery").value = data.distillery;
           document.getElementById("proof").value = data.proof;
           document.getElementById("notes").value = data.notes || "";
-          document.getElementById("killedCheckbox").checked = !!data.killed;
-          document.getElementById("rareCheckbox").checked = !!data.rare;
 
+          // When editing, do NOT update killed or rare from form (no checkboxes)
           form.onsubmit = async (e) => {
             e.preventDefault();
             await db.collection("bottles").doc(id).update({
@@ -238,8 +226,6 @@
               distillery: document.getElementById("distillery").value.trim(),
               proof: document.getElementById("proof").value.trim(),
               notes: document.getElementById("notes").value.trim(),
-              killed: document.getElementById("killedCheckbox").checked,
-              rare: document.getElementById("rareCheckbox").checked,
             });
             form.reset();
             form.onsubmit = handleAdd;
@@ -254,18 +240,17 @@
       const distillery = document.getElementById("distillery").value.trim();
       const proof = document.getElementById("proof").value.trim();
       const notes = document.getElementById("notes").value.trim();
-      const killed = document.getElementById("killedCheckbox").checked;
-      const rare = document.getElementById("rareCheckbox").checked;
 
       if (!name || !distillery || !proof) return;
 
+      // Default killed and rare to false on new bottles
       await db.collection("bottles").add({
         name,
         distillery,
         proof,
         notes,
-        killed,
-        rare,
+        killed: false,
+        rare: false,
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
