@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The Tipsy Bunghole – Sign In</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: 'Georgia', serif;
+      text-align: center;
+      padding: 100px;
+    }
+    input {
+      padding: 10px;
+      font-size: 18px;
+      border: none;
+      margin: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+      background-color: #8b0000;
+      color: white;
+      border: none;
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🍑 Enter the Secret Bunghole Code</h1>
+  <input type="password" id="secretCode" placeholder="Hint: it's barrel-y legal..." />
+  <br>
+  <button onclick="checkCode()">Let Me In</button>
+  <div class="error" id="errorMsg"></div>
+
+  <script>
+    const CORRECT_CODE = "barrelproof69"; // change this if you want a different password
+
+    function checkCode() {
+      const input = document.getElementById('secretCode').value.trim();
+      const errorMsg = document.getElementById('errorMsg');
+
+      if (input === CORRECT_CODE) {
+        localStorage.setItem("bungholeAccess", "granted");
+        window.location.href = "index.html";
+      } else {
+        errorMsg.textContent = "🛑 Nope! That’s not the secret sauce.";
+      }
+    }
+  </script>
+</body>
+</html>
