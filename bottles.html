@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -249,17 +249,4 @@
         distillery,
         proof,
         notes,
-        killed: false,
-        rare: false,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      });
-
-      form.reset();
-      loadBottles();
-    }
-
-    form.onsubmit = handleAdd;
-    loadBottles();
-  </script>
-</body>
-</html>
+        killed: 
