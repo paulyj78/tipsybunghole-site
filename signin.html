@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Welcome to The Tipsy Bunghole</title>
-  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
   <style>
     html, body {
       margin: 0;
@@ -12,55 +11,58 @@
       height: 100%;
       background: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.firebasestorage.app/o/IMG_0035.webp?alt=media&token=4573bdc6-43e9-4cdf-bff9-bd7ffe9d29fd') no-repeat center center fixed;
       background-size: cover;
-      font-family: 'Special Elite', serif;
+      font-family: 'Georgia', serif;
       display: flex;
       justify-content: center;
       align-items: center;
+      color: #f5deb3;
     }
 
-    #door {
-      background: linear-gradient(145deg, #4a382a, #2f2218); /* Old leather look */
-      border: 3px solid #5c432e;
-      border-radius: 6px;
-      padding: 24px 28px;
-      box-shadow: 0 0 25px rgba(0,0,0,0.6);
+    #loginContainer {
       text-align: center;
-      width: 280px;
+      background: rgba(44, 25, 12, 0.6); /* old leather look */
+      padding: 40px 30px;
+      border-radius: 10px;
+      backdrop-filter: blur(3px);
+      box-shadow: 0 0 25px rgba(0,0,0,0.6);
     }
 
     #message {
-      color: #f4e8d5;
       font-size: 20px;
-      margin-bottom: 15px;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+      margin-bottom: 20px;
+      font-family: 'Georgia', serif;
+      font-style: italic;
     }
 
     #passwordInput {
       padding: 10px;
-      width: 90%;
+      width: 80%;
       border: none;
       border-radius: 4px;
       font-size: 16px;
       text-align: center;
-      background-color: #eae0d5;
-      color: #3a2a1a;
-      font-family: 'Special Elite', serif;
+      background: #3a2a1a;
+      color: #f5deb3;
+    }
+
+    #passwordInput::placeholder {
+      color: #cbb89d;
     }
 
     #submitBtn {
-      margin-top: 12px;
-      padding: 10px 16px;
+      margin-top: 15px;
+      padding: 10px 20px;
       font-size: 16px;
       border: none;
-      background-color: #a67c52;
+      background-color: #7c5730;
       color: white;
       border-radius: 4px;
       cursor: pointer;
-      font-family: 'Special Elite', serif;
+      font-weight: bold;
     }
 
     #submitBtn:hover {
-      background-color: #8b5e3c;
+      background-color: #5e3e22;
     }
 
     .shake {
@@ -77,9 +79,10 @@
   </style>
 </head>
 <body>
-  <div id="door">
+  <div id="loginContainer">
     <div id="message">👁️ "Password, pal?"</div>
     <input type="password" id="passwordInput" placeholder="••••••••••" />
+    <br />
     <button id="submitBtn">Enter</button>
   </div>
 
@@ -87,14 +90,15 @@
     const correctPassword = 'barrelproof69';
     const passwordInput = document.getElementById('passwordInput');
     const submitBtn = document.getElementById('submitBtn');
-    const door = document.getElementById('door');
+    const loginContainer = document.getElementById('loginContainer');
 
     submitBtn.addEventListener('click', () => {
-      if (passwordInput.value === correctPassword) {
-        window.location.href = 'index.html';
+      const entered = passwordInput.value.trim();
+      if (entered === correctPassword) {
+        window.location.assign('index.html'); // Redirect works
       } else {
-        door.classList.add('shake');
-        setTimeout(() => door.classList.remove('shake'), 400);
+        loginContainer.classList.add('shake');
+        setTimeout(() => loginContainer.classList.remove('shake'), 400);
         passwordInput.value = '';
         passwordInput.placeholder = "Try again, wise guy";
       }
