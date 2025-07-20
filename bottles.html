@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -33,9 +34,9 @@
     }
 
     .fun-button {
-      padding: 12px 30px;
+      padding: 10px 24px;
       font-weight: bold;
-      font-size: 1.1em;
+      font-size: 1em;
       font-family: 'Comic Sans MS', cursive, sans-serif;
       border-radius: 30px;
       cursor: pointer;
@@ -49,8 +50,7 @@
 
     .fun-button:hover {
       background: linear-gradient(135deg, #ffb347, #ffd369);
-      transform: scale(1.1);
-      box-shadow: 0 8px 15px rgba(255, 179, 71, 0.9);
+      transform: scale(1.05);
     }
 
     .bottle-list {
@@ -60,69 +60,52 @@
       margin-right: auto;
       text-align: left;
     }
-.bottle-entry {
-  font-family: 'Courier Prime', monospace;
-  font-size: 16px;
-  color: #4a3b1a;
-  background-color: #f5e6c4;
-  background-image:
-    linear-gradient(to bottom, rgba(100, 80, 40, 0.15) 1px, transparent 24px), /* lines */
-    radial-gradient(circle, #999 2px, transparent 3px);                        /* binder holes */
-  background-size:
-    100% 24px,
-    12px 48px;
-  background-position:
-    left 60px top,
-    left 24px top;
-  background-repeat:
-    repeat,
-    repeat-y;
 
-  padding: 20px 20px 20px 80px;
-  border-left: 2px solid #b33c3c; /* notebook-style red margin */
-  margin-left: 30px;
-  margin-right: 15px;
-  margin-bottom: 30px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
-  border-radius: 12px 12px 0 0;
-  position: relative;
+    .bottle-entry {
+      font-family: 'Courier Prime', monospace;
+      background: url('https://www.transparenttextures.com/patterns/old-paper.png'), #fdf6e3;
+      background-size: cover;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 20px 20px 20px 60px;
+      margin-bottom: 20px;
+      position: relative;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      overflow: hidden;
+      line-height: 1.6em;
+    }
 
-  clip-path: polygon(
-    0 0,
-    93% 0,
-    100% 5%,
-    100% 95%,
-    98% 98%,
-    95% 97%,
-    92% 99%,
-    88% 98%,
-    85% 100%,
-    80% 98%,
-    75% 100%,
-    70% 98%,
-    65% 100%,
-    60% 98%,
-    55% 100%,
-    50% 98%,
-    45% 100%,
-    40% 98%,
-    35% 100%,
-    30% 98%,
-    25% 100%,
-    20% 98%,
-    15% 100%,
-    10% 97%,
-    5% 99%,
-    2% 97%,
-    0 98%
-  );
+    .bottle-entry::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 40px;
+      width: 4px;
+      height: 100%;
+      background-color: #b22222;
+    }
 
-}
+    .bottle-entry::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 15px;
+      width: 14px;
+      height: calc(100% - 20px);
+      background-image: radial-gradient(circle, #666 3px, transparent 3px);
+      background-size: 100% 32px;
+      background-repeat: repeat-y;
+    }
 
-.bottle-entry button:hover {
-  background-color: #a26b44;
-}
- 
+    .torn-corner {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, transparent 40%, #fdf6e3 40%);
+      z-index: 1;
+    }
 
     .bottle-entry.killed {
       opacity: 0.5;
@@ -148,7 +131,7 @@
     }
 
     .entry-actions button {
-      margin-right: 10px;
+      margin: 5px 8px 0 0;
       padding: 6px 12px;
       font-size: 0.85em;
       border-radius: 15px;
@@ -177,7 +160,6 @@
     <input type="text" id="distillery" placeholder="Distillery" required /><br />
     <input type="text" id="proof" placeholder="Proof" required /><br />
     <textarea id="notes" rows="3" placeholder="Tasting Notes / Comments"></textarea><br />
-
     <button type="submit" class="fun-button">Add Bottle</button>
   </form>
 
@@ -221,6 +203,7 @@
       if (data.rare) entry.classList.add("rare");
 
       entry.innerHTML = `
+        <div class="torn-corner"></div>
         <h3>${data.name}</h3>
         <p><strong>🏭 Distillery:</strong> ${data.distillery}</p>
         <p><strong>🔥 Proof:</strong> ${data.proof}</p>
@@ -256,30 +239,26 @@
     }
 
     function editBottle(id) {
-      db.collection("bottles")
-        .doc(id)
-        .get()
-        .then((doc) => {
-          const data = doc.data();
-          document.getElementById("bottleName").value = data.name;
-          document.getElementById("distillery").value = data.distillery;
-          document.getElementById("proof").value = data.proof;
-          document.getElementById("notes").value = data.notes || "";
+      db.collection("bottles").doc(id).get().then((doc) => {
+        const data = doc.data();
+        document.getElementById("bottleName").value = data.name;
+        document.getElementById("distillery").value = data.distillery;
+        document.getElementById("proof").value = data.proof;
+        document.getElementById("notes").value = data.notes || "";
 
-          // When editing, do NOT update killed or rare from form (no checkboxes)
-          form.onsubmit = async (e) => {
-            e.preventDefault();
-            await db.collection("bottles").doc(id).update({
-              name: document.getElementById("bottleName").value.trim(),
-              distillery: document.getElementById("distillery").value.trim(),
-              proof: document.getElementById("proof").value.trim(),
-              notes: document.getElementById("notes").value.trim(),
-            });
-            form.reset();
-            form.onsubmit = handleAdd;
-            loadBottles();
-          };
-        });
+        form.onsubmit = async (e) => {
+          e.preventDefault();
+          await db.collection("bottles").doc(id).update({
+            name: document.getElementById("bottleName").value.trim(),
+            distillery: document.getElementById("distillery").value.trim(),
+            proof: document.getElementById("proof").value.trim(),
+            notes: document.getElementById("notes").value.trim(),
+          });
+          form.reset();
+          form.onsubmit = handleAdd;
+          loadBottles();
+        };
+      });
     }
 
     async function handleAdd(e) {
@@ -291,7 +270,6 @@
 
       if (!name || !distillery || !proof) return;
 
-      // Default killed and rare to false on new bottles
       await db.collection("bottles").add({
         name,
         distillery,
