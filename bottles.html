@@ -2,134 +2,145 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The Tipsy Bunghole | Bottles</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bottle Inventory</title>
   <style>
     body {
-      font-family: "Courier New", Courier, monospace;
-      background: #f9f7e8;
+      font-family: 'Courier New', Courier, monospace;
+      background: #fdf6e3;
       margin: 0;
-      padding: 20px;
-      background-image: url('https://www.transparenttextures.com/patterns/cardboard-flat.png');
+      padding: 0;
     }
 
-    h1 {
+    header {
+      background: #8b5e3c;
+      color: white;
       text-align: center;
-      color: #4a3b29;
+      padding: 1rem;
+      font-size: 24px;
     }
 
-    #bottleForm {
-      background: #fff6dc;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
-      margin-bottom: 30px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
+    #formContainer {
+      margin: 20px auto;
+      max-width: 400px;
+      background-color: #fff599;
+      border: 1px solid #e5d85c;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 5px 5px 10px rgba(0,0,0,0.2);
+      transform: rotate(-1.5deg);
+      position: relative;
     }
 
-    input, select, button {
-      margin: 5px 0;
-      padding: 10px;
-      width: 100%;
-      font-size: 1em;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+    #formContainer h2 {
+      margin-top: 0;
     }
 
-    button {
-      cursor: pointer;
+    #formToggleBtn {
+      display: block;
+      margin: 20px auto 10px;
+      padding: 10px 15px;
       background-color: #8b5e3c;
       color: white;
       border: none;
-      margin-top: 10px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
     }
 
-    .bottle-entry {
-      width: 200px;
-      min-height: 180px;
+    form label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+
+    form input {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: 10px;
+    }
+
+    #bottleList {
+      padding: 20px;
+    }
+
+    .bottle-card {
+      background-color: #fff599;
+      border: 1px solid #e5d85c;
       padding: 15px;
-      background: #fcf09f;
-      box-shadow: 3px 3px 10px rgba(0,0,0,0.3);
-      border: 1px solid #d1be80;
-      border-radius: 8px;
-      margin: 15px;
-      display: inline-block;
-      vertical-align: top;
+      margin: 10px auto;
+      max-width: 400px;
+      box-shadow: 5px 5px 10px rgba(0,0,0,0.2);
+      transform: rotate(var(--angle));
       position: relative;
-      font-size: 0.95em;
-      transform: rotate(
-        calc(-3deg + (6 * var(--random-rotate)))
-      );
+      transition: transform 0.2s ease;
     }
 
-    .bottle-entry .buttons {
-      margin-top: 10px;
-    }
-
-    .rare-bottle {
-      border: 2px dashed #d2691e;
-      background: #fff3b0;
-    }
-
-    .rare-bottle::before {
-      content: "🦄 Rare!";
+    .bottle-card.rare::after {
+      content: "🦄";
       position: absolute;
-      top: 5px;
-      right: 10px;
-      font-size: 1.2em;
+      top: 8px;
+      right: 8px;
+      font-size: 1.5em;
     }
 
-    #bottlesList {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+    .bottle-buttons button {
+      background-color: #8b5e3c;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      margin-top: 10px;
+      border-radius: 4px;
+      cursor: pointer;
     }
 
-    .return-btn {
+    #backBtn {
+      margin: 20px auto;
       display: block;
       text-align: center;
-      margin-top: 40px;
-    }
-
-    .return-btn button {
-      background-color: #6b4226;
-      padding: 12px 25px;
-      font-size: 1.1em;
-      border-radius: 8px;
+      padding: 10px 20px;
+      background-color: #8b5e3c;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      width: fit-content;
     }
   </style>
 </head>
 <body>
-  <h1>📚 The Bunghole Bottle Log</h1>
+  <header>
+    📦 The Tipsy Bunghole Bottle Inventory
+  </header>
 
-  <form id="bottleForm">
-    <input type="text" id="bottleName" placeholder="Bottle Name" required />
-    <input type="text" id="distillery" placeholder="Distillery" required />
-    <input type="text" id="proof" placeholder="Proof" />
-    <input type="text" id="notes" placeholder="Tasting Notes" />
-    <label>
-      <input type="checkbox" id="rare" />
-      Mark as Rare 🦄
-    </label>
-    <button type="submit">Save Bottle</button>
-  </form>
+  <button id="formToggleBtn">➕ Add a Bottle</button>
 
-  <div id="bottlesList"></div>
+  <div id="formContainer" style="display: none;">
+    <h2>Add New Bottle</h2>
+    <form id="bottleForm">
+      <label for="name">Bottle Name:</label>
+      <input type="text" id="name" required />
 
-  <div class="return-btn">
-    <a href="index.html">
-      <button>⬅️ Return to the Bunghole</button>
-    </a>
+      <label for="distillery">Distillery:</label>
+      <input type="text" id="distillery" required />
+
+      <label for="notes">Tasting Notes:</label>
+      <input type="text" id="notes" />
+
+      <button type="submit">Save Bottle</button>
+    </form>
   </div>
 
-  <!-- Firebase SDK -->
+  <section id="bottleList"></section>
+
+  <a href="index.html" id="backBtn">⬅️ Return to the Bunghole</a>
+
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
-      getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+      getFirestore, collection, addDoc, getDocs, onSnapshot, doc, updateDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
@@ -145,94 +156,54 @@
     const bottlesRef = collection(db, "bottles");
 
     const form = document.getElementById("bottleForm");
-    const bottlesList = document.getElementById("bottlesList");
+    const list = document.getElementById("bottleList");
+    const formContainer = document.getElementById("formContainer");
+    const toggleBtn = document.getElementById("formToggleBtn");
 
-    function renderBottle(docData, id) {
-      const div = document.createElement("div");
-      div.classList.add("bottle-entry");
-      if (docData.rare) div.classList.add("rare-bottle");
-
-      // Add a random rotation value for each entry
-      const rotation = Math.random();
-      div.style.setProperty("--random-rotate", rotation.toFixed(2));
-
-      div.innerHTML = `
-        <strong>${docData.bottleName}</strong><br/>
-        🏭 ${docData.distillery}<br/>
-        🔥 ${docData.proof || "N/A"}<br/>
-        📝 ${docData.notes || "No notes"}<br/>
-        <div class="buttons">
-          <button onclick="editBottle('${id}')">✏️ Edit</button>
-          <button onclick="deleteBottle('${id}')">🗑️ Delete</button>
-          <button onclick="toggleKilled('${id}')">${docData.killed ? "💀 Unkill" : "💀 Kill"}</button>
-          <button onclick="toggleRare('${id}')">${docData.rare ? "🦄 Unmark Rare" : "🦄 Mark Rare"}</button>
-        </div>
-      `;
-
-      bottlesList.appendChild(div);
-    }
-
-    async function loadBottles() {
-      bottlesList.innerHTML = "";
-      const snapshot = await getDocs(bottlesRef);
-      snapshot.forEach(doc => renderBottle(doc.data(), doc.id));
-    }
+    toggleBtn.addEventListener("click", () => {
+      formContainer.style.display = formContainer.style.display === "none" ? "block" : "none";
+    });
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const newBottle = {
-        bottleName: form.bottleName.value,
-        distillery: form.distillery.value,
-        proof: form.proof.value,
-        notes: form.notes.value,
-        killed: false,
-        rare: form.rare.checked,
-      };
-      await addDoc(bottlesRef, newBottle);
+      const name = document.getElementById("name").value;
+      const distillery = document.getElementById("distillery").value;
+      const notes = document.getElementById("notes").value;
+      await addDoc(bottlesRef, {
+        name, distillery, notes, killed: false, rare: false
+      });
       form.reset();
-      loadBottles();
+      formContainer.style.display = "none";
     });
 
-    window.editBottle = async (id) => {
-      const docRef = doc(db, "bottles", id);
-      const newName = prompt("New bottle name?");
-      if (newName) {
-        await updateDoc(docRef, { bottleName: newName });
-        loadBottles();
-      }
+    function renderBottle(doc) {
+      const data = doc.data();
+      const div = document.createElement("div");
+      div.className = "bottle-card";
+      if (data.rare) div.classList.add("rare");
+      div.style.setProperty('--angle', `${(Math.random() - 0.5) * 4}deg`);
+      div.innerHTML = `
+        <strong>${data.name}</strong><br/>
+        <em>${data.distillery}</em><br/>
+        <small>${data.notes || ""}</small>
+        <div class="bottle-buttons">
+          <button onclick="markKilled('${doc.id}')">☠️ Mark as Killed</button>
+        </div>
+      `;
+      list.appendChild(div);
+    }
+
+    window.markKilled = async (id) => {
+      const bottleDoc = doc(db, "bottles", id);
+      await updateDoc(bottleDoc, { killed: true });
     };
 
-    window.deleteBottle = async (id) => {
-      const confirmDel = confirm("Delete this bottle?");
-      if (confirmDel) {
-        await deleteDoc(doc(db, "bottles", id));
-        loadBottles();
-      }
-    };
-
-    window.toggleKilled = async (id) => {
-      const docRef = doc(db, "bottles", id);
-      const snap = await getDocs(bottlesRef);
-      snap.forEach(async d => {
-        if (d.id === id) {
-          await updateDoc(docRef, { killed: !d.data().killed });
-          loadBottles();
-        }
+    onSnapshot(bottlesRef, (snapshot) => {
+      list.innerHTML = "";
+      snapshot.forEach(doc => {
+        renderBottle(doc);
       });
-    };
-
-    window.toggleRare = async (id) => {
-      const docRef = doc(db, "bottles", id);
-      const snap = await getDocs(bottlesRef);
-      snap.forEach(async d => {
-        if (d.id === id) {
-          await updateDoc(docRef, { rare: !d.data().rare });
-          loadBottles();
-        }
-      });
-    };
-
-    loadBottles();
+    });
   </script>
 </body>
 </html>
