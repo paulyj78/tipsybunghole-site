@@ -3,244 +3,250 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bottle Inventory - The Tipsy Bunghole</title>
+  <title>The Tipsy Bunghole – Bottles</title>
   <style>
     body {
+      font-family: 'Courier New', monospace;
+      background: #f9f5e3;
       margin: 0;
-      font-family: 'Courier New', Courier, monospace;
-      background-color: #deb887;
-      background-image: url("https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db");
-      background-size: cover;
-      background-repeat: repeat;
-      background-attachment: fixed;
-      background-position: center center;
+      padding: 0;
     }
 
-    h1 {
-      text-align: center;
-      margin-top: 20px;
-      color: #3e2c1b;
-      text-shadow: 1px 1px #fff;
-    }
-
-    .note-form-container {
-      background-color: #fdfd96;
-      width: 280px;
-      margin: 20px auto;
+    .entry-form {
+      background: #fff8dc;
       padding: 15px;
-      border: 2px dashed #aaa;
+      margin: 20px;
+      border: 2px dashed #ccc;
       border-radius: 10px;
-      box-shadow: 3px 3px 10px rgba(0,0,0,0.2);
-      transform: rotate(-1deg);
+      box-shadow: 3px 3px 5px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
-    .note-form-container h3 {
-      margin-top: 0;
-      font-size: 16px;
+    .form-toggle {
+      cursor: pointer;
+      background-color: #deb887;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      margin: 20px;
     }
 
-    #noteForm {
-      display: flex;
-      flex-direction: column;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
     }
 
-    #noteForm input, #noteForm button {
-      margin-bottom: 8px;
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+
+    .bottle-entry {
+      background: #fff;
+      margin: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      position: relative;
+      cursor: grab;
+      transition: transform 0.2s ease;
       font-size: 14px;
     }
 
-    #noteForm label {
-      font-size: 13px;
+    .bottle-entry.dragging {
+      opacity: 0.5;
     }
 
-    .bottle-note {
-      width: 180px;
-      height: auto;
-      min-height: 160px;
-      padding: 10px;
-      margin: 15px;
-      background-color: yellow;
-      border: 1px solid #ddd;
-      box-shadow: 3px 3px 6px rgba(0,0,0,0.3);
-      border-radius: 6px;
-      transform: rotate(-2deg);
-      position: relative;
-      word-wrap: break-word;
-      cursor: move;
+    .ripped {
+      background: #fff;
+      border: 1px solid #ccc;
+      clip-path: polygon(0% 0%, 100% 0%, 100% 95%, 95% 100%, 5% 100%, 0% 95%);
     }
 
-    .bottle-note.rare {
-      border: 2px solid red;
-    }
-
-    #notesContainer {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+    .edit-icon {
+      width: 16px;
+      cursor: pointer;
     }
 
     .btn {
-      background-color: #774936;
+      background: #4CAF50;
       color: white;
       border: none;
       padding: 5px 10px;
+      border-radius: 5px;
       cursor: pointer;
-      font-size: 13px;
-      margin-top: 5px;
-      border-radius: 4px;
     }
 
-    .btn:hover {
-      background-color: #5a3325;
-    }
-
-    .return-button {
+    .return-btn {
       display: block;
-      margin: 50px auto 30px auto;
-      background-color: #533;
+      margin: 40px auto;
+      padding: 12px 24px;
+      background: #8b0000;
       color: white;
-      padding: 10px 20px;
       font-size: 16px;
-      border-radius: 8px;
       text-align: center;
+      border-radius: 8px;
       text-decoration: none;
-    }
-
-    .drag-over {
-      border: 2px dashed #444;
+      width: fit-content;
     }
   </style>
 </head>
 <body>
-  <h1>The Tipsy Bunghole Bottle Inventory</h1>
 
-  <div class="note-form-container">
-    <h3>Add a New Bottle</h3>
-    <form id="noteForm">
-      <input type="text" id="bottleName" placeholder="Bottle Name" required />
-      <input type="text" id="distillery" placeholder="Distillery" required />
-      <label>
-        <input type="checkbox" id="isRare" />
-        Mark as Rare
-      </label>
-      <button type="submit" class="btn">Add Bottle</button>
-    </form>
-  </div>
+<button class="form-toggle" onclick="toggleForm()">Add a New Bottle</button>
 
-  <div id="notesContainer"></div>
+<div id="form-container" class="entry-form" style="display:none;">
+  <input id="bottleName" placeholder="Bottle Name" /><br/>
+  <input id="distillery" placeholder="Distillery" /><br/>
+  <input id="proof" placeholder="Proof" /><br/>
+  <input id="notes" placeholder="Notes" /><br/>
+  <label><input type="checkbox" id="isRare" /> Mark as Rare</label><br/>
+  <button onclick="addBottle()">Add Bottle</button>
+</div>
 
-  <a href="index.html" class="return-button">Return to the Bunghole</a>
+<div id="bottleList"></div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<a href="index.html" class="return-btn">Return to the Bunghole</a>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
-      authDomain: "tipsy-bunghole-photos.firebaseapp.com",
-      projectId: "tipsy-bunghole-photos",
-      storageBucket: "tipsy-bunghole-photos.appspot.com",
-      messagingSenderId: "760634563911",
-      appId: "1:760634563911:web:44a6d3097c3cf6bcf44a74"
-    };
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const bottlesCollection = collection(db, "bottles");
+  const firebaseConfig = {
+    apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
+    authDomain: "tipsy-bunghole-guest-book.firebaseapp.com",
+    projectId: "tipsy-bunghole-photos",
+    storageBucket: "tipsy-bunghole-photos.appspot.com",
+    messagingSenderId: "152050189848",
+    appId: "1:152050189848:web:9ba719e8d2ad24c138e56d",
+  };
 
-    const colors = ['#fdfd96', '#ffb347', '#aec6cf', '#b0e57c', '#ff6961'];
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const bottlesRef = collection(db, "bottles");
 
-    const noteForm = document.getElementById("noteForm");
-    const notesContainer = document.getElementById("notesContainer");
+  function toggleForm() {
+    const form = document.getElementById("form-container");
+    form.style.display = form.style.display === "none" ? "block" : "none";
+  }
 
-    noteForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const name = document.getElementById("bottleName").value;
-      const distillery = document.getElementById("distillery").value;
-      const isRare = document.getElementById("isRare").checked;
+  async function addBottle() {
+    const name = document.getElementById("bottleName").value;
+    const distillery = document.getElementById("distillery").value;
+    const proof = document.getElementById("proof").value;
+    const notes = document.getElementById("notes").value;
+    const isRare = document.getElementById("isRare").checked;
 
-      const docRef = await addDoc(bottlesCollection, {
-        name,
-        distillery,
-        isKilled: false,
-        isRare,
-        order: Date.now()
-      });
+    if (!name) return;
 
-      noteForm.reset();
-      renderNotes();
+    await addDoc(bottlesRef, {
+      name,
+      distillery,
+      proof,
+      notes,
+      isRare,
+      killed: false,
+      order: Date.now(),
     });
 
-    async function renderNotes() {
-      notesContainer.innerHTML = "";
-      const querySnapshot = await getDocs(bottlesCollection);
-      const bottles = [];
-      querySnapshot.forEach((doc) => {
-        bottles.push({ id: doc.id, ...doc.data() });
+    loadBottles();
+    document.getElementById("form-container").style.display = "none";
+  }
+
+  async function loadBottles() {
+    const querySnapshot = await getDocs(bottlesRef);
+    const list = document.getElementById("bottleList");
+    list.innerHTML = "";
+
+    const entries = [];
+    querySnapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      entries.push({ id: docSnap.id, ...data });
+    });
+
+    entries.sort((a, b) => a.order - b.order);
+
+    entries.forEach(entry => {
+      const row = document.createElement("div");
+      row.className = "bottle-entry ripped";
+      row.setAttribute("draggable", "true");
+      row.innerHTML = `
+        <strong>${entry.name}</strong> (${entry.distillery}) – ${entry.proof} proof<br/>
+        <em>${entry.notes || ""}</em><br/>
+        ${entry.isRare ? "🦄 <strong>Rare</strong><br/>" : ""}
+        <label><input type="checkbox" ${entry.killed ? "checked" : ""} onchange="toggleKilled('${entry.id}', this.checked)"> Killed</label>
+        <img src="https://cdn-icons-png.flaticon.com/512/84/84380.png" class="edit-icon" onclick="editBottle('${entry.id}')" />
+      `;
+      row.dataset.id = entry.id;
+      list.appendChild(row);
+    });
+
+    enableDragAndDrop();
+  }
+
+  window.toggleKilled = async (id, killed) => {
+    const bottleDoc = doc(db, "bottles", id);
+    await updateDoc(bottleDoc, { killed });
+    loadBottles();
+  };
+
+  window.editBottle = async (id) => {
+    const bottleDoc = doc(db, "bottles", id);
+    const docSnap = await getDocs(bottlesRef);
+    const data = (await getDocs(bottlesRef)).docs.find(d => d.id === id).data();
+
+    document.getElementById("bottleName").value = data.name;
+    document.getElementById("distillery").value = data.distillery;
+    document.getElementById("proof").value = data.proof;
+    document.getElementById("notes").value = data.notes;
+    document.getElementById("isRare").checked = data.isRare;
+    document.getElementById("form-container").style.display = "block";
+
+    await deleteDoc(bottleDoc);
+  };
+
+  function enableDragAndDrop() {
+    let dragged;
+
+    document.querySelectorAll(".bottle-entry").forEach(el => {
+      el.addEventListener("dragstart", (e) => {
+        dragged = el;
+        e.dataTransfer.effectAllowed = "move";
       });
 
-      bottles.sort((a, b) => a.order - b.order);
-
-      bottles.forEach((bottle) => {
-        const note = document.createElement("div");
-        note.className = "bottle-note";
-        if (bottle.isRare) note.classList.add("rare");
-        note.draggable = true;
-
-        note.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        note.style.transform = `rotate(${Math.floor(Math.random() * 10 - 5)}deg)`;
-
-        note.innerHTML = `
-          <strong>${bottle.name}</strong><br/>
-          <em>${bottle.distillery}</em><br/>
-          ${bottle.isKilled ? "<span>💀 Killed</span><br/>" : ""}
-          <button class="btn kill-btn">Mark as Killed</button>
-        `;
-
-        // Drag-and-drop support
-        note.addEventListener("dragstart", (e) => {
-          e.dataTransfer.setData("text/plain", bottle.id);
-        });
-
-        note.addEventListener("dragover", (e) => {
-          e.preventDefault();
-          note.classList.add("drag-over");
-        });
-
-        note.addEventListener("dragleave", () => {
-          note.classList.remove("drag-over");
-        });
-
-        note.addEventListener("drop", async (e) => {
-          e.preventDefault();
-          note.classList.remove("drag-over");
-          const draggedId = e.dataTransfer.getData("text/plain");
-          const targetId = bottle.id;
-
-          if (draggedId !== targetId) {
-            const draggedRef = doc(db, "bottles", draggedId);
-            const targetRef = doc(db, "bottles", targetId);
-
-            const now = Date.now();
-
-            await updateDoc(draggedRef, { order: now });
-            await updateDoc(targetRef, { order: now + 1 });
-
-            renderNotes();
-          }
-        });
-
-        note.querySelector(".kill-btn").addEventListener("click", async () => {
-          const bottleRef = doc(db, "bottles", bottle.id);
-          await updateDoc(bottleRef, { isKilled: true });
-          renderNotes();
-        });
-
-        notesContainer.appendChild(note);
+      el.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
       });
-    }
 
-    renderNotes();
-  </script>
+      el.addEventListener("drop", async (e) => {
+        e.preventDefault();
+        const parent = el.parentNode;
+        const children = Array.from(parent.children);
+        const draggedIndex = children.indexOf(dragged);
+        const targetIndex = children.indexOf(el);
+        if (draggedIndex < targetIndex) {
+          parent.insertBefore(dragged, el.nextSibling);
+        } else {
+          parent.insertBefore(dragged, el);
+        }
+
+        // Recalculate order
+        const reordered = Array.from(parent.children);
+        for (let i = 0; i < reordered.length; i++) {
+          const docId = reordered[i].dataset.id;
+          await updateDoc(doc(db, "bottles", docId), { order: i });
+        }
+      });
+    });
+  }
+
+  loadBottles();
+</script>
+
 </body>
 </html>
