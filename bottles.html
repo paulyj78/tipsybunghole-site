@@ -20,12 +20,11 @@
     #bottleForm {
       background: #fff8a8;
       padding: 15px;
-      width: 280px;
+      width: 260px;
       margin: 20px auto;
       border-radius: 8px;
-      box-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+      box-shadow: 3px 3px 6px rgba(0,0,0,0.3);
       transform: rotate(-1deg);
-      font-family: 'Courier New', monospace;
     }
 
     #bottleForm input[type="text"] {
@@ -36,15 +35,16 @@
     .sticky-note {
       padding: 10px;
       margin: 12px;
-      width: 200px;
-      min-height: 120px;
+      width: 160px;
+      min-height: 100px;
       border-radius: 6px;
-      box-shadow: 4px 4px 10px rgba(0,0,0,0.3);
+      box-shadow: 5px 5px 12px rgba(0,0,0,0.4);
       display: inline-block;
       vertical-align: top;
       white-space: pre-wrap;
       font-family: 'Courier New', monospace;
       position: relative;
+      cursor: grab;
     }
 
     .sticky-yellow { background: #fff89e; }
@@ -58,7 +58,13 @@
 
     .buttons button {
       margin-right: 4px;
-      font-size: 0.8em;
+      font-size: 0.75em;
+      background: #8b5e3c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 4px 8px;
+      cursor: pointer;
     }
 
     #bottleContainer {
@@ -70,7 +76,7 @@
 
     .return-btn {
       display: block;
-      margin: 40px auto;
+      margin: 40px auto 80px;
       background-color: #5e3c00;
       color: white;
       padding: 10px 20px;
@@ -79,7 +85,8 @@
       border-radius: 8px;
       font-weight: bold;
       text-decoration: none;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+      width: fit-content;
     }
 
     .rare-icon {
@@ -88,12 +95,20 @@
       right: 10px;
       font-size: 20px;
     }
+
+    summary {
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.1em;
+      cursor: pointer;
+      padding: 10px;
+    }
   </style>
 </head>
 <body>
 
   <details open id="formSection">
-    <summary style="text-align: center; font-weight: bold; cursor: pointer;">➕ Add a New Bottle</summary>
+    <summary>➕ Add a New Bottle</summary>
     <form id="bottleForm">
       <input type="text" id="bottleName" placeholder="Bottle Name" required>
       <input type="text" id="distillery" placeholder="Distillery" required>
@@ -149,7 +164,7 @@
     }
 
     function markAsKilled(id) {
-      db.collection("bottles").doc(id).update({ killed: true });
+      db.collection("bottles").doc(id).update({ killed: true }).then(loadBottles);
     }
 
     function loadBottles() {
