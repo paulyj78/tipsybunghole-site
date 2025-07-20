@@ -7,121 +7,155 @@
   <style>
     body {
       font-family: 'Courier New', Courier, monospace;
-      background: #fdf6e3;
+      background-color: #f8f4e3;
       margin: 0;
       padding: 0;
+      background-image: linear-gradient(to bottom, #f8f4e3 0%, #f8f4e3 100%);
+    }
+
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+      font-family: 'Georgia', serif;
+      color: #3a2f1b;
     }
 
     .paper {
       position: relative;
+      margin: 20px auto;
+      padding: 20px 40px;
       max-width: 800px;
-      margin: 40px auto;
-      padding: 40px 30px 80px 60px;
-      background-color: #fff8dc;
-      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+      background-color: #fdfbf4;
       background-image:
-        repeating-linear-gradient(to bottom, transparent, transparent 23px, rgba(173, 216, 230, 0.4) 24px),
-        linear-gradient(to right, rgba(255, 192, 203, 0.5) 60px, transparent 60px),
-        radial-gradient(circle at 50px 20px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 60px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 100px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 140px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 180px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 220px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 260px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 300px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 340px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 380px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 420px, #ccc 6px, transparent 7px);
-      background-repeat: repeat-y;
-      background-size: 100% 24px;
-      border: 1px solid #d4af37;
-      border-radius: 6px;
-      clip-path: polygon(0 0, 95% 0, 100% 5%, 100% 100%, 0% 100%);
+        linear-gradient(to bottom, rgba(0, 0, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 255, 0.1) 1px, transparent 30px);
+      background-size: 100% 30px;
+      border-left: 8px solid #ffb6c1; /* pink margin */
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      color: #2d1f0c;
+    }
+
+    .paper::before {
+      content: "";
+      position: absolute;
+      left: -16px;
+      top: 0;
+      height: 100%;
+      width: 8px;
+      background-color: #ffb6c1;
+      border-right: 1px dashed #d08a95;
     }
 
     .paper::after {
       content: "";
       position: absolute;
-      bottom: -20px;
-      left: 0;
-      width: 100%;
+      top: 0;
+      right: 0;
+      border-width: 0 60px 60px 0;
+      border-style: solid;
+      border-color: #f8f4e3 transparent transparent transparent;
+      box-shadow: -3px 3px 8px rgba(0,0,0,0.1);
+    }
+
+    .hole {
+      position: absolute;
+      left: -30px;
+      width: 14px;
+      height: 14px;
+      background-color: #d9d9d9;
+      border-radius: 50%;
+      border: 1px solid #aaa;
+    }
+
+    .hole:nth-child(1) { top: 20px; }
+    .hole:nth-child(2) { top: 80px; }
+    .hole:nth-child(3) { top: 140px; }
+    .hole:nth-child(4) { top: 200px; }
+    .hole:nth-child(5) { top: 260px; }
+    .hole:nth-child(6) { top: 320px; }
+
+    .tear {
+      position: relative;
       height: 20px;
-      background: linear-gradient(to right, #fff8dc 90%, transparent);
-      clip-path: polygon(0 0, 100% 5%, 100% 100%, 0% 100%);
-    }
-
-    h1, h2 {
-      text-align: center;
-      font-family: Georgia, serif;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 6px;
-      margin: 6px 0 12px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      font-family: 'Courier New', Courier, monospace;
-    }
-
-    button {
-      padding: 6px 10px;
-      background-color: #8b5e3c;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      margin: 2px;
-      cursor: pointer;
-      font-size: 14px;
+      background: repeating-linear-gradient(
+        -45deg,
+        #f8f4e3,
+        #f8f4e3 4px,
+        #ccc 4px,
+        #ccc 5px
+      );
     }
 
     .bottle-entry {
-      background: rgba(255, 255, 255, 0.6);
-      border: 1px solid #ddd;
       padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
+      margin-bottom: 20px;
+      background-color: rgba(255, 255, 255, 0.85);
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+      position: relative;
     }
 
-    .rare-icon {
-      display: inline-block;
-      margin-left: 8px;
-      color: gold;
+    .rare {
+      background-image: url('https://cdn-icons-png.flaticon.com/512/616/616408.png');
+      background-size: 30px 30px;
+      background-repeat: no-repeat;
+      background-position: top right;
     }
 
-    .form-label {
-      font-weight: bold;
+    button {
+      background-color: #8b5e3c;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 6px;
+      font-size: 14px;
+    }
+
+    input, select {
+      padding: 5px;
+      margin: 5px;
+      border-radius: 4px;
+      border: 1px solid #aaa;
+      width: 95%;
+      font-family: inherit;
     }
   </style>
 </head>
 <body>
+
+  <h1>The Tipsy Bunghole Bottles</h1>
+
   <div class="paper">
-    <h1>📚 Bottle Inventory</h1>
-    <form id="bottle-form">
-      <label class="form-label">Bottle Name:</label>
-      <input type="text" id="bottleName" required />
-      
-      <label class="form-label">Distillery:</label>
-      <input type="text" id="distillery" />
+    <div class="hole"></div>
+    <div class="hole"></div>
+    <div class="hole"></div>
+    <div class="hole"></div>
+    <div class="hole"></div>
+    <div class="hole"></div>
 
-      <label class="form-label">Notes:</label>
-      <textarea id="notes" rows="3"></textarea>
-
-      <label><input type="checkbox" id="isRare" /> 🦄 Mark as Rare</label>
+    <form id="bottleForm">
+      <input type="text" id="bottleName" placeholder="Bottle Name" required />
+      <input type="text" id="distillery" placeholder="Distillery" required />
+      <input type="text" id="proof" placeholder="Proof" />
+      <input type="text" id="notes" placeholder="Tasting Notes" />
+      <label><input type="checkbox" id="rare" /> 🦄 Rare Bottle</label>
+      <br /><br />
       <button type="submit">Add Bottle</button>
     </form>
 
-    <h2>🥃 My Collection</h2>
-    <div id="bottle-list"></div>
+    <div id="bottleList"></div>
+
+    <div class="tear"></div>
   </div>
 
-  <!-- Firebase + Bottle Script -->
+  <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import {
-      getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
@@ -134,25 +168,25 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const bottlesRef = collection(db, "bottles");
+    const bottlesCol = collection(db, "bottles");
 
-    const form = document.getElementById("bottle-form");
-    const list = document.getElementById("bottle-list");
+    const form = document.getElementById("bottleForm");
+    const list = document.getElementById("bottleList");
 
     async function loadBottles() {
-      const snapshot = await getDocs(bottlesRef);
       list.innerHTML = "";
+      const snapshot = await getDocs(bottlesCol);
       snapshot.forEach(docSnap => {
         const data = docSnap.data();
         const div = document.createElement("div");
-        div.className = "bottle-entry";
+        div.className = "bottle-entry" + (data.rare ? " rare" : "");
         div.innerHTML = `
-          <strong>${data.name}</strong> - ${data.distillery || "Unknown"}
-          ${data.rare ? '<span class="rare-icon">🦄</span>' : ""}
-          <p>${data.notes || ""}</p>
+          <strong>${data.name}</strong><br/>
+          <em>${data.distillery}</em><br/>
+          Proof: ${data.proof || "N/A"}<br/>
+          Notes: ${data.notes || ""}<br/>
+          <button onclick="editBottle('${docSnap.id}')">Edit</button>
           <button onclick="deleteBottle('${docSnap.id}')">Delete</button>
-          <button onclick="markKilled('${docSnap.id}')">Mark as Killed</button>
-          <button onclick="markRare('${docSnap.id}')">Toggle Rare</button>
         `;
         list.appendChild(div);
       });
@@ -160,37 +194,31 @@
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      await addDoc(bottlesRef, {
-        name: document.getElementById("bottleName").value,
-        distillery: document.getElementById("distillery").value,
-        notes: document.getElementById("notes").value,
-        rare: document.getElementById("isRare").checked,
-        killed: false,
-      });
+      const name = document.getElementById("bottleName").value;
+      const distillery = document.getElementById("distillery").value;
+      const proof = document.getElementById("proof").value;
+      const notes = document.getElementById("notes").value;
+      const rare = document.getElementById("rare").checked;
+
+      await addDoc(bottlesCol, { name, distillery, proof, notes, rare });
       form.reset();
       loadBottles();
     });
 
+    window.editBottle = async (id) => {
+      const docRef = doc(db, "bottles", id);
+      const newNotes = prompt("Update notes:");
+      if (newNotes !== null) {
+        await updateDoc(docRef, { notes: newNotes });
+        loadBottles();
+      }
+    };
+
     window.deleteBottle = async (id) => {
-      await deleteDoc(doc(bottlesRef, id));
-      loadBottles();
-    };
-
-    window.markKilled = async (id) => {
-      const bottleDoc = doc(bottlesRef, id);
-      await updateDoc(bottleDoc, { killed: true });
-      loadBottles();
-    };
-
-    window.markRare = async (id) => {
-      const bottleDoc = doc(bottlesRef, id);
-      const snap = await getDocs(bottlesRef);
-      snap.forEach(async s => {
-        if (s.id === id) {
-          await updateDoc(bottleDoc, { rare: !s.data().rare });
-        }
-      });
-      loadBottles();
+      if (confirm("Delete this bottle?")) {
+        await deleteDoc(doc(db, "bottles", id));
+        loadBottles();
+      }
     };
 
     loadBottles();
