@@ -2,101 +2,100 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Bottle Inventory</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Tipsy Bunghole Bottles</title>
   <style>
     body {
-      font-family: 'Courier New', Courier, monospace;
       background: #fdf6e3;
+      font-family: 'Courier New', Courier, monospace;
       margin: 0;
       padding: 0;
     }
 
-    header {
-      background: #8b5e3c;
-      color: white;
-      text-align: center;
-      padding: 1rem;
-      font-size: 24px;
-    }
-
-    #formContainer {
+    .sticky-note {
+      background: #fff8a6;
+      width: 90%;
+      max-width: 500px;
       margin: 20px auto;
-      max-width: 400px;
-      background-color: #fff599;
-      border: 1px solid #e5d85c;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 5px 5px 10px rgba(0,0,0,0.2);
-      transform: rotate(-1.5deg);
+      border: 1px solid #e6d800;
+      box-shadow: 3px 3px 8px rgba(0,0,0,0.2);
+      transform: rotate(-1deg);
       position: relative;
+      border-radius: 5px;
     }
 
-    #formContainer h2 {
+    .sticky-note h2 {
       margin-top: 0;
+      font-size: 20px;
     }
 
-    #formToggleBtn {
+    .sticky-note input, .sticky-note textarea {
       display: block;
-      margin: 20px auto 10px;
-      padding: 10px 15px;
-      background-color: #8b5e3c;
-      color: white;
+      width: 100%;
+      margin: 8px 0;
+      padding: 5px;
+      font-family: inherit;
+      font-size: 16px;
+    }
+
+    #bottleFormToggle {
+      background-color: #ffdb58;
       border: none;
-      border-radius: 6px;
+      padding: 10px 20px;
       font-size: 16px;
       cursor: pointer;
+      margin: 10px;
+      border-radius: 6px;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
 
-    form label {
-      display: block;
-      margin: 10px 0 5px;
+    #bottleFormContainer {
+      display: none;
+      text-align: center;
     }
 
-    form input {
-      width: 100%;
-      padding: 6px;
-      margin-bottom: 10px;
+    .bottle-entry {
+      background: #fff8dc;
+      border: 1px solid #deb887;
+      margin: 15px;
+      padding: 10px;
+      width: 260px;
+      transform: rotate(calc(-3deg + (6 * var(--rotation))));
+      box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.2);
+      position: relative;
+      font-size: 14px;
+      display: inline-block;
+      vertical-align: top;
+      cursor: move;
+    }
+
+    .rare-icon {
+      color: goldenrod;
+      font-weight: bold;
     }
 
     #bottleList {
-      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
     }
 
-    .bottle-card {
-      background-color: #fff599;
-      border: 1px solid #e5d85c;
-      padding: 15px;
-      margin: 10px auto;
-      max-width: 400px;
-      box-shadow: 5px 5px 10px rgba(0,0,0,0.2);
-      transform: rotate(var(--angle));
-      position: relative;
-      transition: transform 0.2s ease;
-    }
-
-    .bottle-card.rare::after {
-      content: "🦄";
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      font-size: 1.5em;
-    }
-
-    .bottle-buttons button {
-      background-color: #8b5e3c;
+    .kill-button {
+      background-color: #a52a2a;
       color: white;
       border: none;
       padding: 5px 10px;
       margin-top: 10px;
-      border-radius: 4px;
       cursor: pointer;
+      border-radius: 4px;
+      font-size: 14px;
     }
 
-    #backBtn {
-      margin: 20px auto;
+    .nav-btn {
       display: block;
-      text-align: center;
+      margin: 30px auto 10px auto;
       padding: 10px 20px;
       background-color: #8b5e3c;
       color: white;
@@ -104,42 +103,41 @@
       border-radius: 6px;
       font-size: 16px;
       cursor: pointer;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
       text-decoration: none;
-      width: fit-content;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <header>
-    📦 The Tipsy Bunghole Bottle Inventory
-  </header>
-
-  <button id="formToggleBtn">➕ Add a Bottle</button>
-
-  <div id="formContainer" style="display: none;">
-    <h2>Add New Bottle</h2>
-    <form id="bottleForm">
-      <label for="name">Bottle Name:</label>
-      <input type="text" id="name" required />
-
-      <label for="distillery">Distillery:</label>
-      <input type="text" id="distillery" required />
-
-      <label for="notes">Tasting Notes:</label>
-      <input type="text" id="notes" />
-
-      <button type="submit">Save Bottle</button>
+  <button id="bottleFormToggle">📌 Add a New Bottle</button>
+  <div id="bottleFormContainer">
+    <form id="bottleForm" class="sticky-note">
+      <h2>New Bottle Entry</h2>
+      <input type="text" id="name" placeholder="Bottle Name" required />
+      <input type="text" id="distillery" placeholder="Distillery" required />
+      <input type="text" id="proof" placeholder="Proof" />
+      <input type="text" id="notes" placeholder="Tasting Notes" />
+      <label><input type="checkbox" id="rare" /> Mark as Rare</label>
+      <button type="submit">Add Bottle</button>
     </form>
   </div>
 
-  <section id="bottleList"></section>
+  <div id="bottleList"></div>
 
-  <a href="index.html" id="backBtn">⬅️ Return to the Bunghole</a>
+  <a href="index.html" class="nav-btn">← Return to The Bunghole</a>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
-      getFirestore, collection, addDoc, getDocs, onSnapshot, doc, updateDoc
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      doc,
+      updateDoc,
+      deleteDoc,
+      setDoc,
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -153,57 +151,100 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const bottlesRef = collection(db, "bottles");
+    const bottleRef = collection(db, "bottles");
 
-    const form = document.getElementById("bottleForm");
-    const list = document.getElementById("bottleList");
-    const formContainer = document.getElementById("formContainer");
-    const toggleBtn = document.getElementById("formToggleBtn");
+    const formToggle = document.getElementById("bottleFormToggle");
+    const formContainer = document.getElementById("bottleFormContainer");
 
-    toggleBtn.addEventListener("click", () => {
+    formToggle.addEventListener("click", () => {
       formContainer.style.display = formContainer.style.display === "none" ? "block" : "none";
     });
 
-    form.addEventListener("submit", async (e) => {
+    document.getElementById("bottleForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const name = document.getElementById("name").value;
       const distillery = document.getElementById("distillery").value;
+      const proof = document.getElementById("proof").value;
       const notes = document.getElementById("notes").value;
-      await addDoc(bottlesRef, {
-        name, distillery, notes, killed: false, rare: false
+      const rare = document.getElementById("rare").checked;
+
+      await addDoc(bottleRef, {
+        name,
+        distillery,
+        proof,
+        notes,
+        killed: false,
+        rare,
       });
-      form.reset();
-      formContainer.style.display = "none";
+
+      e.target.reset();
+      loadBottles();
     });
 
-    function renderBottle(doc) {
-      const data = doc.data();
-      const div = document.createElement("div");
-      div.className = "bottle-card";
-      if (data.rare) div.classList.add("rare");
-      div.style.setProperty('--angle', `${(Math.random() - 0.5) * 4}deg`);
-      div.innerHTML = `
-        <strong>${data.name}</strong><br/>
-        <em>${data.distillery}</em><br/>
-        <small>${data.notes || ""}</small>
-        <div class="bottle-buttons">
-          <button onclick="markKilled('${doc.id}')">☠️ Mark as Killed</button>
-        </div>
-      `;
-      list.appendChild(div);
+    async function loadBottles() {
+      const snapshot = await getDocs(bottleRef);
+      const bottleList = document.getElementById("bottleList");
+      bottleList.innerHTML = "";
+
+      snapshot.forEach((docSnap, index) => {
+        const bottle = docSnap.data();
+        const bottleDiv = document.createElement("div");
+        bottleDiv.className = "bottle-entry";
+        bottleDiv.setAttribute("draggable", "true");
+        bottleDiv.dataset.id = docSnap.id;
+        bottleDiv.style.setProperty("--rotation", Math.random());
+
+        bottleDiv.innerHTML = `
+          <strong>${bottle.name}</strong> ${bottle.rare ? '<span class="rare-icon">🦄</span>' : ""}<br>
+          <em>${bottle.distillery}</em><br>
+          ${bottle.proof ? `<strong>Proof:</strong> ${bottle.proof}<br>` : ""}
+          ${bottle.notes ? `<strong>Notes:</strong> ${bottle.notes}<br>` : ""}
+          ${bottle.killed ? "<strong>💀 Killed</strong><br>" : ""}
+          <button class="kill-button" onclick="markAsKilled('${docSnap.id}')">Mark as Killed</button>
+        `;
+        bottleList.appendChild(bottleDiv);
+      });
+
+      addDragAndDropHandlers();
     }
 
-    window.markKilled = async (id) => {
-      const bottleDoc = doc(db, "bottles", id);
-      await updateDoc(bottleDoc, { killed: true });
+    window.markAsKilled = async function (id) {
+      const docRef = doc(db, "bottles", id);
+      await updateDoc(docRef, { killed: true });
+      loadBottles();
     };
 
-    onSnapshot(bottlesRef, (snapshot) => {
-      list.innerHTML = "";
-      snapshot.forEach(doc => {
-        renderBottle(doc);
+    function addDragAndDropHandlers() {
+      const entries = document.querySelectorAll(".bottle-entry");
+      let dragged;
+
+      entries.forEach((entry) => {
+        entry.addEventListener("dragstart", (e) => {
+          dragged = e.target;
+        });
+
+        entry.addEventListener("dragover", (e) => {
+          e.preventDefault();
+        });
+
+        entry.addEventListener("drop", (e) => {
+          e.preventDefault();
+          if (dragged !== e.target) {
+            const list = document.getElementById("bottleList");
+            const nodes = Array.from(list.children);
+            const draggedIndex = nodes.indexOf(dragged);
+            const targetIndex = nodes.indexOf(e.target);
+            if (draggedIndex < targetIndex) {
+              list.insertBefore(dragged, e.target.nextSibling);
+            } else {
+              list.insertBefore(dragged, e.target);
+            }
+          }
+        });
       });
-    });
+    }
+
+    loadBottles();
   </script>
 </body>
 </html>
