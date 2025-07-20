@@ -2,45 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Bottles - The Tipsy Bunghole</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Tipsy Bunghole - Bottles</title>
   <style>
     body {
       margin: 0;
       font-family: 'Courier New', Courier, monospace;
       background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
       background-size: cover;
-      background-repeat: no-repeat;
       background-attachment: fixed;
-      min-height: 100vh;
+      background-position: center;
     }
 
-    #entryForm {
-      background: #fdfdc4;
-      border: 2px dashed #999;
-      padding: 15px;
+    #bottleForm {
+      background-color: #ffff88;
+      padding: 10px;
+      border: 1px solid #ddd;
       width: 250px;
       margin: 10px auto;
-      box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.4);
-      transform: rotate(-1deg);
+      transform: rotate(-2deg);
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
       cursor: pointer;
     }
 
     .sticky-note {
-      padding: 15px;
-      margin: 15px;
       width: 200px;
-      min-height: 120px;
-      float: left;
-      background: yellow;
-      box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
-      transform: rotate(calc(-3deg + (6 * var(--angle))) );
+      padding: 10px;
+      margin: 10px;
       position: relative;
-      border: 1px solid #ccc;
+      transform: rotate(var(--rotation));
+      background-color: var(--bgColor);
+      box-shadow: 3px 3px 10px rgba(0,0,0,0.3);
+      display: inline-block;
+      vertical-align: top;
+      word-wrap: break-word;
+      cursor: grab;
     }
 
-    .sticky-note:hover {
-      cursor: grab;
+    .sticky-note.killed {
+      text-decoration: line-through;
+      opacity: 0.6;
     }
 
     .note-buttons {
@@ -48,165 +49,197 @@
     }
 
     .note-buttons button {
-      font-size: 12px;
-      margin-right: 4px;
-      margin-top: 5px;
-      cursor: pointer;
-    }
-
-    #returnBtn {
-      display: block;
-      margin: 100px auto 40px;
-      background-color: #843c0c;
+      background-color: #cc0000;
       color: white;
       border: none;
-      padding: 12px 20px;
-      font-size: 16px;
-      border-radius: 6px;
-      text-decoration: none;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 0.8em;
+    }
+
+    .rare {
+      border: 2px dashed purple;
+    }
+
+    #notesContainer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding-bottom: 60px;
     }
 
     #toggleFormBtn {
-      display: block;
-      margin: 20px auto;
-      background-color: #ff8c00;
+      background-color: #ffa500;
       color: white;
       border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 6px;
+      padding: 8px 16px;
+      font-weight: bold;
+      font-size: 1em;
       cursor: pointer;
+      display: block;
+      margin: 20px auto 5px;
+    }
+
+    #returnBtn {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #222;
+      color: #fff;
+      padding: 10px 20px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+      z-index: 999;
     }
   </style>
 </head>
 <body>
 
-  <button id="toggleFormBtn">➕ Add a New Bottle</button>
+<button id="toggleFormBtn">+ Add New Bottle</button>
 
-  <div id="entryForm" style="display:none;">
-    <input type="text" id="nameInput" placeholder="Name"><br>
-    <input type="text" id="distilleryInput" placeholder="Distillery"><br>
-    <input type="text" id="abvInput" placeholder="ABV"><br>
-    <label><input type="checkbox" id="rareInput"> Mark as Rare</label><br>
-    <button onclick="addBottle()">Add Bottle</button>
-  </div>
+<div id="bottleForm" style="display: none;">
+  <input type="text" id="bottleName" placeholder="Bottle Name" /><br />
+  <input type="text" id="distillery" placeholder="Distillery" /><br />
+  <input type="text" id="proof" placeholder="Proof" /><br />
+  <label><input type="checkbox" id="rare"> Mark as Rare</label><br />
+  <button onclick="addBottle()">Add Bottle</button>
+</div>
 
-  <div id="bottleContainer"></div>
+<div id="notesContainer"></div>
 
-  <a href="index.html" id="returnBtn">Return to the Bunghole</a>
+<button id="returnBtn" onclick="window.location.href='index.html'">Return to the Bunghole</button>
 
-  <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<!-- Firebase Scripts -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
-      authDomain: "tipsy-bunghole-guest-book.firebaseapp.com",
-      projectId: "tipsy-bunghole-photos",
-      storageBucket: "tipsy-bunghole-photos.appspot.com",
-      messagingSenderId: "152050189848",
-      appId: "1:152050189848:web:9ba719e8d2ad24c138e56d",
-    };
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
+    authDomain: "tipsy-bunghole-photos.firebaseapp.com",
+    projectId: "tipsy-bunghole-photos",
+    storageBucket: "tipsy-bunghole-photos.appspot.com",
+    messagingSenderId: "853319474583",
+    appId: "1:853319474583:web:726d3d9b50a3b66d30395c"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const bottleRef = collection(db, "bottles");
+<script>
+  const notesContainer = document.getElementById('notesContainer');
+  const toggleFormBtn = document.getElementById('toggleFormBtn');
+  const bottleForm = document.getElementById('bottleForm');
 
-    document.getElementById("toggleFormBtn").addEventListener("click", () => {
-      const form = document.getElementById("entryForm");
-      form.style.display = form.style.display === "none" ? "block" : "none";
+  toggleFormBtn.addEventListener('click', () => {
+    bottleForm.style.display = bottleForm.style.display === 'none' ? 'block' : 'none';
+  });
+
+  function randomColor() {
+    const colors = ['#ffff88', '#ffcc99', '#ccffcc', '#ffccee', '#ccffff'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  function randomRotation() {
+    return `${(Math.random() * 6 - 3).toFixed(2)}deg`;
+  }
+
+  function renderNote(doc) {
+    const data = doc.data();
+    const note = document.createElement('div');
+    note.classList.add('sticky-note');
+    if (data.killed) note.classList.add('killed');
+    if (data.rare) note.classList.add('rare');
+
+    note.setAttribute('draggable', true);
+    note.dataset.id = doc.id;
+    note.style.setProperty('--rotation', randomRotation());
+    note.style.setProperty('--bgColor', randomColor());
+
+    note.innerHTML = `
+      <strong>${data.name || 'Unnamed'}</strong><br />
+      ${data.distillery || ''}<br />
+      ${data.proof || ''} proof
+      <div class="note-buttons">
+        <button onclick="markKilled('${doc.id}', ${!data.killed})">${data.killed ? 'Unmark' : 'Mark'} as Killed</button>
+      </div>
+    `;
+
+    note.addEventListener('dragstart', dragStart);
+    note.addEventListener('dragover', dragOver);
+    note.addEventListener('drop', drop);
+    note.addEventListener('dragend', dragEnd);
+
+    notesContainer.appendChild(note);
+  }
+
+  function loadBottles() {
+    notesContainer.innerHTML = '';
+    db.collection("bottles").get().then((snapshot) => {
+      snapshot.forEach(doc => renderNote(doc));
     });
+  }
 
-    async function addBottle() {
-      const name = document.getElementById("nameInput").value;
-      const distillery = document.getElementById("distilleryInput").value;
-      const abv = document.getElementById("abvInput").value;
-      const rare = document.getElementById("rareInput").checked;
+  function addBottle() {
+    const name = document.getElementById("bottleName").value;
+    const distillery = document.getElementById("distillery").value;
+    const proof = document.getElementById("proof").value;
+    const rare = document.getElementById("rare").checked;
 
-      if (!name) return;
-
-      await addDoc(bottleRef, {
-        name,
-        distillery,
-        abv,
-        killed: false,
-        rare
-      });
-
-      document.getElementById("nameInput").value = "";
-      document.getElementById("distilleryInput").value = "";
-      document.getElementById("abvInput").value = "";
-      document.getElementById("rareInput").checked = false;
+    db.collection("bottles").add({
+      name,
+      distillery,
+      proof,
+      killed: false,
+      rare
+    }).then(() => {
       loadBottles();
-    }
+      document.getElementById("bottleName").value = '';
+      document.getElementById("distillery").value = '';
+      document.getElementById("proof").value = '';
+      document.getElementById("rare").checked = false;
+      bottleForm.style.display = 'none';
+    });
+  }
 
-    async function loadBottles() {
-      const querySnapshot = await getDocs(bottleRef);
-      const container = document.getElementById("bottleContainer");
-      container.innerHTML = "";
-      querySnapshot.forEach((docSnap, index) => {
-        const data = docSnap.data();
-        const note = document.createElement("div");
-        note.className = "sticky-note";
-        note.style.setProperty('--angle', Math.random().toFixed(2));
-        note.style.backgroundColor = getRandomStickyColor();
-        note.setAttribute("draggable", true);
+  function markKilled(id, status) {
+    db.collection("bottles").doc(id).update({ killed: status }).then(() => loadBottles());
+  }
 
-        note.innerHTML = `
-          <strong>${data.name}</strong><br>
-          <em>${data.distillery}</em><br>
-          ABV: ${data.abv || 'N/A'}<br>
-          ${data.killed ? "💀 Killed<br>" : ""}
-          ${data.rare ? "🦄 Rare<br>" : ""}
-          <div class="note-buttons">
-            <button onclick="markKilled('${docSnap.id}', ${data.killed})">${data.killed ? "Unmark Killed" : "Mark as Killed"}</button>
-          </div>
-        `;
+  // Drag & Drop Reordering
+  let dragged;
 
-        note.addEventListener("dragstart", dragStart);
-        note.addEventListener("dragover", dragOver);
-        note.addEventListener("drop", drop);
+  function dragStart(e) {
+    dragged = this;
+    this.style.opacity = '0.4';
+  }
 
-        container.appendChild(note);
-      });
-    }
+  function dragOver(e) {
+    e.preventDefault();
+  }
 
-    function getRandomStickyColor() {
-      const colors = ["#fdfd96", "#ffb347", "#ffd1dc", "#b0e0e6", "#caffb9"];
-      return colors[Math.floor(Math.random() * colors.length)];
-    }
-
-    async function markKilled(id, current) {
-      const docRef = doc(db, "bottles", id);
-      await updateDoc(docRef, { killed: !current });
-      loadBottles();
-    }
-
-    let dragSrcEl = null;
-
-    function dragStart(e) {
-      dragSrcEl = this;
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/html', this.innerHTML);
-    }
-
-    function dragOver(e) {
-      e.preventDefault();
-      return false;
-    }
-
-    function drop(e) {
-      e.stopPropagation();
-      if (dragSrcEl !== this) {
-        let temp = this.innerHTML;
-        this.innerHTML = dragSrcEl.innerHTML;
-        dragSrcEl.innerHTML = temp;
+  function drop(e) {
+    e.preventDefault();
+    if (dragged !== this) {
+      const draggedIndex = [...notesContainer.children].indexOf(dragged);
+      const droppedIndex = [...notesContainer.children].indexOf(this);
+      if (draggedIndex < droppedIndex) {
+        notesContainer.insertBefore(dragged, this.nextSibling);
+      } else {
+        notesContainer.insertBefore(dragged, this);
       }
-      return false;
     }
+  }
 
-    loadBottles();
-  </script>
+  function dragEnd() {
+    this.style.opacity = '1';
+  }
+
+  loadBottles();
+</script>
+
 </body>
 </html>
