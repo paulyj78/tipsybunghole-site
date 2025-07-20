@@ -3,125 +3,148 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bottle Inventory - The Tipsy Bunghole</title>
+  <title>The Tipsy Bunghole - Bottles</title>
   <style>
     body {
-      font-family: 'Courier New', Courier, monospace;
-      background: #fdf6e3;
-      margin: 0;
-      padding: 0;
-    }
-
-    .paper {
-      position: relative;
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 40px 30px 80px 60px;
-      background-color: #fff8dc;
-      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
-      background-image:
-        repeating-linear-gradient(to bottom, transparent, transparent 23px, rgba(173, 216, 230, 0.4) 24px),
-        linear-gradient(to right, rgba(255, 192, 203, 0.5) 60px, transparent 60px),
-        radial-gradient(circle at 50px 20px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 60px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 100px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 140px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 180px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 220px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 260px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 300px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 340px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 380px, #ccc 6px, transparent 7px),
-        radial-gradient(circle at 50px 420px, #ccc 6px, transparent 7px);
-      background-repeat: repeat-y;
+      background-color: #fefcf4;
+      background-image: 
+        linear-gradient(to bottom, rgba(0,0,0,0.03) 1px, transparent 1px),
+        linear-gradient(to right, rgba(255,192,203,0.4) 60px, transparent 60px);
       background-size: 100% 24px;
-      border: 1px solid #d4af37;
-      border-radius: 6px;
-      clip-path: polygon(0 0, 95% 0, 100% 5%, 100% 100%, 0% 100%);
+      font-family: 'Courier New', Courier, monospace;
+      padding: 40px;
+      color: #2e2b1f;
+      position: relative;
     }
 
-    .paper::after {
+    .bottle-entry {
+      background-color: #fdf6e3;
+      padding: 30px 40px;
+      margin: 40px auto;
+      border-radius: 6px;
+      max-width: 700px;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.15);
+      position: relative;
+      border: 1px solid #ccc;
+    }
+
+    .bottle-entry::before {
       content: "";
       position: absolute;
-      bottom: -20px;
+      top: 0;
+      left: 55px;
+      width: 3px;
+      height: 100%;
+      background-color: rgba(255, 105, 180, 0.4); /* Pinkish margin */
+      z-index: 0;
+    }
+
+    .bottle-entry::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      border-width: 0 70px 70px 0;
+      border-style: solid;
+      border-color: transparent #e0d6ba transparent transparent;
+      z-index: 2;
+      box-shadow: -5px 5px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .torn-bottom {
+      background: linear-gradient(135deg, #fdf6e3 33%, transparent 33%) 0 100%,
+                  linear-gradient(225deg, #fdf6e3 33%, transparent 33%) 100% 100%;
+      background-size: 16px 16px;
+      background-repeat: repeat-x;
+      height: 16px;
+      position: absolute;
+      bottom: -16px;
       left: 0;
-      width: 100%;
-      height: 20px;
-      background: linear-gradient(to right, #fff8dc 90%, transparent);
-      clip-path: polygon(0 0, 100% 5%, 100% 100%, 0% 100%);
+      right: 0;
+      z-index: 1;
     }
 
-    h1, h2 {
-      text-align: center;
-      font-family: Georgia, serif;
+    .binder-holes {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 15px;
+      height: calc(100% - 40px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 3;
     }
 
-    input, select, textarea {
-      width: 100%;
-      padding: 6px;
-      margin: 6px 0 12px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      font-family: 'Courier New', Courier, monospace;
+    .binder-holes span {
+      width: 12px;
+      height: 12px;
+      background-color: #bbb;
+      border-radius: 50%;
+      box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2);
     }
 
     button {
-      padding: 6px 10px;
       background-color: #8b5e3c;
       color: white;
       border: none;
       border-radius: 5px;
-      margin: 2px;
+      padding: 6px 10px;
+      margin: 4px;
       cursor: pointer;
       font-size: 14px;
     }
 
-    .bottle-entry {
-      background: rgba(255, 255, 255, 0.6);
-      border: 1px solid #ddd;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-    }
-
-    .rare-icon {
-      display: inline-block;
-      margin-left: 8px;
-      color: gold;
-    }
-
-    .form-label {
-      font-weight: bold;
+    #return-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background-color: #8b5e3c;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 18px;
+      font-size: 16px;
+      cursor: pointer;
+      z-index: 10;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
     }
   </style>
 </head>
 <body>
-  <div class="paper">
-    <h1>📚 Bottle Inventory</h1>
-    <form id="bottle-form">
-      <label class="form-label">Bottle Name:</label>
-      <input type="text" id="bottleName" required />
-      
-      <label class="form-label">Distillery:</label>
-      <input type="text" id="distillery" />
+  <h1>The Tipsy Bunghole Bottle Log</h1>
 
-      <label class="form-label">Notes:</label>
-      <textarea id="notes" rows="3"></textarea>
+  <div id="bottle-list"></div>
 
-      <label><input type="checkbox" id="isRare" /> 🦄 Mark as Rare</label>
-      <button type="submit">Add Bottle</button>
-    </form>
+  <button id="return-btn" onclick="window.location.href='index.html'">← Return to the Bunghole</button>
 
-    <h2>🥃 My Collection</h2>
-    <div id="bottle-list"></div>
-  </div>
+  <!-- Template for bottle entries -->
+  <template id="bottle-template">
+    <div class="bottle-entry">
+      <div class="binder-holes">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="bottle-content">
+        <strong>Name:</strong> <span class="name"></span><br>
+        <strong>Distillery:</strong> <span class="distillery"></span><br>
+        <strong>Proof:</strong> <span class="proof"></span><br>
+        <strong>Notes:</strong> <span class="notes"></span><br>
+        <strong>Status:</strong> <span class="status"></span><br>
+        <strong>Favorite:</strong> <span class="favorite"></span><br>
+      </div>
+      <div class="torn-bottom"></div>
+    </div>
+  </template>
 
-  <!-- Firebase + Bottle Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import {
-      getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
@@ -134,64 +157,26 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const bottlesRef = collection(db, "bottles");
 
-    const form = document.getElementById("bottle-form");
-    const list = document.getElementById("bottle-list");
+    const bottleList = document.getElementById("bottle-list");
+    const template = document.getElementById("bottle-template");
 
     async function loadBottles() {
-      const snapshot = await getDocs(bottlesRef);
-      list.innerHTML = "";
-      snapshot.forEach(docSnap => {
-        const data = docSnap.data();
-        const div = document.createElement("div");
-        div.className = "bottle-entry";
-        div.innerHTML = `
-          <strong>${data.name}</strong> - ${data.distillery || "Unknown"}
-          ${data.rare ? '<span class="rare-icon">🦄</span>' : ""}
-          <p>${data.notes || ""}</p>
-          <button onclick="deleteBottle('${docSnap.id}')">Delete</button>
-          <button onclick="markKilled('${docSnap.id}')">Mark as Killed</button>
-          <button onclick="markRare('${docSnap.id}')">Toggle Rare</button>
-        `;
-        list.appendChild(div);
+      const snapshot = await getDocs(collection(db, "bottles"));
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const clone = template.content.cloneNode(true);
+
+        clone.querySelector(".name").textContent = data.name || "";
+        clone.querySelector(".distillery").textContent = data.distillery || "";
+        clone.querySelector(".proof").textContent = data.proof || "";
+        clone.querySelector(".notes").textContent = data.notes || "";
+        clone.querySelector(".status").textContent = data.killed ? "Killed" : "Alive";
+        clone.querySelector(".favorite").textContent = data.rare ? "🦄 Unicorn!" : "—";
+
+        bottleList.appendChild(clone);
       });
     }
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      await addDoc(bottlesRef, {
-        name: document.getElementById("bottleName").value,
-        distillery: document.getElementById("distillery").value,
-        notes: document.getElementById("notes").value,
-        rare: document.getElementById("isRare").checked,
-        killed: false,
-      });
-      form.reset();
-      loadBottles();
-    });
-
-    window.deleteBottle = async (id) => {
-      await deleteDoc(doc(bottlesRef, id));
-      loadBottles();
-    };
-
-    window.markKilled = async (id) => {
-      const bottleDoc = doc(bottlesRef, id);
-      await updateDoc(bottleDoc, { killed: true });
-      loadBottles();
-    };
-
-    window.markRare = async (id) => {
-      const bottleDoc = doc(bottlesRef, id);
-      const snap = await getDocs(bottlesRef);
-      snap.forEach(async s => {
-        if (s.id === id) {
-          await updateDoc(bottleDoc, { rare: !s.data().rare });
-        }
-      });
-      loadBottles();
-    };
 
     loadBottles();
   </script>
