@@ -3,148 +3,159 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The Tipsy Bunghole - Bottles</title>
+  <title>Bottle Inventory - The Tipsy Bunghole</title>
   <style>
     body {
-      background-color: #fefcf4;
-      background-image: 
-        linear-gradient(to bottom, rgba(0,0,0,0.03) 1px, transparent 1px),
-        linear-gradient(to right, rgba(255,192,203,0.4) 60px, transparent 60px);
-      background-size: 100% 24px;
       font-family: 'Courier New', Courier, monospace;
-      padding: 40px;
-      color: #2e2b1f;
+      background-color: #f8f4e3;
+      margin: 0;
+      padding: 0;
+      background-image: linear-gradient(to bottom, #f8f4e3 0%, #f8f4e3 100%);
+    }
+
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+      font-family: 'Georgia', serif;
+      color: #3a2f1b;
+    }
+
+    .paper {
       position: relative;
+      margin: 20px auto;
+      padding: 20px 40px;
+      max-width: 800px;
+      background-color: #fdfbf4;
+      background-image:
+        linear-gradient(to bottom, rgba(0, 0, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 255, 0.1) 1px, transparent 30px);
+      background-size: 100% 30px;
+      border-left: 8px solid #ffb6c1; /* pink margin */
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      color: #2d1f0c;
+    }
+
+    .paper::before {
+      content: "";
+      position: absolute;
+      left: -16px;
+      top: 0;
+      height: 100%;
+      width: 8px;
+      background-color: #ffb6c1;
+      border-right: 1px dashed #d08a95;
+    }
+
+    .paper::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      border-width: 0 60px 60px 0;
+      border-style: solid;
+      border-color: #f8f4e3 transparent transparent transparent;
+      box-shadow: -3px 3px 8px rgba(0,0,0,0.1);
+    }
+
+    .hole {
+      position: absolute;
+      left: -30px;
+      width: 14px;
+      height: 14px;
+      background-color: #d9d9d9;
+      border-radius: 50%;
+      border: 1px solid #aaa;
+    }
+
+    .hole:nth-child(1) { top: 20px; }
+    .hole:nth-child(2) { top: 80px; }
+    .hole:nth-child(3) { top: 140px; }
+    .hole:nth-child(4) { top: 200px; }
+    .hole:nth-child(5) { top: 260px; }
+    .hole:nth-child(6) { top: 320px; }
+
+    .tear {
+      position: relative;
+      height: 20px;
+      background: repeating-linear-gradient(
+        -45deg,
+        #f8f4e3,
+        #f8f4e3 4px,
+        #ccc 4px,
+        #ccc 5px
+      );
     }
 
     .bottle-entry {
-      background-color: #fdf6e3;
-      padding: 30px 40px;
-      margin: 40px auto;
-      border-radius: 6px;
-      max-width: 700px;
-      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.15);
-      position: relative;
+      padding: 10px;
+      margin-bottom: 20px;
+      background-color: rgba(255, 255, 255, 0.85);
       border: 1px solid #ccc;
+      border-radius: 6px;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+      position: relative;
     }
 
-    .bottle-entry::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 55px;
-      width: 3px;
-      height: 100%;
-      background-color: rgba(255, 105, 180, 0.4); /* Pinkish margin */
-      z-index: 0;
-    }
-
-    .bottle-entry::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      right: 0;
-      border-width: 0 70px 70px 0;
-      border-style: solid;
-      border-color: transparent #e0d6ba transparent transparent;
-      z-index: 2;
-      box-shadow: -5px 5px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .torn-bottom {
-      background: linear-gradient(135deg, #fdf6e3 33%, transparent 33%) 0 100%,
-                  linear-gradient(225deg, #fdf6e3 33%, transparent 33%) 100% 100%;
-      background-size: 16px 16px;
-      background-repeat: repeat-x;
-      height: 16px;
-      position: absolute;
-      bottom: -16px;
-      left: 0;
-      right: 0;
-      z-index: 1;
-    }
-
-    .binder-holes {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      width: 15px;
-      height: calc(100% - 40px);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      z-index: 3;
-    }
-
-    .binder-holes span {
-      width: 12px;
-      height: 12px;
-      background-color: #bbb;
-      border-radius: 50%;
-      box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2);
+    .rare {
+      background-image: url('https://cdn-icons-png.flaticon.com/512/616/616408.png');
+      background-size: 30px 30px;
+      background-repeat: no-repeat;
+      background-position: top right;
     }
 
     button {
       background-color: #8b5e3c;
       color: white;
       border: none;
-      border-radius: 5px;
-      padding: 6px 10px;
-      margin: 4px;
+      padding: 6px 12px;
+      border-radius: 4px;
       cursor: pointer;
+      margin-right: 6px;
       font-size: 14px;
     }
 
-    #return-btn {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background-color: #8b5e3c;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 10px 18px;
-      font-size: 16px;
-      cursor: pointer;
-      z-index: 10;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    input, select {
+      padding: 5px;
+      margin: 5px;
+      border-radius: 4px;
+      border: 1px solid #aaa;
+      width: 95%;
+      font-family: inherit;
     }
   </style>
 </head>
 <body>
-  <h1>The Tipsy Bunghole Bottle Log</h1>
 
-  <div id="bottle-list"></div>
+  <h1>The Tipsy Bunghole Bottles</h1>
 
-  <button id="return-btn" onclick="window.location.href='index.html'">← Return to the Bunghole</button>
+  <div class="paper">
+    <div class="hole"></div>
+    <div class="hole"></div>
+    <div class="hole"></div>
+    <div class="hole"></div>
+    <div class="hole"></div>
+    <div class="hole"></div>
 
-  <!-- Template for bottle entries -->
-  <template id="bottle-template">
-    <div class="bottle-entry">
-      <div class="binder-holes">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-      <div class="bottle-content">
-        <strong>Name:</strong> <span class="name"></span><br>
-        <strong>Distillery:</strong> <span class="distillery"></span><br>
-        <strong>Proof:</strong> <span class="proof"></span><br>
-        <strong>Notes:</strong> <span class="notes"></span><br>
-        <strong>Status:</strong> <span class="status"></span><br>
-        <strong>Favorite:</strong> <span class="favorite"></span><br>
-      </div>
-      <div class="torn-bottom"></div>
-    </div>
-  </template>
+    <form id="bottleForm">
+      <input type="text" id="bottleName" placeholder="Bottle Name" required />
+      <input type="text" id="distillery" placeholder="Distillery" required />
+      <input type="text" id="proof" placeholder="Proof" />
+      <input type="text" id="notes" placeholder="Tasting Notes" />
+      <label><input type="checkbox" id="rare" /> 🦄 Rare Bottle</label>
+      <br /><br />
+      <button type="submit">Add Bottle</button>
+    </form>
 
+    <div id="bottleList"></div>
+
+    <div class="tear"></div>
+  </div>
+
+  <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
@@ -157,26 +168,58 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const bottlesCol = collection(db, "bottles");
 
-    const bottleList = document.getElementById("bottle-list");
-    const template = document.getElementById("bottle-template");
+    const form = document.getElementById("bottleForm");
+    const list = document.getElementById("bottleList");
 
     async function loadBottles() {
-      const snapshot = await getDocs(collection(db, "bottles"));
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const clone = template.content.cloneNode(true);
-
-        clone.querySelector(".name").textContent = data.name || "";
-        clone.querySelector(".distillery").textContent = data.distillery || "";
-        clone.querySelector(".proof").textContent = data.proof || "";
-        clone.querySelector(".notes").textContent = data.notes || "";
-        clone.querySelector(".status").textContent = data.killed ? "Killed" : "Alive";
-        clone.querySelector(".favorite").textContent = data.rare ? "🦄 Unicorn!" : "—";
-
-        bottleList.appendChild(clone);
+      list.innerHTML = "";
+      const snapshot = await getDocs(bottlesCol);
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const div = document.createElement("div");
+        div.className = "bottle-entry" + (data.rare ? " rare" : "");
+        div.innerHTML = `
+          <strong>${data.name}</strong><br/>
+          <em>${data.distillery}</em><br/>
+          Proof: ${data.proof || "N/A"}<br/>
+          Notes: ${data.notes || ""}<br/>
+          <button onclick="editBottle('${docSnap.id}')">Edit</button>
+          <button onclick="deleteBottle('${docSnap.id}')">Delete</button>
+        `;
+        list.appendChild(div);
       });
     }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("bottleName").value;
+      const distillery = document.getElementById("distillery").value;
+      const proof = document.getElementById("proof").value;
+      const notes = document.getElementById("notes").value;
+      const rare = document.getElementById("rare").checked;
+
+      await addDoc(bottlesCol, { name, distillery, proof, notes, rare });
+      form.reset();
+      loadBottles();
+    });
+
+    window.editBottle = async (id) => {
+      const docRef = doc(db, "bottles", id);
+      const newNotes = prompt("Update notes:");
+      if (newNotes !== null) {
+        await updateDoc(docRef, { notes: newNotes });
+        loadBottles();
+      }
+    };
+
+    window.deleteBottle = async (id) => {
+      if (confirm("Delete this bottle?")) {
+        await deleteDoc(doc(db, "bottles", id));
+        loadBottles();
+      }
+    };
 
     loadBottles();
   </script>
