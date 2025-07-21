@@ -121,10 +121,10 @@
   </div>
 
   <div id="bottleForm">
-    <input type="text" id="nameInput" placeholder="Bottle Name">
-    <input type="text" id="distilleryInput" placeholder="Distillery">
-    <input type="text" id="proofInput" placeholder="Proof">
-    <input type="text" id="shelfInput" placeholder="Shelf#">
+    <input type="text" id="nameInput" placeholder="Bottle Name" />
+    <input type="text" id="distilleryInput" placeholder="Distillery" />
+    <input type="text" id="proofInput" placeholder="Proof" />
+    <input type="text" id="shelfInput" placeholder="Shelf#" />
     <button onclick="addBottle()">Add Bottle</button>
   </div>
 
@@ -135,6 +135,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 
   <script>
+    // Firebase config and initialization
     const firebaseConfig = {
       apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
       authDomain: "tipsy-bunghole-photos.firebaseapp.com",
@@ -146,6 +147,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    // DOM elements
     const bottleList = document.getElementById('bottleList');
     const distilleryFilter = document.getElementById('filterDistillery');
     const favoriteFilter = document.getElementById('filterFavorite');
@@ -153,29 +155,33 @@
     const shelfFilter = document.getElementById('filterShelf');
     const searchBar = document.getElementById('searchBar');
 
+    // Render a bottle row
     function renderBottle(doc) {
       const data = doc.data();
       const div = document.createElement('div');
       div.className = 'bottle-row';
       if (data.killed) div.classList.add('killed');
+
       div.setAttribute('data-id', doc.id);
       div.setAttribute('data-name', data.name.toLowerCase());
       div.setAttribute('data-distillery', data.distillery.toLowerCase());
-      div.setAttribute('data-favorite', data.favorite || false);
-      div.setAttribute('data-killed', data.killed || false);
-      div.setAttribute('data-shelf', (data.shelf || '').toLowerCase());
+      div.setAttribute('data-favorite', data.favorite ? 'true' : 'false');
+      div.setAttribute('data-killed', data.killed ? 'true' : 'false');
+      // Handle shelf - if missing, store 'unknown'
+      const shelfVal = data.shelf ? data.shelf.toString().toLowerCase() : 'unknown';
+      div.setAttribute('data-shelf', shelfVal);
 
       div.innerHTML = `
         <span class="drag-handle">☰</span>
         <div class="bottle-info">
           <span>${data.name}</span>
           <span>${data.distillery}</span>
-          <span>${data.proof}</span>
-          <span>Shelf: ${data.shelf || 'N/A'}</span>
+          <span>${data.proof || ''}</span>
+          <span>Shelf: ${data.shelf || 'Unknown'}</span>
         </div>
         <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" onclick="toggleFavorite('${doc.id}', ${!data.favorite})">★</span>
         <label class="toggle-switch">
-          <input type="checkbox" onchange="toggleKilled('${doc.id}', this.checked)" ${data.killed ? 'checked' : ''}>
+          <input type="checkbox" onchange="toggleKilled('${doc.id}', this.checked)" ${data.killed ? 'checked' : ''} />
           🪦
         </label>
         <span class="edit-icon" onclick="editBottle('${doc.id}')">✏️</span>
@@ -183,6 +189,7 @@
       bottleList.appendChild(div);
     }
 
+    // Fetch bottles and render list + filters
     function fetchAndRender() {
       bottleList.innerHTML = '';
       const distillerySet = new Set();
@@ -192,7 +199,11 @@
         snapshot.forEach(doc => {
           const data = doc.data();
           distillerySet.add(data.distillery);
-          if (data.shelf) shelfSet.add(data.shelf);
+          if (data.shelf) {
+            shelfSet.add(data.shelf);
+          } else {
+            shelfSet.add('Unknown');
+          }
           renderBottle(doc);
         });
         populateFilter(distillerySet, shelfSet);
@@ -200,52 +211,66 @@
       });
     }
 
+    // Populate filter dropdowns for distillery and shelf
     function populateFilter(distilleries, shelves) {
+      // Distillery filter
       distilleryFilter.innerHTML = `<option value="">All Distilleries</option>`;
       Array.from(distilleries).sort().forEach(d => {
         distilleryFilter.innerHTML += `<option value="${d}">${d}</option>`;
       });
 
+      // Shelf filter
       shelfFilter.innerHTML = `<option value="">All Shelves</option>`;
       Array.from(shelves).sort().forEach(s => {
-        shelfFilter.innerHTML += `<option value="${s}">${s}</option>`;
+        shelfFilter.innerHTML += `<option value="${s.toLowerCase()}">${s}</option>`;
       });
     }
 
+    // Add a new bottle to Firestore
     function addBottle() {
-      const name = document.getElementById('nameInput').value;
-      const distillery = document.getElementById('distilleryInput').value;
-      const proof = document.getElementById('proofInput').value;
-      const shelf = document.getElementById('shelfInput').value;
+      const name = document.getElementById('nameInput').value.trim();
+      const distillery = document.getElementById('distilleryInput').value.trim();
+      const proof = document.getElementById('proofInput').value.trim();
+      const shelf = document.getElementById('shelfInput').value.trim();
+
       if (!name || !distillery) return;
 
       db.collection('bottles').add({
-        name, distillery, proof, shelf,
+        name,
+        distillery,
+        proof,
+        shelf: shelf || null,
         killed: false,
         favorite: false,
         order: Date.now()
       }).then(() => {
+        // Clear inputs after adding
         document.getElementById('nameInput').value = '';
         document.getElementById('distilleryInput').value = '';
         document.getElementById('proofInput').value = '';
-        document.getElementById('shelfInput
         document.getElementById('shelfInput').value = '';
         fetchAndRender();
+      }).catch(err => {
+        console.error("Error adding bottle:", err);
       });
     }
 
+    // Toggle killed state
     function toggleKilled(id, state) {
-      db.collection('bottles').doc(id).update({ killed: state });
+      db.collection('bottles').doc(id).update({ killed: state }).catch(console.error);
     }
 
+    // Toggle favorite state
     function toggleFavorite(id, state) {
-      db.collection('bottles').doc(id).update({ favorite: state });
+      db.collection('bottles').doc(id).update({ favorite: state }).catch(console.error);
     }
 
+    // Edit bottle stub
     function editBottle(id) {
       alert("Editing not yet implemented.");
     }
 
+    // Enable drag & drop sorting
     new Sortable(bottleList, {
       handle: '.drag-handle',
       animation: 150,
@@ -255,15 +280,17 @@
           order: index
         }));
         newOrder.forEach(item => {
-          db.collection('bottles').doc(item.id).update({ order: item.order });
+          db.collection('bottles').doc(item.id).update({ order: item.order }).catch(console.error);
         });
       }
     });
 
+    // Apply filters on input changes
     [searchBar, distilleryFilter, favoriteFilter, killedFilter, shelfFilter].forEach(el => {
       el.addEventListener('input', applyFilters);
     });
 
+    // Filter visible bottles based on inputs
     function applyFilters() {
       const search = searchBar.value.toLowerCase();
       const dist = distilleryFilter.value.toLowerCase();
@@ -276,7 +303,7 @@
         const distillery = row.dataset.distillery;
         const favorite = row.dataset.favorite === 'true';
         const killed = row.dataset.killed === 'true';
-        const shelfNum = row.dataset.shelf;
+        const shelfNum = row.dataset.shelf || 'unknown';
 
         let show = true;
         if (search && !name.includes(search) && !distillery.includes(search)) show = false;
@@ -289,8 +316,9 @@
       });
     }
 
+    // Initial fetch and render on page load
     fetchAndRender();
+
   </script>
 </body>
 </html>
-
