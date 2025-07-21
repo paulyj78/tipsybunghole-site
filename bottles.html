@@ -37,17 +37,17 @@
     }
 
     .bottle-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #fffef0;
-  color: #000;
-  padding: 10px;
-  margin: 8px 0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-  font-family: 'Courier New', monospace;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fffef0;
+      color: #000;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      font-family: 'Courier New', monospace;
     }
 
     .bottle-row.killed {
@@ -55,74 +55,27 @@
       text-decoration: line-through;
     }
 
-    ..bottle-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #fffef0;
-  color: #000;
-  padding: 10px;
-  margin: 8px 0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-  font-family: 'Courier New', monospace;
-}
-
-.bottle-row.killed {
-  opacity: 0.4;
-  text-decoration: line-through;
-}
-
-.bottle-info {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  flex: 1;
-  min-width: 0;
-  overflow-wrap: break-word;
-}
-
-.bottle-controls {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-
-.favorite-toggle {
-  font-size: 1.5em;
-  cursor: pointer;
-  color: gold;
-}
-
-.favorite-toggle.inactive {
-  color: #ccc;
-}
-
-.toggle-switch {
-  cursor: pointer;
-}
-
-.edit-icon {
-  cursor: pointer;
-  font-size: 1em;
-}
-
+    .bottle-info {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      flex: 1;
+      min-width: 0;
+      overflow-wrap: break-word;
     }
 
-    .drag-handle {
-      cursor: grab;
-      margin-right: 10px;
+    .bottle-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
     }
 
     .favorite-toggle {
-      position: absolute;
-      top: 8px;
-      right: 10px;
       font-size: 1.5em;
       cursor: pointer;
       color: gold;
+      margin-left: 10px;
     }
 
     .favorite-toggle.inactive {
@@ -137,6 +90,11 @@
       margin-left: 10px;
       cursor: pointer;
       font-size: 14px;
+    }
+
+    .drag-handle {
+      cursor: grab;
+      margin-right: 10px;
     }
 
     button {
@@ -174,10 +132,10 @@
   </div>
 
   <div id="bottleForm">
-    <input type="text" id="nameInput" placeholder="Bottle Name">
-    <input type="text" id="distilleryInput" placeholder="Distillery">
-    <input type="text" id="proofInput" placeholder="Proof">
-    <input type="text" id="shelfInput" placeholder="Shelf#">
+    <input type="text" id="nameInput" placeholder="Bottle Name" />
+    <input type="text" id="distilleryInput" placeholder="Distillery" />
+    <input type="text" id="proofInput" placeholder="Proof" />
+    <input type="text" id="shelfInput" placeholder="Shelf#" />
     <button onclick="addBottle()">Add Bottle</button>
   </div>
 
@@ -218,8 +176,8 @@
       div.setAttribute('data-favorite', data.favorite || false);
       div.setAttribute('data-killed', data.killed || false);
       div.setAttribute('data-shelf', (data.shelf || '').toLowerCase());
-      
-div.innerHTML = `
+
+      div.innerHTML = `
         <span class="drag-handle">☰</span>
         <div class="bottle-info">
           <span>${data.name}</span>
@@ -227,15 +185,16 @@ div.innerHTML = `
           <span>${data.proof}</span>
           <span>Shelf: ${data.shelf || 'N/A'}</span>
         </div>
-        <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" onclick="toggleFavorite('${doc.id}', this)">★</span>
-        <label class="toggle-switch">
-          <input type="checkbox" onchange="toggleKilled('${doc.id}', this.checked)" ${data.killed ? 'checked' : ''}>
-          🪦
-        </label>
-        <span class="edit-icon" onclick="editBottle('${doc.id}')">✏️</span>
+        <div class="bottle-controls">
+          <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" onclick="toggleFavorite('${doc.id}', this)">★</span>
+          <label class="toggle-switch">
+            <input type="checkbox" onchange="toggleKilled('${doc.id}', this.checked)" ${data.killed ? 'checked' : ''}>
+            🪦
+          </label>
+          <span class="edit-icon" onclick="editBottle('${doc.id}')">✏️</span>
+        </div>
       `;
-      bottleList.appendChild(div)
-      ;
+      bottleList.appendChild(div);
     }
 
     function fetchAndRender() {
@@ -297,7 +256,7 @@ div.innerHTML = `
       const isActive = !el.classList.contains('inactive');
       db.collection('bottles').doc(id).update({ favorite: !isActive }).then(() => {
         el.classList.toggle('inactive', isActive);
-        el.parentElement.setAttribute('data-favorite', String(!isActive));
+        el.parentElement.parentElement.setAttribute('data-favorite', String(!isActive));
         applyFilters();
       });
     }
