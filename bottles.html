@@ -37,6 +37,7 @@
     }
 
     .bottle-row {
+      position: relative;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -58,8 +59,8 @@
     .bottle-info {
       display: flex;
       gap: 20px;
-      flex: 1;
       flex-wrap: wrap;
+      flex: 1;
     }
 
     .drag-handle {
@@ -68,10 +69,12 @@
     }
 
     .favorite-toggle {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 1.5em;
       cursor: pointer;
       color: gold;
-      user-select: none;
-      font-size: 1.5em;
     }
 
     .favorite-toggle.inactive {
@@ -80,14 +83,12 @@
 
     .toggle-switch {
       cursor: pointer;
-      user-select: none;
     }
 
     .edit-icon {
       margin-left: 10px;
       cursor: pointer;
       font-size: 14px;
-      user-select: none;
     }
 
     button {
@@ -125,15 +126,16 @@
   </div>
 
   <div id="bottleForm">
-    <input type="text" id="nameInput" placeholder="Bottle Name" />
-    <input type="text" id="distilleryInput" placeholder="Distillery" />
-    <input type="text" id="proofInput" placeholder="Proof" />
-    <input type="text" id="shelfInput" placeholder="Shelf#" />
+    <input type="text" id="nameInput" placeholder="Bottle Name">
+    <input type="text" id="distilleryInput" placeholder="Distillery">
+    <input type="text" id="proofInput" placeholder="Proof">
+    <input type="text" id="shelfInput" placeholder="Shelf#">
     <button onclick="addBottle()">Add Bottle</button>
   </div>
 
   <div id="bottleList"></div>
 
+  <!-- Firebase & Sortable -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
@@ -163,26 +165,26 @@
       div.className = 'bottle-row';
       if (data.killed) div.classList.add('killed');
       div.setAttribute('data-id', doc.id);
-      div.setAttribute('data-name', data.name.toLowerCase());
-      div.setAttribute('data-distillery', data.distillery.toLowerCase());
-      div.setAttribute('data-favorite', (data.favorite || false).toString());
-      div.setAttribute('data-killed', (data.killed || false).toString());
+      div.setAttribute('data-name', (data.name || '').toLowerCase());
+      div.setAttribute('data-distillery', (data.distillery || '').toLowerCase());
+      div.setAttribute('data-favorite', data.favorite || false);
+      div.setAttribute('data-killed', data.killed || false);
       div.setAttribute('data-shelf', (data.shelf || '').toLowerCase());
 
       div.innerHTML = `
-        <span class="drag-handle" title="Drag to reorder">☰</span>
+        <span class="drag-handle">☰</span>
         <div class="bottle-info">
           <span>${data.name}</span>
           <span>${data.distillery}</span>
-          <span>${data.proof || ''}</span>
+          <span>${data.proof}</span>
           <span>Shelf: ${data.shelf || 'N/A'}</span>
         </div>
-        <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" title="Toggle Favorite" onclick="toggleFavorite('${doc.id}', ${!data.favorite}, this)">★</span>
-        <label class="toggle-switch" title="Toggle Killed">
-          <input type="checkbox" onchange="toggleKilled('${doc.id}', this.checked)" ${data.killed ? 'checked' : ''} />
+        <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" onclick="toggleFavorite('${doc.id}', this)">★</span>
+        <label class="toggle-switch">
+          <input type="checkbox" onchange="toggleKilled('${doc.id}', this.checked)" ${data.killed ? 'checked' : ''}>
           🪦
         </label>
-        <span class="edit-icon" title="Edit Bottle" onclick="editBottle('${doc.id}')">✏️</span>
+        <span class="edit-icon" onclick="editBottle('${doc.id}')">✏️</span>
       `;
       bottleList.appendChild(div);
     }
@@ -199,12 +201,12 @@
           if (data.shelf) shelfSet.add(data.shelf);
           renderBottle(doc);
         });
-        populateFilter(distillerySet, shelfSet);
+        populateFilters(distillerySet, shelfSet);
         applyFilters();
       });
     }
 
-    function populateFilter(distilleries, shelves) {
+    function populateFilters(distilleries, shelves) {
       distilleryFilter.innerHTML = `<option value="">All Distilleries</option>`;
       Array.from(distilleries).sort().forEach(d => {
         distilleryFilter.innerHTML += `<option value="${d}">${d}</option>`;
@@ -221,7 +223,8 @@
       const distillery = document.getElementById('distilleryInput').value.trim();
       const proof = document.getElementById('proofInput').value.trim();
       const shelf = document.getElementById('shelfInput').value.trim();
-      if (!name || !distillery) return alert('Name and Distillery are required.');
+
+      if (!name || !distillery) return;
 
       db.collection('bottles').add({
         name, distillery, proof, shelf,
@@ -238,33 +241,15 @@
     }
 
     function toggleKilled(id, state) {
-      db.collection('bottles').doc(id).update({ killed: state })
-      .then(() => {
-        // Update UI data attribute for consistency
-        const row = bottleList.querySelector(`[data-id="${id}"]`);
-        if (row) {
-          row.setAttribute('data-killed', state.toString());
-          if (state) row.classList.add('killed');
-          else row.classList.remove('killed');
-          applyFilters();
-        }
-      });
+      db.collection('bottles').doc(id).update({ killed: state }).then(fetchAndRender);
     }
 
-    function toggleFavorite(id, newState, elem) {
-      db.collection('bottles').doc(id).update({ favorite: newState })
-      .then(() => {
-        // Immediately update UI without re-fetching
-        if (elem) {
-          elem.classList.toggle('inactive', !newState);
-          const row = elem.closest('.bottle-row');
-          if (row) {
-            row.setAttribute('data-favorite', newState.toString());
-          }
-          applyFilters();
-        }
-      }).catch(err => {
-        console.error('Error updating favorite:', err);
+    function toggleFavorite(id, el) {
+      const isActive = !el.classList.contains('inactive');
+      db.collection('bottles').doc(id).update({ favorite: !isActive }).then(() => {
+        el.classList.toggle('inactive', isActive);
+        el.parentElement.setAttribute('data-favorite', String(!isActive));
+        applyFilters();
       });
     }
 
@@ -275,13 +260,9 @@
     new Sortable(bottleList, {
       handle: '.drag-handle',
       animation: 150,
-      onEnd: function () {
-        const newOrder = [...bottleList.children].map((el, index) => ({
-          id: el.dataset.id,
-          order: index
-        }));
-        newOrder.forEach(item => {
-          db.collection('bottles').doc(item.id).update({ order: item.order });
+      onEnd: () => {
+        [...bottleList.children].forEach((el, index) => {
+          db.collection('bottles').doc(el.dataset.id).update({ order: index });
         });
       }
     });
