@@ -59,6 +59,7 @@
       display: flex;
       gap: 20px;
       flex: 1;
+      flex-wrap: wrap;
     }
 
     .drag-handle {
@@ -114,6 +115,9 @@
       <option value="true">Killed</option>
       <option value="false">Alive</option>
     </select>
+    <select id="filterShelf">
+      <option value="">All Shelves</option>
+    </select>
   </div>
 
   <div id="bottleForm">
@@ -146,6 +150,7 @@
     const distilleryFilter = document.getElementById('filterDistillery');
     const favoriteFilter = document.getElementById('filterFavorite');
     const killedFilter = document.getElementById('filterKilled');
+    const shelfFilter = document.getElementById('filterShelf');
     const searchBar = document.getElementById('searchBar');
 
     function renderBottle(doc) {
@@ -158,6 +163,7 @@
       div.setAttribute('data-distillery', data.distillery.toLowerCase());
       div.setAttribute('data-favorite', data.favorite || false);
       div.setAttribute('data-killed', data.killed || false);
+      div.setAttribute('data-shelf', (data.shelf || '').toLowerCase());
 
       div.innerHTML = `
         <span class="drag-handle">☰</span>
@@ -165,6 +171,7 @@
           <span>${data.name}</span>
           <span>${data.distillery}</span>
           <span>${data.proof}</span>
+          <span>Shelf: ${data.shelf || 'N/A'}</span>
         </div>
         <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" onclick="toggleFavorite('${doc.id}', ${!data.favorite})">★</span>
         <label class="toggle-switch">
@@ -178,21 +185,30 @@
 
     function fetchAndRender() {
       bottleList.innerHTML = '';
+      const distillerySet = new Set();
+      const shelfSet = new Set();
+
       db.collection('bottles').orderBy('order').get().then(snapshot => {
-        const distillerySet = new Set();
         snapshot.forEach(doc => {
           const data = doc.data();
           distillerySet.add(data.distillery);
+          if (data.shelf) shelfSet.add(data.shelf);
           renderBottle(doc);
         });
-        populateFilter(distillerySet);
+        populateFilter(distillerySet, shelfSet);
+        applyFilters();
       });
     }
 
-    function populateFilter(distilleries) {
+    function populateFilter(distilleries, shelves) {
       distilleryFilter.innerHTML = `<option value="">All Distilleries</option>`;
       Array.from(distilleries).sort().forEach(d => {
         distilleryFilter.innerHTML += `<option value="${d}">${d}</option>`;
+      });
+
+      shelfFilter.innerHTML = `<option value="">All Shelves</option>`;
+      Array.from(shelves).sort().forEach(s => {
+        shelfFilter.innerHTML += `<option value="${s}">${s}</option>`;
       });
     }
 
@@ -200,10 +216,11 @@
       const name = document.getElementById('nameInput').value;
       const distillery = document.getElementById('distilleryInput').value;
       const proof = document.getElementById('proofInput').value;
+      const shelf = document.getElementById('shelfInput').value;
       if (!name || !distillery) return;
 
       db.collection('bottles').add({
-        name, distillery, proof,
+        name, distillery, proof, shelf,
         killed: false,
         favorite: false,
         order: Date.now()
@@ -211,6 +228,8 @@
         document.getElementById('nameInput').value = '';
         document.getElementById('distilleryInput').value = '';
         document.getElementById('proofInput').value = '';
+        document.getElementById('shelfInput
+        document.getElementById('shelfInput').value = '';
         fetchAndRender();
       });
     }
@@ -241,7 +260,7 @@
       }
     });
 
-    [searchBar, distilleryFilter, favoriteFilter, killedFilter].forEach(el => {
+    [searchBar, distilleryFilter, favoriteFilter, killedFilter, shelfFilter].forEach(el => {
       el.addEventListener('input', applyFilters);
     });
 
@@ -250,18 +269,21 @@
       const dist = distilleryFilter.value.toLowerCase();
       const fav = favoriteFilter.value;
       const kill = killedFilter.value;
+      const shelf = shelfFilter.value.toLowerCase();
 
       [...bottleList.children].forEach(row => {
         const name = row.dataset.name;
         const distillery = row.dataset.distillery;
         const favorite = row.dataset.favorite === 'true';
         const killed = row.dataset.killed === 'true';
+        const shelfNum = row.dataset.shelf;
 
         let show = true;
         if (search && !name.includes(search) && !distillery.includes(search)) show = false;
         if (dist && distillery !== dist) show = false;
         if (fav && String(favorite) !== fav) show = false;
         if (kill && String(killed) !== kill) show = false;
+        if (shelf && shelfNum !== shelf) show = false;
 
         row.style.display = show ? 'flex' : 'none';
       });
@@ -271,3 +293,4 @@
   </script>
 </body>
 </html>
+
