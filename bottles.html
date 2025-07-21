@@ -2,245 +2,206 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The Tipsy Bunghole - Bottles</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Tipsy Bunghole Bottles</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <style>
     body {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: #f8f5e4;
       background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
       background-size: cover;
-      background-position: center;
-      font-family: 'Courier New', Courier, monospace;
+      background-repeat: no-repeat;
       margin: 0;
-      padding: 20px;
-      color: #fff;
+      padding: 0;
     }
+
     h1 {
       text-align: center;
+      margin: 20px;
     }
 
-    #entry-form {
-      background-color: rgba(0,0,0,0.8);
+    #entryForm {
+      background-color: #fff58f;
+      width: 300px;
+      margin: 10px auto;
       padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+      transform: rotate(-2deg);
     }
 
-    .form-row input {
-      margin: 5px;
-      padding: 6px;
+    #toggleFormBtn {
+      display: block;
+      margin: 10px auto;
+      background-color: #ff69b4;
+      border: none;
+      padding: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 5px;
     }
 
-    #bottle-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    .bottle-list {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 10px;
     }
 
-    .bottle-row {
+    .bottle-entry {
+      background: #fffdf0;
+      margin: 8px 0;
+      padding: 10px;
+      border: 1px solid #d9c99a;
+      border-radius: 5px;
+      box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      background: #fdf6e3;
-      color: #000;
-      padding: 10px;
-      border-radius: 4px;
-      font-size: 0.9em;
-      box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
-      border: 2px dashed #c2a77b;
+      gap: 10px;
+      font-size: 14px;
       position: relative;
+      clip-path: polygon(0 0, 100% 0, 100% 90%, 95% 100%, 90% 90%, 85% 100%, 80% 90%, 75% 100%, 70% 90%, 65% 100%, 60% 90%, 55% 100%, 50% 90%, 45% 100%, 40% 90%, 35% 100%, 30% 90%, 25% 100%, 20% 90%, 15% 100%, 10% 90%, 5% 100%, 0 90%);
     }
 
-    .bottle-row.killed {
-      background-color: #444;
-      color: #999;
-      text-decoration: line-through;
+    .bottle-entry span {
+      flex: 1;
+      word-break: break-word;
     }
 
     .edit-icon {
       cursor: pointer;
-      margin-left: 10px;
+      font-size: 16px;
     }
 
     .drag-handle {
       cursor: grab;
-      margin-right: 10px;
+      font-size: 18px;
+      user-select: none;
     }
 
-    .favorite {
-      cursor: pointer;
-      font-size: 1.2em;
-      margin-left: 10px;
-    }
-
-    .favorite.active {
-      color: gold;
-    }
-
-    button {
-      padding: 6px 12px;
-      background: #8b4513;
-      border: none;
-      border-radius: 4px;
+    #returnBtn {
+      display: block;
+      margin: 40px auto;
+      padding: 10px 20px;
+      background-color: #a0522d;
       color: white;
-      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      text-align: center;
+      text-decoration: none;
     }
 
-    input[type="text"] {
-      padding: 6px;
-      width: 140px;
-    }
-
-    .collapsed {
-      display: none;
+    input[type="text"], select {
+      width: 100%;
+      margin-bottom: 5px;
+      padding: 5px;
     }
   </style>
 </head>
 <body>
-  <h1>📦 Bunghole Bottles</h1>
+  <h1>📋 Bunghole Bottles</h1>
 
-  <button onclick="toggleForm()">➕ Add Bottle</button>
-  <div id="entry-form" class="collapsed">
-    <div class="form-row">
-      <input type="text" id="distillery" placeholder="Distillery" />
-      <input type="text" id="name" placeholder="Name" />
-      <input type="text" id="proof" placeholder="Proof" />
-      <input type="text" id="notes" placeholder="Notes" />
-      <button onclick="addBottle()">💾 Save</button>
-    </div>
+  <button id="toggleFormBtn">➕ Add a New Bottle</button>
+
+  <div id="entryForm" style="display: none;">
+    <input type="text" id="name" placeholder="Bottle Name" />
+    <input type="text" id="distillery" placeholder="Distillery" />
+    <input type="text" id="proof" placeholder="Proof" />
+    <label>
+      <input type="checkbox" id="isRare" /> Rare?
+    </label>
+    <button onclick="addBottle()">Add Bottle</button>
   </div>
 
-  <div id="bottle-list"></div>
+  <div class="bottle-list" id="bottleList"></div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <a href="index.html" id="returnBtn">⬅ Return to Bunghole</a>
 
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
-      authDomain: "tipsy-bunghole-photos.firebaseapp.com",
+      authDomain: "tipsy-bunghole-guest-book.firebaseapp.com",
       projectId: "tipsy-bunghole-photos",
       storageBucket: "tipsy-bunghole-photos.appspot.com",
-      messagingSenderId: "783804314086",
-      appId: "1:783804314086:web:9271f66c65c22bd3d2b4e2"
+      messagingSenderId: "152050189848",
+      appId: "1:152050189848:web:9ba719e8d2ad24c138e56d"
     };
 
-    const app = firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    const bottleList = document.getElementById("bottle-list");
 
-    function toggleForm() {
-      document.getElementById("entry-form").classList.toggle("collapsed");
-    }
+    document.getElementById("toggleFormBtn").addEventListener("click", () => {
+      const form = document.getElementById("entryForm");
+      form.style.display = form.style.display === "none" ? "block" : "none";
+    });
 
-    async function addBottle() {
-      const distillery = document.getElementById("distillery").value.trim();
-      const name = document.getElementById("name").value.trim();
-      const proof = document.getElementById("proof").value.trim();
-      const notes = document.getElementById("notes").value.trim();
+    function addBottle() {
+      const name = document.getElementById("name").value;
+      const distillery = document.getElementById("distillery").value;
+      const proof = document.getElementById("proof").value;
+      const isRare = document.getElementById("isRare").checked;
 
-      if (!distillery || !name) return;
+      if (!name || !distillery || !proof) return;
 
-      const docRef = await db.collection("bottles").add({
-        distillery,
+      db.collection("bottles").add({
         name,
+        distillery,
         proof,
-        notes,
+        isRare,
         killed: false,
-        favorite: false,
         order: Date.now()
+      }).then(() => {
+        document.getElementById("entryForm").reset();
+        loadBottles();
       });
-
-      document.getElementById("distillery").value = "";
-      document.getElementById("name").value = "";
-      document.getElementById("proof").value = "";
-      document.getElementById("notes").value = "";
-
-      loadBottles();
     }
 
-    async function loadBottles() {
-      bottleList.innerHTML = "";
-      const snapshot = await db.collection("bottles").orderBy("order").get();
-      snapshot.forEach(doc => renderBottle(doc));
-    }
+    function loadBottles() {
+      db.collection("bottles").orderBy("order").get().then(snapshot => {
+        const list = document.getElementById("bottleList");
+        list.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const div = document.createElement("div");
+          div.className = "bottle-entry";
+          div.setAttribute("data-id", doc.id);
+          div.innerHTML = `
+            <div class="drag-handle">☰</div>
+            <span><strong>${data.name}</strong></span>
+            <span>${data.distillery}</span>
+            <span>${data.proof}</span>
+            <span>${data.isRare ? "🦄" : ""}</span>
+            <label><input type="checkbox" ${data.killed ? "checked" : ""} onchange="toggleKilled('${doc.id}', this.checked)"> 💀</label>
+            <span class="edit-icon" onclick="editBottle('${doc.id}')">✏️</span>
+          `;
+          list.appendChild(div);
+        });
 
-    function renderBottle(doc) {
-      const data = doc.data();
-      const div = document.createElement("div");
-      div.className = `bottle-row${data.killed ? " killed" : ""}`;
-      div.setAttribute("data-id", doc.id);
-
-      div.innerHTML = `
-        <span class="drag-handle">☰</span>
-        <span contenteditable="false" class="cell distillery">${data.distillery}</span>
-        <span contenteditable="false" class="cell name">${data.name}</span>
-        <span contenteditable="false" class="cell proof">${data.proof}</span>
-        <span contenteditable="false" class="cell notes">${data.notes}</span>
-        <button onclick="toggleKilled('${doc.id}', ${!data.killed})">💀</button>
-        <span class="favorite ${data.favorite ? 'active' : ''}" onclick="toggleFavorite('${doc.id}', ${!data.favorite})">★</span>
-        <span class="edit-icon" onclick="enableEdit(this)">✏️</span>
-      `;
-
-      bottleList.appendChild(div);
-    }
-
-    async function toggleKilled(id, value) {
-      await db.collection("bottles").doc(id).update({ killed: value });
-      loadBottles();
-    }
-
-    async function toggleFavorite(id, value) {
-      await db.collection("bottles").doc(id).update({ favorite: value });
-      loadBottles();
-    }
-
-    function enableEdit(icon) {
-      const row = icon.closest(".bottle-row");
-      row.querySelectorAll(".cell").forEach(cell => {
-        cell.contentEditable = true;
-        cell.style.borderBottom = "1px dotted #444";
-        cell.addEventListener("blur", () => saveEdits(row));
-        cell.addEventListener("keypress", e => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            cell.blur();
+        new Sortable(list, {
+          handle: '.drag-handle',
+          animation: 150,
+          onEnd: () => {
+            const children = list.children;
+            for (let i = 0; i < children.length; i++) {
+              const id = children[i].getAttribute("data-id");
+              db.collection("bottles").doc(id).update({ order: i });
+            }
           }
         });
       });
     }
 
-    async function saveEdits(row) {
-      const id = row.getAttribute("data-id");
-      const distillery = row.querySelector(".distillery").textContent.trim();
-      const name = row.querySelector(".name").textContent.trim();
-      const proof = row.querySelector(".proof").textContent.trim();
-      const notes = row.querySelector(".notes").textContent.trim();
-
-      await db.collection("bottles").doc(id).update({ distillery, name, proof, notes });
-
-      row.querySelectorAll(".cell").forEach(cell => {
-        cell.contentEditable = false;
-        cell.style.borderBottom = "none";
-      });
+    function toggleKilled(id, state) {
+      db.collection("bottles").doc(id).update({ killed: state });
     }
 
-    new Sortable(bottleList, {
-      handle: ".drag-handle",
-      animation: 150,
-      onEnd: async () => {
-        const ids = [...bottleList.children].map((el, index) => ({
-          id: el.getAttribute("data-id"),
-          order: index
-        }));
-        const batch = db.batch();
-        ids.forEach(entry => {
-          const ref = db.collection("bottles").doc(entry.id);
-          batch.update(ref, { order: entry.order });
-        });
-        await batch.commit();
-      }
-    });
+    function editBottle(id) {
+      alert("Edit feature coming soon!");
+    }
 
     loadBottles();
   </script>
