@@ -37,18 +37,17 @@
     }
 
     .bottle-row {
-      position: relative;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #fffef0;
-      color: #000;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-      font-family: 'Courier New', monospace;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fffef0;
+  color: #000;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  font-family: 'Courier New', monospace;
     }
 
     .bottle-row.killed {
@@ -56,11 +55,60 @@
       text-decoration: line-through;
     }
 
-    .bottle-info {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      flex: 1;
+    ..bottle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fffef0;
+  color: #000;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  font-family: 'Courier New', monospace;
+}
+
+.bottle-row.killed {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+.bottle-info {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.bottle-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.favorite-toggle {
+  font-size: 1.5em;
+  cursor: pointer;
+  color: gold;
+}
+
+.favorite-toggle.inactive {
+  color: #ccc;
+}
+
+.toggle-switch {
+  cursor: pointer;
+}
+
+.edit-icon {
+  cursor: pointer;
+  font-size: 1em;
+}
+
     }
 
     .drag-handle {
@@ -170,8 +218,8 @@
       div.setAttribute('data-favorite', data.favorite || false);
       div.setAttribute('data-killed', data.killed || false);
       div.setAttribute('data-shelf', (data.shelf || '').toLowerCase());
-
-      div.innerHTML = `
+      
+div.innerHTML = `
         <span class="drag-handle">☰</span>
         <div class="bottle-info">
           <span>${data.name}</span>
@@ -186,7 +234,8 @@
         </label>
         <span class="edit-icon" onclick="editBottle('${doc.id}')">✏️</span>
       `;
-      bottleList.appendChild(div);
+      bottleList.appendChild(div)
+      ;
     }
 
     function fetchAndRender() {
