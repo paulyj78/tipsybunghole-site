@@ -48,6 +48,7 @@
       border: 1px solid #ccc;
       box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
       font-family: 'Courier New', monospace;
+      position: relative;
     }
 
     .bottle-row.killed {
@@ -75,7 +76,7 @@
       font-size: 1.5em;
       cursor: pointer;
       color: gold;
-      margin-left: 10px;
+      user-select: none;
     }
 
     .favorite-toggle.inactive {
@@ -84,17 +85,20 @@
 
     .toggle-switch {
       cursor: pointer;
+      user-select: none;
     }
 
     .edit-icon {
       margin-left: 10px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 1.2em;
+      user-select: none;
     }
 
     .drag-handle {
       cursor: grab;
       margin-right: 10px;
+      user-select: none;
     }
 
     button {
@@ -104,6 +108,20 @@
       border-radius: 4px;
       cursor: pointer;
       font-weight: bold;
+      user-select: none;
+    }
+
+    input.edit-name,
+    input.edit-distillery,
+    input.edit-proof,
+    input.edit-shelf {
+      font-family: 'Courier New', monospace;
+      font-size: 1em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      width: auto;
+      min-width: 60px;
     }
   </style>
 </head>
@@ -132,10 +150,10 @@
   </div>
 
   <div id="bottleForm">
-    <input type="text" id="nameInput" placeholder="Bottle Name" />
-    <input type="text" id="distilleryInput" placeholder="Distillery" />
-    <input type="text" id="proofInput" placeholder="Proof" />
-    <input type="text" id="shelfInput" placeholder="Shelf#" />
+    <input type="text" id="nameInput" placeholder="Bottle Name">
+    <input type="text" id="distilleryInput" placeholder="Distillery">
+    <input type="text" id="proofInput" placeholder="Proof">
+    <input type="text" id="shelfInput" placeholder="Shelf#">
     <button onclick="addBottle()">Add Bottle</button>
   </div>
 
@@ -176,7 +194,7 @@
       div.setAttribute('data-favorite', data.favorite || false);
       div.setAttribute('data-killed', data.killed || false);
       div.setAttribute('data-shelf', (data.shelf || '').toLowerCase());
-
+      
       div.innerHTML = `
         <span class="drag-handle">☰</span>
         <div class="bottle-info">
@@ -262,47 +280,176 @@
     }
 
     function editBottle(id) {
-      alert("Editing not yet implemented.");
+      const row = bottleList.querySelector(`[data-id="${id}"]`);
+      if (!row) return;
+
+      // Prevent multiple edits
+      if (row.classList.contains('editing')) return;
+
+      row.classList.add('editing');
+
+      // Grab current data from row elements
+      const data = {
+        name: row.querySelector('.bottle-info > span:nth-child(1)').textContent,
+        distillery: row.querySelector('.bottle-info > span:nth-child(2)').textContent,
+        proof: row.querySelector('.bottle-info > span:nth-child(3)').textContent,
+        shelf: row.querySelector('.bottle-info > span:nth-child(4)').textContent.replace('Shelf: ', ''),
+      };
+
+      // Replace info display with inputs
+      row.querySelector('.bottle-info').innerHTML = `
+        <input type="text" class="edit-name" value="${data.name}" style="width: 120px; margin-right: 5px;">
+        <input type="text" class="edit-distillery" value="${data.distillery}" style="width: 120px; margin-right: 5px;">
+        <input type="text" class="edit-proof" value="${data.proof}" style="width: 60px; margin-right: 5px;">
+        <input type="text" class="edit-shelf" value="${data.shelf}" style="width: 60px;">
+      `;
+
+      // Replace controls with Save and Cancel buttons
+      const controls = row.querySelector('.bottle-controls');
+      controls.innerHTML = `
+        <button class="save-btn">💾 Save</button>
+        <button class="cancel-btn">❌ Cancel</button>
+      `;
+
+      controls.querySelector('.save-btn').onclick = () => saveEdit(id);
+      controls.querySelector('.cancel-btn').onclick = () => cancelEdit(id);
     }
 
+    function saveEdit(id) {
+      const row = bottleList.querySelector(`[data-id="${id}"]`);
+      if (!row) return;
+
+      // Get values from inputs
+      const name = row.querySelector('.edit-name').value.trim();
+      const distillery = row.querySelector('.edit-distillery').value.trim();
+      const proof = row.querySelector('.edit-proof').value.trim();
+      const shelf = row.querySelector('.edit-shelf').value.trim();
+
+      if (!name || !distillery) {
+        alert('Name and Distillery cannot be empty!');
+        return;
+      }
+
+      // Update Firestore
+      db.collection('bottles').doc(id).update({
+        name,
+        distillery,
+        proof,
+        shelf
+      }).then(() => {
+        row.classList.remove('editing');
+        // Re-render updated bottle row info
+        row.querySelector('.bottle-info').innerHTML = `
+          <span>${name}</span>
+          <span>${distillery}</span>
+          <span>${proof}</span>
+          <span>Shelf: ${shelf || 'N/A'}</span>
+        `;
+
+        // Restore bottle controls (favorite star, killed toggle, edit icon)
+        const dataFavorite = row.getAttribute('data-favorite') === 'true';
+        const dataKilled = row.getAttribute('data-killed') === 'true';
+
+        row.querySelector('.bottle-controls').innerHTML = `
+          <span class="favorite-toggle ${dataFavorite ? '' : 'inactive'}" onclick="toggleFavorite('${id}', this)">★</span>
+          <label class="toggle-switch">
+            <input type="checkbox" onchange="toggleKilled('${id}', this.checked)" ${dataKilled ? 'checked' : ''}>
+            🪦
+          </label>
+          <span class="edit-icon" onclick="editBottle('${id}')">✏️</span>
+        `;
+
+        // Update data attributes for filtering
+        row.setAttribute('data-name', name.toLowerCase());
+        row.setAttribute('data-distillery', distillery.toLowerCase());
+        row.setAttribute('data-shelf', shelf.toLowerCase());
+      }).catch(err => {
+        alert('Failed to save changes: ' + err.message);
+      });
+    }
+
+    function cancelEdit(id) {
+      const row = bottleList.querySelector(`[data-id="${id}"]`);
+      if (!row) return;
+
+      row.classList.remove('editing');
+
+      // Get original data from Firestore again to restore
+      db.collection('bottles').doc(id).get().then(doc => {
+        if (!doc.exists) return;
+        const data = doc.data();
+
+        row.querySelector('.bottle-info').innerHTML = `
+          <span>${data.name}</span>
+          <span>${data.distillery}</span>
+          <span>${data.proof}</span>
+          <span>Shelf: ${data.shelf || 'N/A'}</span>
+        `;
+
+        row.querySelector('.bottle-controls').innerHTML = `
+          <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" onclick="toggleFavorite('${id}', this)">★</span>
+          <label class="toggle-switch">
+            <input type="checkbox" onchange="toggleKilled('${id}', this.checked)" ${data.killed ? 'checked' : ''}>
+            🪦
+          </label>
+          <span class="edit-icon" onclick="editBottle('${id}')">✏️</span>
+        `;
+
+        // Restore data attributes for filtering
+        row.setAttribute('data-name', (data.name || '').toLowerCase());
+        row.setAttribute('data-distillery', (data.distillery || '').toLowerCase());
+        row.setAttribute('data-favorite', data.favorite || false);
+        row.setAttribute('data-killed', data.killed || false);
+        row.setAttribute('data-shelf', (data.shelf || '').toLowerCase());
+      });
+    }
+
+    function applyFilters() {
+      const searchText = searchBar.value.toLowerCase();
+      const distilleryVal = distilleryFilter.value.toLowerCase();
+      const favoriteVal = favoriteFilter.value;
+      const killedVal = killedFilter.value;
+      const shelfVal = shelfFilter.value.toLowerCase();
+
+      Array.from(bottleList.children).forEach(row => {
+        const name = row.getAttribute('data-name');
+        const distillery = row.getAttribute('data-distillery');
+        const favorite = row.getAttribute('data-favorite');
+        const killed = row.getAttribute('data-killed');
+        const shelf = row.getAttribute('data-shelf');
+
+        const matchesSearch = name.includes(searchText) || distillery.includes(searchText);
+        const matchesDistillery = !distilleryVal || distillery === distilleryVal;
+        const matchesFavorite = favoriteVal === '' || favorite === favoriteVal;
+        const matchesKilled = killedVal === '' || killed === killedVal;
+        const matchesShelf = !shelfVal || shelf === shelfVal;
+
+        if (matchesSearch && matchesDistillery && matchesFavorite && matchesKilled && matchesShelf) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    // Event Listeners for filters/search
+    searchBar.addEventListener('input', applyFilters);
+    distilleryFilter.addEventListener('change', applyFilters);
+    favoriteFilter.addEventListener('change', applyFilters);
+    killedFilter.addEventListener('change', applyFilters);
+    shelfFilter.addEventListener('change', applyFilters);
+
+    // Initialize Sortable
     new Sortable(bottleList, {
       handle: '.drag-handle',
       animation: 150,
-      onEnd: () => {
-        [...bottleList.children].forEach((el, index) => {
-          db.collection('bottles').doc(el.dataset.id).update({ order: index });
+      onEnd: function(evt) {
+        Array.from(bottleList.children).forEach((child, index) => {
+          const id = child.getAttribute('data-id');
+          db.collection('bottles').doc(id).update({ order: index });
         });
       }
     });
-
-    [searchBar, distilleryFilter, favoriteFilter, killedFilter, shelfFilter].forEach(el => {
-      el.addEventListener('input', applyFilters);
-    });
-
-    function applyFilters() {
-      const search = searchBar.value.toLowerCase();
-      const dist = distilleryFilter.value.toLowerCase();
-      const fav = favoriteFilter.value;
-      const kill = killedFilter.value;
-      const shelf = shelfFilter.value.toLowerCase();
-
-      [...bottleList.children].forEach(row => {
-        const name = row.dataset.name;
-        const distillery = row.dataset.distillery;
-        const favorite = row.dataset.favorite === 'true';
-        const killed = row.dataset.killed === 'true';
-        const shelfNum = row.dataset.shelf;
-
-        let show = true;
-        if (search && !name.includes(search) && !distillery.includes(search)) show = false;
-        if (dist && distillery !== dist) show = false;
-        if (fav && String(favorite) !== fav) show = false;
-        if (kill && String(killed) !== kill) show = false;
-        if (shelf && shelfNum !== shelf) show = false;
-
-        row.style.display = show ? 'flex' : 'none';
-      });
-    }
 
     fetchAndRender();
   </script>
