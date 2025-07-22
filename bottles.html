@@ -199,7 +199,7 @@
       div.innerHTML = `
         <span class="drag-handle">☰</span>
         <div class="bottle-info">
-          <span>${data.name}</span>
+         <span>${data.name}</span>
           <span>Distillery: ${data.distillery}</span>
           <span>Proof: ${data.proof}</span>
           <span>Shelf: ${data.shelf || 'N/A'}</span>
@@ -381,8 +381,8 @@
         const data = doc.data();
 
         row.querySelector('.bottle-info').innerHTML = `
-          <span>${data.name}</span> 
-          <span>Distillerym ${data.distillery}</span>
+          span>${data.name}</span> 
+          <span>Distillery ${data.distillery}</span>
           <span>Proof: ${data.proof}</span>
           <span>Shelf: ${data.shelf || 'N/A'}</span>
         `;
