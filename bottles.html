@@ -16,7 +16,7 @@
     h1 {
       font-size: 2em;
       margin-bottom: 20px;
-      color: #000
+      color: #000;
     }
 
     #bottleForm {
@@ -64,6 +64,14 @@
       flex: 1;
       min-width: 0;
       overflow-wrap: break-word;
+    }
+
+    /* Bold labels */
+    .bottle-info span {
+      white-space: nowrap;
+    }
+    .bottle-info span.label {
+      font-weight: bold;
     }
 
     .bottle-controls {
@@ -151,10 +159,10 @@
   </div>
 
   <div id="bottleForm">
-    <input type="text" id="nameInput" placeholder="Bottle Name">
-    <input type="text" id="distilleryInput" placeholder="Distillery">
-    <input type="text" id="proofInput" placeholder="Proof">
-    <input type="text" id="shelfInput" placeholder="Shelf#">
+    <input type="text" id="nameInput" placeholder="Bottle Name" />
+    <input type="text" id="distilleryInput" placeholder="Distillery" />
+    <input type="text" id="proofInput" placeholder="Proof" />
+    <input type="text" id="shelfInput" placeholder="Shelf#" />
     <button onclick="addBottle()">Add Bottle</button>
   </div>
 
@@ -195,19 +203,19 @@
       div.setAttribute('data-favorite', data.favorite || false);
       div.setAttribute('data-killed', data.killed || false);
       div.setAttribute('data-shelf', (data.shelf || '').toLowerCase());
-      
+
       div.innerHTML = `
         <span class="drag-handle">☰</span>
         <div class="bottle-info">
-         <span>${data.name}</span>
-          <span>Distillery: ${data.distillery}</span>
-          <span>Proof: ${data.proof}</span>
-          <span>Shelf: ${data.shelf || 'N/A'}</span>
+          <span>${data.name}</span>
+          <span><span class="label">Distillery:</span> ${data.distillery}</span>
+          <span><span class="label">Proof:</span> ${data.proof}</span>
+          <span><span class="label">Shelf:</span> ${data.shelf || 'N/A'}</span>
         </div>
         <div class="bottle-controls">
           <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" onclick="toggleFavorite('${doc.id}', this)">★</span>
           <label class="toggle-switch">
-            <input type="checkbox" onchange="toggleKilled('${doc.id}', this.checked)" ${data.killed ? 'checked' : ''}>
+            <input type="checkbox" onchange="toggleKilled('${doc.id}', this.checked)" ${data.killed ? 'checked' : ''} />
             🪦
           </label>
           <span class="edit-icon" onclick="editBottle('${doc.id}')">✏️</span>
@@ -284,28 +292,24 @@
       const row = bottleList.querySelector(`[data-id="${id}"]`);
       if (!row) return;
 
-      // Prevent multiple edits
       if (row.classList.contains('editing')) return;
 
       row.classList.add('editing');
 
-      // Grab current data from row elements
       const data = {
         name: row.querySelector('.bottle-info > span:nth-child(1)').textContent,
-        distillery: row.querySelector('.bottle-info > span:nth-child(2)').textContent,
-        proof: row.querySelector('.bottle-info > span:nth-child(3)').textContent,
+        distillery: row.querySelector('.bottle-info > span:nth-child(2)').textContent.replace('Distillery: ', ''),
+        proof: row.querySelector('.bottle-info > span:nth-child(3)').textContent.replace('Proof: ', ''),
         shelf: row.querySelector('.bottle-info > span:nth-child(4)').textContent.replace('Shelf: ', ''),
       };
 
-      // Replace info display with inputs
       row.querySelector('.bottle-info').innerHTML = `
-        <input type="text" class="edit-name" value="${data.name}" style="width: 120px; margin-right: 5px;">
-        <input type="text" class="edit-distillery" value="${data.distillery}" style="width: 120px; margin-right: 5px;">
-        <input type="text" class="edit-proof" value="${data.proof}" style="width: 60px; margin-right: 5px;">
-        <input type="text" class="edit-shelf" value="${data.shelf}" style="width: 60px;">
+        <input type="text" class="edit-name" value="${data.name}" style="width: 120px; margin-right: 5px;" />
+        <input type="text" class="edit-distillery" value="${data.distillery}" style="width: 120px; margin-right: 5px;" />
+        <input type="text" class="edit-proof" value="${data.proof}" style="width: 60px; margin-right: 5px;" />
+        <input type="text" class="edit-shelf" value="${data.shelf}" style="width: 60px;" />
       `;
 
-      // Replace controls with Save and Cancel buttons
       const controls = row.querySelector('.bottle-controls');
       controls.innerHTML = `
         <button class="save-btn">💾 Save</button>
@@ -320,7 +324,6 @@
       const row = bottleList.querySelector(`[data-id="${id}"]`);
       if (!row) return;
 
-      // Get values from inputs
       const name = row.querySelector('.edit-name').value.trim();
       const distillery = row.querySelector('.edit-distillery').value.trim();
       const proof = row.querySelector('.edit-proof').value.trim();
@@ -331,7 +334,6 @@
         return;
       }
 
-      // Update Firestore
       db.collection('bottles').doc(id).update({
         name,
         distillery,
@@ -339,120 +341,27 @@
         shelf
       }).then(() => {
         row.classList.remove('editing');
-        // Re-render updated bottle row info
         row.querySelector('.bottle-info').innerHTML = `
           <span>${name}</span>
-          <span>Distillery: ${distillery}</span>
-          <span>Proof: ${proof}</span>
-          <span>Shelf: ${shelf || 'N/A'}</span>
+          <span><span class="label">Distillery:</span> ${distillery}</span>
+          <span><span class="label">Proof:</span> ${proof}</span>
+          <span><span class="label">Shelf:</span> ${shelf || 'N/A'}</span>
         `;
 
-        // Restore bottle controls (favorite star, killed toggle, edit icon)
         const dataFavorite = row.getAttribute('data-favorite') === 'true';
         const dataKilled = row.getAttribute('data-killed') === 'true';
 
         row.querySelector('.bottle-controls').innerHTML = `
           <span class="favorite-toggle ${dataFavorite ? '' : 'inactive'}" onclick="toggleFavorite('${id}', this)">★</span>
           <label class="toggle-switch">
-            <input type="checkbox" onchange="toggleKilled('${id}', this.checked)" ${dataKilled ? 'checked' : ''}>
+            <input type="checkbox" onchange="toggleKilled('${id}', this.checked)" ${dataKilled ? 'checked' : ''} />
             🪦
           </label>
           <span class="edit-icon" onclick="editBottle('${id}')">✏️</span>
         `;
 
-        // Update data attributes for filtering
         row.setAttribute('data-name', name.toLowerCase());
         row.setAttribute('data-distillery', distillery.toLowerCase());
         row.setAttribute('data-shelf', shelf.toLowerCase());
       }).catch(err => {
-        alert('Failed to save changes: ' + err.message);
-      });
-    }
-
-    function cancelEdit(id) {
-      const row = bottleList.querySelector(`[data-id="${id}"]`);
-      if (!row) return;
-
-      row.classList.remove('editing');
-
-      // Get original data from Firestore again to restore
-      db.collection('bottles').doc(id).get().then(doc => {
-        if (!doc.exists) return;
-        const data = doc.data();
-
-        row.querySelector('.bottle-info').innerHTML = `
-          span>${data.name}</span> 
-          <span>Distillery ${data.distillery}</span>
-          <span>Proof: ${data.proof}</span>
-          <span>Shelf: ${data.shelf || 'N/A'}</span>
-        `;
-
-        row.querySelector('.bottle-controls').innerHTML = `
-          <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" onclick="toggleFavorite('${id}', this)">★</span>
-          <label class="toggle-switch">
-            <input type="checkbox" onchange="toggleKilled('${id}', this.checked)" ${data.killed ? 'checked' : ''}>
-            🪦
-          </label>
-          <span class="edit-icon" onclick="editBottle('${id}')">✏️</span>
-        `;
-
-        // Restore data attributes for filtering
-        row.setAttribute('data-name', (data.name || '').toLowerCase());
-        row.setAttribute('data-distillery', (data.distillery || '').toLowerCase());
-        row.setAttribute('data-favorite', data.favorite || false);
-        row.setAttribute('data-killed', data.killed || false);
-        row.setAttribute('data-shelf', (data.shelf || '').toLowerCase());
-      });
-    }
-
-    function applyFilters() {
-      const searchText = searchBar.value.toLowerCase();
-      const distilleryVal = distilleryFilter.value.toLowerCase();
-      const favoriteVal = favoriteFilter.value;
-      const killedVal = killedFilter.value;
-      const shelfVal = shelfFilter.value.toLowerCase();
-
-      Array.from(bottleList.children).forEach(row => {
-        const name = row.getAttribute('data-name');
-        const distillery = row.getAttribute('data-distillery');
-        const favorite = row.getAttribute('data-favorite');
-        const killed = row.getAttribute('data-killed');
-        const shelf = row.getAttribute('data-shelf');
-
-        const matchesSearch = name.includes(searchText) || distillery.includes(searchText);
-        const matchesDistillery = !distilleryVal || distillery === distilleryVal;
-        const matchesFavorite = favoriteVal === '' || favorite === favoriteVal;
-        const matchesKilled = killedVal === '' || killed === killedVal;
-        const matchesShelf = !shelfVal || shelf === shelfVal;
-
-        if (matchesSearch && matchesDistillery && matchesFavorite && matchesKilled && matchesShelf) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
-      });
-    }
-
-    // Event Listeners for filters/search
-    searchBar.addEventListener('input', applyFilters);
-    distilleryFilter.addEventListener('change', applyFilters);
-    favoriteFilter.addEventListener('change', applyFilters);
-    killedFilter.addEventListener('change', applyFilters);
-    shelfFilter.addEventListener('change', applyFilters);
-
-    // Initialize Sortable
-    new Sortable(bottleList, {
-      handle: '.drag-handle',
-      animation: 150,
-      onEnd: function(evt) {
-        Array.from(bottleList.children).forEach((child, index) => {
-          const id = child.getAttribute('data-id');
-          db.collection('bottles').doc(id).update({ order: index });
-        });
-      }
-    });
-
-    fetchAndRender();
-  </script>
-</body>
-</html>
+        alert('Failed to save changes: ' + err
