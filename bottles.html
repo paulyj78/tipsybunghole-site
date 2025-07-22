@@ -200,8 +200,8 @@
         <span class="drag-handle">☰</span>
         <div class="bottle-info">
           <span>${data.name}</span>
-          <span>${data.distillery}</span>
-          <span>${data.proof}</span>
+          <span>Distillery: ${data.distillery}</span>
+          <span>Proof: ${data.proof}</span>
           <span>Shelf: ${data.shelf || 'N/A'}</span>
         </div>
         <div class="bottle-controls">
@@ -342,8 +342,8 @@
         // Re-render updated bottle row info
         row.querySelector('.bottle-info').innerHTML = `
           <span>${name}</span>
-          <span>${distillery}</span>
-          <span>${proof}</span>
+          <span>Distillery: ${distillery}</span>
+          <span>Proof: ${proof}</span>
           <span>Shelf: ${shelf || 'N/A'}</span>
         `;
 
@@ -381,9 +381,9 @@
         const data = doc.data();
 
         row.querySelector('.bottle-info').innerHTML = `
-          <span>${data.name}</span>
-          <span>${data.distillery}</span>
-          <span>${data.proof}</span>
+          <span>${data.name}</span> 
+          <span>Distillerym ${data.distillery}</span>
+          <span>Proof: ${data.proof}</span>
           <span>Shelf: ${data.shelf || 'N/A'}</span>
         `;
 
