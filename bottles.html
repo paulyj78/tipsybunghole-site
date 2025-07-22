@@ -1,367 +1,351 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The Tipsy Bunghole Bottles</title>
-  <style>
-    body {
-      background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
-      background-size: cover;
-      font-family: 'Courier New', monospace;
-      color: #fff;
-      padding: 20px;
-    }
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <title>The Tipsy Bunghole Bottles</title>
+ <style>
+   body {
+     background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
+     background-size: cover;
+     font-family: 'Courier New', monospace;
+     color: #fff;
+     padding: 20px;
+   }
 
-    h1 {
-      font-size: 2em;
-      margin-bottom: 20px;
-      color: #000;
-    }
+   h1 {
+     font-size: 2em;
+     margin-bottom: 20px;
+   }
 
-    #bottleForm {
-      background: rgba(255, 255, 255, 0.1);
-      border: 2px dashed #ffb347;
-      padding: 10px;
-      margin-bottom: 20px;
-      border-radius: 10px;
-    }
+   #bottleForm {
+     background: rgba(255, 255, 255, 0.1);
+     border: 2px dashed #ffb347;
+     padding: 10px;
+     margin-bottom: 20px;
+     border-radius: 10px;
+   }
 
-    .filter-container {
-      margin-bottom: 20px;
-    }
+   .filter-container {
+     margin-bottom: 20px;
+   }
 
-    .filter-container input,
-    .filter-container select {
-      margin-right: 10px;
-      padding: 5px;
-    }
+   .filter-container input,
+   .filter-container select {
+     margin-right: 10px;
+     padding: 5px;
+   }
 
-    .bottle-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #fffef0;
-      color: #000;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-      font-family: 'Courier New', monospace;
-      position: relative;
-    }
+   .bottle-row {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ background: #fffef0;
+ color: #000;
+ padding: 10px;
+ margin: 8px 0;
+ border-radius: 6px;
+ border: 1px solid #ccc;
+ box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+ font-family: 'Courier New', monospace;
+   }
 
-    .bottle-row.killed {
-      opacity: 0.4;
-      text-decoration: line-through;
-    }
+   .bottle-row.killed {
+     opacity: 0.4;
+     text-decoration: line-through;
+   }
 
-    .bottle-info {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      flex: 1;
-      min-width: 0;
-      overflow-wrap: break-word;
-    }
+   ..bottle-row {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ background: #fffef0;
+ color: #000;
+ padding: 10px;
+ margin: 8px 0;
+ border-radius: 6px;
+ border: 1px solid #ccc;
+ box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+ font-family: 'Courier New', monospace;
+}
 
-    /* Bold labels */
-    .bottle-info span {
-      white-space: nowrap;
-    }
-    .bottle-info span.label {
-      font-weight: bold;
-    }
+.bottle-row.killed {
+ opacity: 0.4;
+ text-decoration: line-through;
+}
 
-    .bottle-controls {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-    }
+.bottle-info {
+ display: flex;
+ gap: 20px;
+ flex-wrap: wrap;
+ flex: 1;
+ min-width: 0;
+ overflow-wrap: break-word;
+}
 
-    .favorite-toggle {
-      font-size: 1.5em;
-      cursor: pointer;
-      color: gold;
-      user-select: none;
-    }
+.bottle-controls {
+ display: flex;
+ align-items: center;
+ gap: 10px;
+ flex-shrink: 0;
+}
 
-    .favorite-toggle.inactive {
-      color: #ccc;
-    }
+.favorite-toggle {
+ font-size: 1.5em;
+ cursor: pointer;
+ color: gold;
+}
 
-    .toggle-switch {
-      cursor: pointer;
-      user-select: none;
-    }
+.favorite-toggle.inactive {
+ color: #ccc;
+}
 
-    .edit-icon {
-      margin-left: 10px;
-      cursor: pointer;
-      font-size: 1.2em;
-      user-select: none;
-    }
+.toggle-switch {
+ cursor: pointer;
+}
 
-    .drag-handle {
-      cursor: grab;
-      margin-right: 10px;
-      user-select: none;
-    }
+.edit-icon {
+ cursor: pointer;
+ font-size: 1em;
+}
 
-    button {
-      background-color: #ffb347;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-      user-select: none;
-    }
+   }
 
-    input.edit-name,
-    input.edit-distillery,
-    input.edit-proof,
-    input.edit-shelf {
-      font-family: 'Courier New', monospace;
-      font-size: 1em;
-      padding: 2px 6px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      width: auto;
-      min-width: 60px;
-    }
-  </style>
+   .drag-handle {
+     cursor: grab;
+     margin-right: 10px;
+   }
+
+   .favorite-toggle {
+     position: absolute;
+     top: 8px;
+     right: 10px;
+     font-size: 1.5em;
+     cursor: pointer;
+     color: gold;
+   }
+
+   .favorite-toggle.inactive {
+     color: #ccc;
+   }
+
+   .toggle-switch {
+     cursor: pointer;
+   }
+
+   .edit-icon {
+     margin-left: 10px;
+     cursor: pointer;
+     font-size: 14px;
+   }
+
+   button {
+     background-color: #ffb347;
+     border: none;
+     padding: 8px 12px;
+     border-radius: 4px;
+     cursor: pointer;
+     font-weight: bold;
+   }
+ </style>
 </head>
 <body>
 
-  <h1>📦 The Tipsy Bunghole Bottle Inventory</h1>
+ <h1>📦 The Tipsy Bunghole Bottle Inventory</h1>
 
-  <div class="filter-container">
-    <input type="text" id="searchBar" placeholder="Search..." />
-    <select id="filterDistillery">
-      <option value="">All Distilleries</option>
-    </select>
-    <select id="filterFavorite">
-      <option value="">All</option>
-      <option value="true">Favorites</option>
-      <option value="false">Non-Favorites</option>
-    </select>
-    <select id="filterKilled">
-      <option value="">All</option>
-      <option value="true">Killed</option>
-      <option value="false">Alive</option>
-    </select>
-    <select id="filterShelf">
-      <option value="">All Shelves</option>
-    </select>
-  </div>
+ <div class="filter-container">
+   <input type="text" id="searchBar" placeholder="Search..." />
+   <select id="filterDistillery">
+     <option value="">All Distilleries</option>
+   </select>
+   <select id="filterFavorite">
+     <option value="">All</option>
+     <option value="true">Favorites</option>
+     <option value="false">Non-Favorites</option>
+   </select>
+   <select id="filterKilled">
+     <option value="">All</option>
+     <option value="true">Killed</option>
+     <option value="false">Alive</option>
+   </select>
+   <select id="filterShelf">
+     <option value="">All Shelves</option>
+   </select>
+ </div>
 
-  <div id="bottleForm">
-    <input type="text" id="nameInput" placeholder="Bottle Name" />
-    <input type="text" id="distilleryInput" placeholder="Distillery" />
-    <input type="text" id="proofInput" placeholder="Proof" />
-    <input type="text" id="shelfInput" placeholder="Shelf#" />
-    <button onclick="addBottle()">Add Bottle</button>
-  </div>
+ <div id="bottleForm">
+   <input type="text" id="nameInput" placeholder="Bottle Name">
+   <input type="text" id="distilleryInput" placeholder="Distillery">
+   <input type="text" id="proofInput" placeholder="Proof">
+   <input type="text" id="shelfInput" placeholder="Shelf#">
+   <button onclick="addBottle()">Add Bottle</button>
+ </div>
 
-  <div id="bottleList"></div>
+ <div id="bottleList"></div>
 
-  <!-- Firebase & Sortable -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+ <!-- Firebase & Sortable -->
+ <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+ <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
-      authDomain: "tipsy-bunghole-photos.firebaseapp.com",
-      projectId: "tipsy-bunghole-photos",
-      storageBucket: "tipsy-bunghole-photos.appspot.com",
-      messagingSenderId: "183586489596",
-      appId: "1:183586489596:web:3f7dd0d0f9ae30c9e059f2"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+ <script>
+   const firebaseConfig = {
+     apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
+     authDomain: "tipsy-bunghole-photos.firebaseapp.com",
+     projectId: "tipsy-bunghole-photos",
+     storageBucket: "tipsy-bunghole-photos.appspot.com",
+     messagingSenderId: "183586489596",
+     appId: "1:183586489596:web:3f7dd0d0f9ae30c9e059f2"
+   };
+   firebase.initializeApp(firebaseConfig);
+   const db = firebase.firestore();
 
-    const bottleList = document.getElementById('bottleList');
-    const distilleryFilter = document.getElementById('filterDistillery');
-    const favoriteFilter = document.getElementById('filterFavorite');
-    const killedFilter = document.getElementById('filterKilled');
-    const shelfFilter = document.getElementById('filterShelf');
-    const searchBar = document.getElementById('searchBar');
+   const bottleList = document.getElementById('bottleList');
+   const distilleryFilter = document.getElementById('filterDistillery');
+   const favoriteFilter = document.getElementById('filterFavorite');
+   const killedFilter = document.getElementById('filterKilled');
+   const shelfFilter = document.getElementById('filterShelf');
+   const searchBar = document.getElementById('searchBar');
 
-    function renderBottle(doc) {
-      const data = doc.data();
-      const div = document.createElement('div');
-      div.className = 'bottle-row';
-      if (data.killed) div.classList.add('killed');
-      div.setAttribute('data-id', doc.id);
-      div.setAttribute('data-name', (data.name || '').toLowerCase());
-      div.setAttribute('data-distillery', (data.distillery || '').toLowerCase());
-      div.setAttribute('data-favorite', data.favorite || false);
-      div.setAttribute('data-killed', data.killed || false);
-      div.setAttribute('data-shelf', (data.shelf || '').toLowerCase());
+   function renderBottle(doc) {
+     const data = doc.data();
+     const div = document.createElement('div');
+     div.className = 'bottle-row';
+     if (data.killed) div.classList.add('killed');
+     div.setAttribute('data-id', doc.id);
+     div.setAttribute('data-name', (data.name || '').toLowerCase());
+     div.setAttribute('data-distillery', (data.distillery || '').toLowerCase());
+     div.setAttribute('data-favorite', data.favorite || false);
+     div.setAttribute('data-killed', data.killed || false);
+     div.setAttribute('data-shelf', (data.shelf || '').toLowerCase());
 
-      div.innerHTML = `
-        <span class="drag-handle">☰</span>
-        <div class="bottle-info">
-          <span>${data.name}</span>
-          <span><span class="label">Distillery:</span> ${data.distillery}</span>
-          <span><span class="label">Proof:</span> ${data.proof}</span>
-          <span><span class="label">Shelf:</span> ${data.shelf || 'N/A'}</span>
-        </div>
-        <div class="bottle-controls">
-          <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" onclick="toggleFavorite('${doc.id}', this)">★</span>
-          <label class="toggle-switch">
-            <input type="checkbox" onchange="toggleKilled('${doc.id}', this.checked)" ${data.killed ? 'checked' : ''} />
-            🪦
-          </label>
-          <span class="edit-icon" onclick="editBottle('${doc.id}')">✏️</span>
-        </div>
-      `;
-      bottleList.appendChild(div);
-    }
+div.innerHTML = `
+       <span class="drag-handle">☰</span>
+       <div class="bottle-info">
+         <span>${data.name}</span>
+         <span>${data.distillery}</span>
+         <span>${data.proof}</span>
+         <span>Shelf: ${data.shelf || 'N/A'}</span>
+       </div>
+       <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" onclick="toggleFavorite('${doc.id}', this)">★</span>
+       <label class="toggle-switch">
+         <input type="checkbox" onchange="toggleKilled('${doc.id}', this.checked)" ${data.killed ? 'checked' : ''}>
+         🪦
+       </label>
+       <span class="edit-icon" onclick="editBottle('${doc.id}')">✏️</span>
+     `;
+     bottleList.appendChild(div)
+     ;
+   }
 
-    function fetchAndRender() {
-      bottleList.innerHTML = '';
-      const distillerySet = new Set();
-      const shelfSet = new Set();
+   function fetchAndRender() {
+     bottleList.innerHTML = '';
+     const distillerySet = new Set();
+     const shelfSet = new Set();
 
-      db.collection('bottles').orderBy('order').get().then(snapshot => {
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          if (data.distillery) distillerySet.add(data.distillery);
-          if (data.shelf) shelfSet.add(data.shelf);
-          renderBottle(doc);
-        });
-        populateFilters(distillerySet, shelfSet);
-        applyFilters();
-      });
-    }
+     db.collection('bottles').orderBy('order').get().then(snapshot => {
+       snapshot.forEach(doc => {
+         const data = doc.data();
+         if (data.distillery) distillerySet.add(data.distillery);
+         if (data.shelf) shelfSet.add(data.shelf);
+         renderBottle(doc);
+       });
+       populateFilters(distillerySet, shelfSet);
+       applyFilters();
+     });
+   }
 
-    function populateFilters(distilleries, shelves) {
-      distilleryFilter.innerHTML = `<option value="">All Distilleries</option>`;
-      Array.from(distilleries).sort().forEach(d => {
-        distilleryFilter.innerHTML += `<option value="${d}">${d}</option>`;
-      });
+   function populateFilters(distilleries, shelves) {
+     distilleryFilter.innerHTML = `<option value="">All Distilleries</option>`;
+     Array.from(distilleries).sort().forEach(d => {
+       distilleryFilter.innerHTML += `<option value="${d}">${d}</option>`;
+     });
 
-      shelfFilter.innerHTML = `<option value="">All Shelves</option>`;
-      Array.from(shelves).sort().forEach(s => {
-        shelfFilter.innerHTML += `<option value="${s}">${s}</option>`;
-      });
-    }
+     shelfFilter.innerHTML = `<option value="">All Shelves</option>`;
+     Array.from(shelves).sort().forEach(s => {
+       shelfFilter.innerHTML += `<option value="${s}">${s}</option>`;
+     });
+   }
 
-    function addBottle() {
-      const name = document.getElementById('nameInput').value.trim();
-      const distillery = document.getElementById('distilleryInput').value.trim();
-      const proof = document.getElementById('proofInput').value.trim();
-      const shelf = document.getElementById('shelfInput').value.trim();
+   function addBottle() {
+     const name = document.getElementById('nameInput').value.trim();
+     const distillery = document.getElementById('distilleryInput').value.trim();
+     const proof = document.getElementById('proofInput').value.trim();
+     const shelf = document.getElementById('shelfInput').value.trim();
 
-      if (!name || !distillery) return;
+     if (!name || !distillery) return;
 
-      db.collection('bottles').add({
-        name, distillery, proof, shelf,
-        killed: false,
-        favorite: false,
-        order: Date.now()
-      }).then(() => {
-        document.getElementById('nameInput').value = '';
-        document.getElementById('distilleryInput').value = '';
-        document.getElementById('proofInput').value = '';
-        document.getElementById('shelfInput').value = '';
-        fetchAndRender();
-      });
-    }
+     db.collection('bottles').add({
+       name, distillery, proof, shelf,
+       killed: false,
+       favorite: false,
+       order: Date.now()
+     }).then(() => {
+       document.getElementById('nameInput').value = '';
+       document.getElementById('distilleryInput').value = '';
+       document.getElementById('proofInput').value = '';
+       document.getElementById('shelfInput').value = '';
+       fetchAndRender();
+     });
+   }
 
-    function toggleKilled(id, state) {
-      db.collection('bottles').doc(id).update({ killed: state }).then(fetchAndRender);
-    }
+   function toggleKilled(id, state) {
+     db.collection('bottles').doc(id).update({ killed: state }).then(fetchAndRender);
+   }
 
-    function toggleFavorite(id, el) {
-      const isActive = !el.classList.contains('inactive');
-      db.collection('bottles').doc(id).update({ favorite: !isActive }).then(() => {
-        el.classList.toggle('inactive', isActive);
-        el.parentElement.parentElement.setAttribute('data-favorite', String(!isActive));
-        applyFilters();
-      });
-    }
+   function toggleFavorite(id, el) {
+     const isActive = !el.classList.contains('inactive');
+     db.collection('bottles').doc(id).update({ favorite: !isActive }).then(() => {
+       el.classList.toggle('inactive', isActive);
+       el.parentElement.setAttribute('data-favorite', String(!isActive));
+       applyFilters();
+     });
+   }
 
-    function editBottle(id) {
-      const row = bottleList.querySelector(`[data-id="${id}"]`);
-      if (!row) return;
+   function editBottle(id) {
+     alert("Editing not yet implemented.");
+   }
 
-      if (row.classList.contains('editing')) return;
+   new Sortable(bottleList, {
+     handle: '.drag-handle',
+     animation: 150,
+     onEnd: () => {
+       [...bottleList.children].forEach((el, index) => {
+         db.collection('bottles').doc(el.dataset.id).update({ order: index });
+       });
+     }
+   });
 
-      row.classList.add('editing');
+   [searchBar, distilleryFilter, favoriteFilter, killedFilter, shelfFilter].forEach(el => {
+     el.addEventListener('input', applyFilters);
+   });
 
-      const data = {
-        name: row.querySelector('.bottle-info > span:nth-child(1)').textContent,
-        distillery: row.querySelector('.bottle-info > span:nth-child(2)').textContent.replace('Distillery: ', ''),
-        proof: row.querySelector('.bottle-info > span:nth-child(3)').textContent.replace('Proof: ', ''),
-        shelf: row.querySelector('.bottle-info > span:nth-child(4)').textContent.replace('Shelf: ', ''),
-      };
+   function applyFilters() {
+     const search = searchBar.value.toLowerCase();
+     const dist = distilleryFilter.value.toLowerCase();
+     const fav = favoriteFilter.value;
+     const kill = killedFilter.value;
+     const shelf = shelfFilter.value.toLowerCase();
 
-      row.querySelector('.bottle-info').innerHTML = `
-        <input type="text" class="edit-name" value="${data.name}" style="width: 120px; margin-right: 5px;" />
-        <input type="text" class="edit-distillery" value="${data.distillery}" style="width: 120px; margin-right: 5px;" />
-        <input type="text" class="edit-proof" value="${data.proof}" style="width: 60px; margin-right: 5px;" />
-        <input type="text" class="edit-shelf" value="${data.shelf}" style="width: 60px;" />
-      `;
+     [...bottleList.children].forEach(row => {
+       const name = row.dataset.name;
+       const distillery = row.dataset.distillery;
+       const favorite = row.dataset.favorite === 'true';
+       const killed = row.dataset.killed === 'true';
+       const shelfNum = row.dataset.shelf;
 
-      const controls = row.querySelector('.bottle-controls');
-      controls.innerHTML = `
-        <button class="save-btn">💾 Save</button>
-        <button class="cancel-btn">❌ Cancel</button>
-      `;
+       let show = true;
+       if (search && !name.includes(search) && !distillery.includes(search)) show = false;
+       if (dist && distillery !== dist) show = false;
+       if (fav && String(favorite) !== fav) show = false;
+       if (kill && String(killed) !== kill) show = false;
+       if (shelf && shelfNum !== shelf) show = false;
 
-      controls.querySelector('.save-btn').onclick = () => saveEdit(id);
-      controls.querySelector('.cancel-btn').onclick = () => cancelEdit(id);
-    }
+       row.style.display = show ? 'flex' : 'none';
+     });
+   }
 
-    function saveEdit(id) {
-      const row = bottleList.querySelector(`[data-id="${id}"]`);
-      if (!row) return;
-
-      const name = row.querySelector('.edit-name').value.trim();
-      const distillery = row.querySelector('.edit-distillery').value.trim();
-      const proof = row.querySelector('.edit-proof').value.trim();
-      const shelf = row.querySelector('.edit-shelf').value.trim();
-
-      if (!name || !distillery) {
-        alert('Name and Distillery cannot be empty!');
-        return;
-      }
-
-      db.collection('bottles').doc(id).update({
-        name,
-        distillery,
-        proof,
-        shelf
-      }).then(() => {
-        row.classList.remove('editing');
-        row.querySelector('.bottle-info').innerHTML = `
-          <span>${name}</span>
-          <span><span class="label">Distillery:</span> ${distillery}</span>
-          <span><span class="label">Proof:</span> ${proof}</span>
-          <span><span class="label">Shelf:</span> ${shelf || 'N/A'}</span>
-        `;
-
-        const dataFavorite = row.getAttribute('data-favorite') === 'true';
-        const dataKilled = row.getAttribute('data-killed') === 'true';
-
-        row.querySelector('.bottle-controls').innerHTML = `
-          <span class="favorite-toggle ${dataFavorite ? '' : 'inactive'}" onclick="toggleFavorite('${id}', this)">★</span>
-          <label class="toggle-switch">
-            <input type="checkbox" onchange="toggleKilled('${id}', this.checked)" ${dataKilled ? 'checked' : ''} />
-            🪦
-          </label>
-          <span class="edit-icon" onclick="editBottle('${id}')">✏️</span>
-        `;
-
-        row.setAttribute('data-name', name.toLowerCase());
-        row.setAttribute('data-distillery', distillery.toLowerCase());
-        row.setAttribute('data-shelf', shelf.toLowerCase());
-      }).catch(err => {
-        alert('Failed to save changes: ' + err
+   fetchAndRender();
+ </script>
+</body>
+</html>
