@@ -16,6 +16,7 @@
    h1 {
      font-size: 2em;
      margin-bottom: 20px;
+     color: #3b2200;
    }
 
    #bottleForm {
@@ -34,20 +35,23 @@
    .filter-container select {
      margin-right: 10px;
      padding: 5px;
+     color: #2e1d0e;
+     background-color: #fffef5;
+     border: 1px solid #ccc;
    }
 
    .bottle-row {
- display: flex;
- justify-content: space-between;
- align-items: center;
- background: #fffef0;
- color: #000;
- padding: 10px;
- margin: 8px 0;
- border-radius: 6px;
- border: 1px solid #ccc;
- box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
- font-family: 'Courier New', monospace;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     background: #fffef0;
+     color: #000;
+     padding: 10px;
+     margin: 8px 0;
+     border-radius: 6px;
+     border: 1px solid #ccc;
+     box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+     font-family: 'Courier New', monospace;
    }
 
    .bottle-row.killed {
@@ -55,75 +59,50 @@
      text-decoration: line-through;
    }
 
- display: flex;
- justify-content: space-between;
- align-items: center;
- background: #fffef0;
- color: #000;
- padding: 10px;
- margin: 8px 0;
- border-radius: 6px;
- border: 1px solid #ccc;
- box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
- font-family: 'Courier New', monospace;
-}
-
-.bottle-row.killed {
- opacity: 0.4;
- text-decoration: line-through;
-}
-
-.bottle-info {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;               
-  flex: 1;
-  min-width: 0;
-  overflow-wrap: break-word;
-}
-
-}
-
-.bottle-controls {
- display: flex;
- align-items: center;
- gap: 10px;
- flex-shrink: 0;
-}
-
-.favorite-toggle {
- font-size: 1.5em;
- cursor: pointer;
- color: gold;
- position: static
-}
-
-.favorite-toggle.inactive {
- color: #ccc;
-}
-
-.toggle-switch {
- cursor: pointer;
-}
-
-.edit-icon {
- cursor: pointer;
- font-size: 1em;
-}
-
+   .bottle-info {
+     display: flex;
+     flex-direction: column;
+     gap: 5px;
+     flex: 1;
+     min-width: 0;
+     overflow-wrap: break-word;
    }
 
-   .drag-handle {
-     cursor: grab;
-     margin-right: 10px;
+   .bottle-info span {
+     display: block;
+     color: #2e1d0e;
+     font-weight: normal;
+   }
+
+   .bottle-info span strong {
+     font-weight: bold;
+     margin-right: 4px;
+   }
+
+   .bottle-info .distillery {
+     color: #0056b3; /* Blue */
+   }
+
+   .bottle-info .proof {
+     color: #b30000; /* Red */
+   }
+
+   .bottle-info .shelf {
+     color: #000000; /* Black */
+   }
+
+   .bottle-controls {
+     display: flex;
+     align-items: center;
+     gap: 10px;
+     flex-shrink: 0;
    }
 
    .favorite-toggle {
-     font-size: 1.5em
+     font-size: 1.5em;
      cursor: pointer;
      color: gold;
-
-
+     position: static;
    }
 
    .favorite-toggle.inactive {
@@ -135,9 +114,15 @@
    }
 
    .edit-icon {
-     margin-left: 10px;
      cursor: pointer;
-     font-size: 14px;
+     font-size: 1em;
+     margin-left: 10px;
+     color: #444;
+   }
+
+   .drag-handle {
+     cursor: grab;
+     margin-right: 10px;
    }
 
    button {
@@ -147,6 +132,7 @@
      border-radius: 4px;
      cursor: pointer;
      font-weight: bold;
+     color: #3b2200;
    }
  </style>
 </head>
@@ -220,13 +206,13 @@
      div.setAttribute('data-killed', data.killed || false);
      div.setAttribute('data-shelf', (data.shelf || '').toLowerCase());
 
-div.innerHTML = `
+     div.innerHTML = `
        <span class="drag-handle">☰</span>
        <div class="bottle-info">
-         <span>${data.name}</span>
-         <span>Distillery: ${data.distillery}</span>
-         <span>Proof: ${data.proof}</span>
-         <span>Shelf: ${data.shelf || 'N/A'}</span>
+         <span><strong>Name:</strong> ${data.name}</span>
+         <span class="distillery"><strong>Distillery:</strong> ${data.distillery}</span>
+         <span class="proof"><strong>Proof:</strong> ${data.proof}</span>
+         <span class="shelf"><strong>Shelf:</strong> ${data.shelf || 'N/A'}</span>
        </div>
        <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" onclick="toggleFavorite('${doc.id}', this)">★</span>
        <label class="toggle-switch">
@@ -235,8 +221,7 @@ div.innerHTML = `
        </label>
        <span class="edit-icon" onclick="editBottle('${doc.id}')">✏️</span>
      `;
-     bottleList.appendChild(div)
-     ;
+     bottleList.appendChild(div);
    }
 
    function fetchAndRender() {
