@@ -222,8 +222,8 @@ div.innerHTML = `
        <span class="drag-handle">☰</span>
        <div class="bottle-info">
          <span>${data.name}</span>
-         <span>${data.distillery}</span>
-         <span>${data.proof}</span>
+         <span>Distillery: ${data.distillery}</span>
+         <span>Proof: ${data.proof}</span>
          <span>Shelf: ${data.shelf || 'N/A'}</span>
        </div>
        <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" onclick="toggleFavorite('${doc.id}', this)">★</span>
