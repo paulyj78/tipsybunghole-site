@@ -1,370 +1,323 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <meta charset="UTF-8" />
- <meta name="viewport" content="width=device-width, initial-scale=1" />
- <title>The Tipsy Bunghole Bottles</title>
- <style>
-   body {
-     background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
-     background-size: cover;
-     font-family: 'Courier New', monospace;
-     color: #000;
-     padding: 20px;
-   }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Tipsy Bunghole Bottles</title>
+  <style>
+    body {
+      background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
+      background-size: cover;
+      font-family: 'Courier New', monospace;
+      color: #000;
+      padding: 20px;
+    }
 
-   h1 {
-     font-size: 2em;
-     margin-bottom: 20px;
-     color: #3b2200;
-   }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #3b2200;
+    }
 
-   #bottleForm {
-     background: rgba(255, 255, 255, 0.1);
-     border: 2px dashed #ffb347;
-     padding: 10px;
-     margin-bottom: 20px;
-     border-radius: 10px;
-   }
+    #bottleForm {
+      background: rgba(255,255,255,0.1);
+      border: 2px dashed #ffb347;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+    }
 
-   .filter-container {
-     margin-bottom: 20px;
-   }
+    .filter-container {
+      margin-bottom: 20px;
+    }
 
-   .filter-container input,
-   .filter-container select {
-     margin-right: 10px;
-     padding: 5px;
-     color: #2e1d0e;
-     background-color: #fffef5;
-     border: 1px solid #ccc;
-   }
+    .filter-container input,
+    .filter-container select {
+      margin-right: 10px;
+      padding: 5px;
+      color: #2e1d0e;
+      background-color: #fffef5;
+      border: 1px solid #ccc;
+    }
 
-   .bottle-row {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     background: #fffef0;
-     color: #000;
-     padding: 10px;
-     margin: 8px 0;
-     border-radius: 6px;
-     border: 1px solid #ccc;
-     box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-     font-family: 'Courier New', monospace;
-   }
+    .bottle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fffef0;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
 
-   .bottle-row.killed {
-     opacity: 0.4;
-     text-decoration: line-through;
-   }
+    .bottle-row.killed {
+      opacity: 0.4;
+      text-decoration: line-through;
+    }
 
-   /* New unicorn styling */
-   .bottle-row.unicorn {
-     border: 2px solid purple;
-     background-color: #f3e6ff;
-   }
+    .bottle-row.unicorn {
+      border: 2px solid purple;
+      background-color: #f3e6ff;
+    }
 
-   .bottle-info {
-     display: flex;
-     flex-direction: column;
-     gap: 5px;
-     flex: 1;
-     min-width: 0;
-     overflow-wrap: break-word;
-   }
+    .bottle-info {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+      min-width: 0;
+      overflow-wrap: break-word;
+    }
 
-   .bottle-info span {
-     display: block;
-     color: #2e1d0e;
-     font-weight: bold;
-   }
+    .bottle-info span {
+      display: block;
+      color: #2e1d0e;
+      font-weight: bold;
+    }
 
-   .bottle-info span strong {
-     font-weight: bold;
-     margin-right: 4px;
-   }
+    .bottle-info .distillery { color: #0056b3; }
+    .bottle-info .proof { color: #b30000; }
+    .bottle-info .shelf { color: #000000; }
 
-   .bottle-info .distillery {
-     color: #0056b3; /* Blue */
-   }
+    .favorite-toggle {
+      font-size: 1.5em;
+      cursor: pointer;
+      color: gold;
+    }
 
-   .bottle-info .proof {
-     color: #b30000; /* Red */
-   }
+    .favorite-toggle.inactive {
+      color: #ccc;
+    }
 
-   .bottle-info .shelf {
-     color: #000000; /* Black */
-   }
+    .toggle-icon {
+      cursor: pointer;
+      font-size: 1.4em;
+      margin: 0 5px;
+    }
 
-   .bottle-controls {
-     display: flex;
-     align-items: center;
-     gap: 10px;
-     flex-shrink: 0;
-   }
+    .edit-icon {
+      cursor: pointer;
+      font-size: 1em;
+      margin-left: 10px;
+      color: #444;
+    }
 
-   .favorite-toggle {
-     font-size: 1.5em;
-     cursor: pointer;
-     color: gold;
-     position: static;
-   }
+    .drag-handle {
+      cursor: grab;
+      margin-right: 10px;
+    }
 
-   .favorite-toggle.inactive {
-     color: #ccc;
-   }
-
-   .toggle-switch {
-     cursor: pointer;
-   }
-
-   .edit-icon {
-     cursor: pointer;
-     font-size: 1em;
-     margin-left: 10px;
-     color: #444;
-   }
-
-   .drag-handle {
-     cursor: grab;
-     margin-right: 10px;
-   }
-
-   button {
-     background-color: #ffb347;
-     border: none;
-     padding: 8px 12px;
-     border-radius: 4px;
-     cursor: pointer;
-     font-weight: bold;
-     color: #3b2200;
-   }
- </style>
+    button {
+      background-color: #ffb347;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      color: #3b2200;
+    }
+  </style>
 </head>
 <body>
 
- <h1>📦 The Tipsy Bunghole Bottle Inventory</h1>
+  <h1>📦 The Tipsy Bunghole Bottle Inventory</h1>
 
- <div class="filter-container">
-   <input type="text" id="searchBar" placeholder="Search..." />
-   <select id="filterDistillery">
-     <option value="">All Distilleries</option>
-   </select>
-   <select id="filterFavorite">
-     <option value="">All</option>
-     <option value="true">Favorites</option>
-     <option value="false">Non-Favorites</option>
-   </select>
-   <select id="filterKilled">
-     <option value="">All</option>
-     <option value="true">Killed</option>
-     <option value="false">Alive</option>
-   </select>
-   <!-- Added unicorn filter dropdown -->
-   <select id="filterUnicorn">
-     <option value="">All</option>
-     <option value="true">Unicorns</option>
-     <option value="false">Non-Unicorns</option>
-   </select>
-   <select id="filterShelf">
-     <option value="">All Shelves</option>
-   </select>
- </div>
+  <div class="filter-container">
+    <input type="text" id="searchBar" placeholder="Search...">
+    <select id="filterDistillery">
+      <option value="">All Distilleries</option>
+    </select>
+    <select id="filterFavorite">
+      <option value="">All</option>
+      <option value="true">Favorites</option>
+      <option value="false">Non-Favorites</option>
+    </select>
+    <select id="filterKilled">
+      <option value="">All</option>
+      <option value="true">Killed</option>
+      <option value="false">Alive</option>
+    </select>
+    <select id="filterUnicorn">
+      <option value="">All</option>
+      <option value="true">Unicorns</option>
+      <option value="false">Non-Unicorns</option>
+    </select>
+    <select id="filterShelf">
+      <option value="">All Shelves</option>
+    </select>
+  </div>
 
- <div id="bottleForm">
-   <input type="text" id="nameInput" placeholder="Bottle Name">
-   <input type="text" id="distilleryInput" placeholder="Distillery">
-   <input type="text" id="proofInput" placeholder="Proof">
-   <input type="text" id="shelfInput" placeholder="Shelf#">
-   <button onclick="addBottle()">Add Bottle</button>
- </div>
+  <div id="bottleForm">
+    <input type="text" id="nameInput" placeholder="Bottle Name">
+    <input type="text" id="distilleryInput" placeholder="Distillery">
+    <input type="text" id="proofInput" placeholder="Proof">
+    <input type="text" id="shelfInput" placeholder="Shelf#">
+    <button onclick="addBottle()">Add Bottle</button>
+  </div>
 
- <div id="bottleList"></div>
+  <div id="bottleList"></div>
 
- <!-- Firebase & Sortable -->
- <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
- <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 
- <script>
-   const firebaseConfig = {
-     apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
-     authDomain: "tipsy-bunghole-photos.firebaseapp.com",
-     projectId: "tipsy-bunghole-photos",
-     storageBucket: "tipsy-bunghole-photos.appspot.com",
-     messagingSenderId: "183586489596",
-     appId: "1:183586489596:web:3f7dd0d0f9ae30c9e059f2"
-   };
-   firebase.initializeApp(firebaseConfig);
-   const db = firebase.firestore();
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
+      authDomain: "tipsy-bunghole-photos.firebaseapp.com",
+      projectId: "tipsy-bunghole-photos",
+      storageBucket: "tipsy-bunghole-photos.appspot.com",
+      messagingSenderId: "183586489596",
+      appId: "1:183586489596:web:3f7dd0d0f9ae30c9e059f2"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-   const bottleList = document.getElementById('bottleList');
-   const distilleryFilter = document.getElementById('filterDistillery');
-   const favoriteFilter = document.getElementById('filterFavorite');
-   const killedFilter = document.getElementById('filterKilled');
-   const unicornFilter = document.getElementById('filterUnicorn');  // NEW
-   const shelfFilter = document.getElementById('filterShelf');
-   const searchBar = document.getElementById('searchBar');
+    const bottleList = document.getElementById('bottleList');
+    const distilleryFilter = document.getElementById('filterDistillery');
+    const favoriteFilter = document.getElementById('filterFavorite');
+    const killedFilter = document.getElementById('filterKilled');
+    const unicornFilter = document.getElementById('filterUnicorn');
+    const shelfFilter = document.getElementById('filterShelf');
+    const searchBar = document.getElementById('searchBar');
 
-   function renderBottle(doc) {
-     const data = doc.data();
-     const div = document.createElement('div');
-     div.className = 'bottle-row';
-     if (data.killed) div.classList.add('killed');
-     if (data.unicorn) div.classList.add('unicorn');  // NEW
+    function renderBottle(doc) {
+      const data = doc.data();
+      const div = document.createElement('div');
+      div.className = 'bottle-row';
+      if (data.killed) div.classList.add('killed');
+      if (data.unicorn) div.classList.add('unicorn');
+      div.setAttribute('data-id', doc.id);
+      div.setAttribute('data-name', data.name?.toLowerCase() || '');
+      div.setAttribute('data-distillery', data.distillery?.toLowerCase() || '');
+      div.setAttribute('data-favorite', data.favorite || false);
+      div.setAttribute('data-killed', data.killed || false);
+      div.setAttribute('data-unicorn', data.unicorn || false);
+      div.setAttribute('data-shelf', data.shelf?.toLowerCase() || '');
 
-     div.setAttribute('data-id', doc.id);
-     div.setAttribute('data-name', (data.name || '').toLowerCase());
-     div.setAttribute('data-distillery', (data.distillery || '').toLowerCase());
-     div.setAttribute('data-favorite', data.favorite || false);
-     div.setAttribute('data-killed', data.killed || false);
-     div.setAttribute('data-unicorn', data.unicorn || false);  // NEW
-     div.setAttribute('data-shelf', (data.shelf || '').toLowerCase());
+      div.innerHTML = `
+        <span class="drag-handle">☰</span>
+        <div class="bottle-info">
+          <span><strong>Name:</strong> ${data.name}</span>
+          <span class="distillery"><strong>Distillery:</strong> ${data.distillery}</span>
+          <span class="proof"><strong>Proof:</strong> ${data.proof}</span>
+          <span class="shelf"><strong>Shelf:</strong> ${data.shelf || 'N/A'}</span>
+        </div>
+        <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" onclick="toggleFavorite('${doc.id}', this)">★</span>
+        <span class="toggle-icon" title="Toggle Killed" onclick="toggleKilled('${doc.id}', ${!data.killed})">🪦</span>
+        <span class="toggle-icon" title="Toggle Unicorn" onclick="toggleUnicorn('${doc.id}', ${!data.unicorn})">🦄</span>
+        <span class="edit-icon" onclick="editBottle('${doc.id}')">✏️</span>
+      `;
+      bottleList.appendChild(div);
+    }
 
-     div.innerHTML = `
-       <span class="drag-handle">☰</span>
-       <div class="bottle-info">
-         <span><strong>Name:</strong> ${data.name}</span>
-         <span class="distillery"><strong>Distillery:</strong> ${data.distillery}</span>
-         <span class="proof"><strong>Proof:</strong> ${data.proof}</span>
-         <span class="shelf"><strong>Shelf:</strong> ${data.shelf || 'N/A'}</span>
-       </div>
-       <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" onclick="toggleFavorite('${doc.id}', this)">★</span>
-       <label class="toggle-switch">
-         <input type="checkbox" onchange="toggleKilled('${doc.id}', this.checked)" ${data.killed ? 'checked' : ''}>
-         🪦
-       </label>
-       <!-- Unicorn toggle checkbox -->
-       <label class="toggle-switch" title="Mark as Unicorn (rare bottle)">
-         <input type="checkbox" onchange="toggleUnicorn('${doc.id}', this.checked)" ${data.unicorn ? 'checked' : ''}>
-         🦄
-       </label>
-       <span class="edit-icon" onclick="editBottle('${doc.id}')">✏️</span>
-     `;
-     bottleList.appendChild(div);
-   }
+    function fetchAndRender() {
+      bottleList.innerHTML = '';
+      const distilleries = new Set(), shelves = new Set();
 
-   function fetchAndRender() {
-     bottleList.innerHTML = '';
-     const distillerySet = new Set();
-     const shelfSet = new Set();
+      db.collection('bottles').orderBy('order').get().then(snapshot => {
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          if (d.distillery) distilleries.add(d.distillery);
+          if (d.shelf) shelves.add(d.shelf);
+          renderBottle(doc);
+        });
+        populateFilters(distilleries, shelves);
+        applyFilters();
+      });
+    }
 
-     db.collection('bottles').orderBy('order').get().then(snapshot => {
-       snapshot.forEach(doc => {
-         const data = doc.data();
-         if (data.distillery) distillerySet.add(data.distillery);
-         if (data.shelf) shelfSet.add(data.shelf);
-         renderBottle(doc);
-       });
-       populateFilters(distillerySet, shelfSet);
-       applyFilters();
-     });
-   }
+    function populateFilters(distilleries, shelves) {
+      distilleryFilter.innerHTML = '<option value="">All Distilleries</option>';
+      Array.from(distilleries).sort().forEach(d => {
+        distilleryFilter.innerHTML += `<option value="${d}">${d}</option>`;
+      });
 
-   function populateFilters(distilleries, shelves) {
-     distilleryFilter.innerHTML = `<option value="">All Distilleries</option>`;
-     Array.from(distilleries).sort().forEach(d => {
-       distilleryFilter.innerHTML += `<option value="${d}">${d}</option>`;
-     });
+      shelfFilter.innerHTML = '<option value="">All Shelves</option>';
+      Array.from(shelves).sort().forEach(s => {
+        shelfFilter.innerHTML += `<option value="${s}">${s}</option>`;
+      });
+    }
 
-     shelfFilter.innerHTML = `<option value="">All Shelves</option>`;
-     Array.from(shelves).sort().forEach(s => {
-       shelfFilter.innerHTML += `<option value="${s}">${s}</option>`;
-     });
-   }
+    function addBottle() {
+      const name = document.getElementById('nameInput').value.trim();
+      const distillery = document.getElementById('distilleryInput').value.trim();
+      const proof = document.getElementById('proofInput').value.trim();
+      const shelf = document.getElementById('shelfInput').value.trim();
+      if (!name || !distillery) return;
 
-   function addBottle() {
-     const name = document.getElementById('nameInput').value.trim();
-     const distillery = document.getElementById('distilleryInput').value.trim();
-     const proof = document.getElementById('proofInput').value.trim();
-     const shelf = document.getElementById('shelfInput').value.trim();
+      db.collection('bottles').add({
+        name, distillery, proof, shelf,
+        killed: false, favorite: false, unicorn: false,
+        order: Date.now()
+      }).then(() => {
+        ['nameInput','distilleryInput','proofInput','shelfInput'].forEach(id => document.getElementById(id).value = '');
+        fetchAndRender();
+      });
+    }
 
-     if (!name || !distillery) return;
+    function toggleKilled(id, state) {
+      db.collection('bottles').doc(id).update({ killed: state }).then(fetchAndRender);
+    }
 
-     db.collection('bottles').add({
-       name, distillery, proof, shelf,
-       killed: false,
-       favorite: false,
-       unicorn: false,  // NEW
-       order: Date.now()
-     }).then(() => {
-       document.getElementById('nameInput').value = '';
-       document.getElementById('distilleryInput').value = '';
-       document.getElementById('proofInput').value = '';
-       document.getElementById('shelfInput').value = '';
-       fetchAndRender();
-     });
-   }
+    function toggleUnicorn(id, state) {
+      db.collection('bottles').doc(id).update({ unicorn: state }).then(fetchAndRender);
+    }
 
-   function toggleKilled(id, state) {
-     db.collection('bottles').doc(id).update({ killed: state }).then(fetchAndRender);
-   }
+    function toggleFavorite(id, el) {
+      const isActive = !el.classList.contains('inactive');
+      db.collection('bottles').doc(id).update({ favorite: !isActive }).then(() => {
+        el.classList.toggle('inactive', isActive);
+        el.parentElement.setAttribute('data-favorite', String(!isActive));
+        applyFilters();
+      });
+    }
 
-   function toggleFavorite(id, el) {
-     const isActive = !el.classList.contains('inactive');
-     db.collection('bottles').doc(id).update({ favorite: !isActive }).then(() => {
-       el.classList.toggle('inactive', isActive);
-       el.parentElement.setAttribute('data-favorite', String(!isActive));
-       applyFilters();
-     });
-   }
+    function editBottle(id) {
+      alert("Editing not yet implemented.");
+    }
 
-   // NEW unicorn toggle handler
-   function toggleUnicorn(id, state) {
-     db.collection('bottles').doc(id).update({ unicorn: state }).then(fetchAndRender);
-   }
+    new Sortable(bottleList, {
+      handle: '.drag-handle', animation: 150,
+      onEnd: () => [...bottleList.children].forEach((el,i) => {
+        db.collection('bottles').doc(el.dataset.id).update({order: i});
+      })
+    });
 
-   function editBottle(id) {
-     alert("Editing not yet implemented.");
-   }
+    [searchBar, distilleryFilter, favoriteFilter, killedFilter, unicornFilter, shelfFilter].forEach(el => {
+      el.addEventListener('input', applyFilters);
+    });
 
-   new Sortable(bottleList, {
-     handle: '.drag-handle',
-     animation: 150,
-     onEnd: () => {
-       [...bottleList.children].forEach((el, index) => {
-         db.collection('bottles').doc(el.dataset.id).update({ order: index });
-       });
-     }
-   });
+    function applyFilters() {
+      const search = searchBar.value.toLowerCase();
+      const dist = distilleryFilter.value.toLowerCase();
+      const fav = favoriteFilter.value;
+      const kill = killedFilter.value;
+      const uni = unicornFilter.value;
+      const shelf = shelfFilter.value.toLowerCase();
 
-   // Add unicornFilter to listeners
-   [searchBar, distilleryFilter, favoriteFilter, killedFilter, unicornFilter, shelfFilter].forEach(el => {
-     el.addEventListener('input', applyFilters);
-   });
+      [...bottleList.children].forEach(row => {
+        const nm = row.dataset.name;
+        const dt = row.dataset.distillery;
+        const favB = row.dataset.favorite==='true';
+        const killB = row.dataset.killed==='true';
+        const uniB = row.dataset.unicorn==='true';
+        const shelfB = row.dataset.shelf;
+        let show = true;
+        if (search && !nm.includes(search) && !dt.includes(search)) show = false;
+        if (dist && dt!==dist) show = false;
+        if (fav && String(favB)!==fav) show = false;
+        if (kill && String(killB)!==kill) show = false;
+        if (uni && String(uniB)!==uni) show = false;
+        if (shelf && shelfB!==shelf) show = false;
+        row.style.display = show ? 'flex' : 'none';
+      });
+    }
 
-   function applyFilters() {
-     const search = searchBar.value.toLowerCase();
-     const dist = distilleryFilter.value.toLowerCase();
-     const fav = favoriteFilter.value;
-     const kill = killedFilter.value;
-     const unicorn = unicornFilter.value;  // NEW
-     const shelf = shelfFilter.value.toLowerCase();
+    fetchAndRender();
+  </script>
 
-     [...bottleList.children].forEach(row => {
-       const name = row.dataset.name;
-       const distillery = row.dataset.distillery;
-       const favorite = row.dataset.favorite === 'true';
-       const killed = row.dataset.killed === 'true';
-       const isUnicorn = row.dataset.unicorn === 'true';  // NEW
-       const shelfNum = row.dataset.shelf;
-
-       let show = true;
-       if (search && !name.includes(search) && !distillery.includes(search)) show = false;
-       if (dist && distillery !== dist) show = false;
-       if (fav && String(favorite) !== fav) show = false;
-       if (kill && String(killed) !== kill) show = false;
-       if (unicorn && String(isUnicorn) !== unicorn) show = false;  // NEW
-       if (shelf && shelfNum !== shelf) show = false;
-
-       row.style.display = show ? 'flex' : 'none';
-     });
-   }
-
-   fetchAndRender();
- </script>
 </body>
 </html>
-
- 
