@@ -59,6 +59,12 @@
      text-decoration: line-through;
    }
 
+   /* New unicorn styling */
+   .bottle-row.unicorn {
+     border: 2px solid purple;
+     background-color: #f3e6ff;
+   }
+
    .bottle-info {
      display: flex;
      flex-direction: column;
@@ -155,6 +161,12 @@
      <option value="true">Killed</option>
      <option value="false">Alive</option>
    </select>
+   <!-- Added unicorn filter dropdown -->
+   <select id="filterUnicorn">
+     <option value="">All</option>
+     <option value="true">Unicorns</option>
+     <option value="false">Non-Unicorns</option>
+   </select>
    <select id="filterShelf">
      <option value="">All Shelves</option>
    </select>
@@ -191,6 +203,7 @@
    const distilleryFilter = document.getElementById('filterDistillery');
    const favoriteFilter = document.getElementById('filterFavorite');
    const killedFilter = document.getElementById('filterKilled');
+   const unicornFilter = document.getElementById('filterUnicorn');  // NEW
    const shelfFilter = document.getElementById('filterShelf');
    const searchBar = document.getElementById('searchBar');
 
@@ -199,11 +212,14 @@
      const div = document.createElement('div');
      div.className = 'bottle-row';
      if (data.killed) div.classList.add('killed');
+     if (data.unicorn) div.classList.add('unicorn');  // NEW
+
      div.setAttribute('data-id', doc.id);
      div.setAttribute('data-name', (data.name || '').toLowerCase());
      div.setAttribute('data-distillery', (data.distillery || '').toLowerCase());
      div.setAttribute('data-favorite', data.favorite || false);
      div.setAttribute('data-killed', data.killed || false);
+     div.setAttribute('data-unicorn', data.unicorn || false);  // NEW
      div.setAttribute('data-shelf', (data.shelf || '').toLowerCase());
 
      div.innerHTML = `
@@ -218,6 +234,11 @@
        <label class="toggle-switch">
          <input type="checkbox" onchange="toggleKilled('${doc.id}', this.checked)" ${data.killed ? 'checked' : ''}>
          🪦
+       </label>
+       <!-- Unicorn toggle checkbox -->
+       <label class="toggle-switch" title="Mark as Unicorn (rare bottle)">
+         <input type="checkbox" onchange="toggleUnicorn('${doc.id}', this.checked)" ${data.unicorn ? 'checked' : ''}>
+         🦄
        </label>
        <span class="edit-icon" onclick="editBottle('${doc.id}')">✏️</span>
      `;
@@ -265,6 +286,7 @@
        name, distillery, proof, shelf,
        killed: false,
        favorite: false,
+       unicorn: false,  // NEW
        order: Date.now()
      }).then(() => {
        document.getElementById('nameInput').value = '';
@@ -288,6 +310,11 @@
      });
    }
 
+   // NEW unicorn toggle handler
+   function toggleUnicorn(id, state) {
+     db.collection('bottles').doc(id).update({ unicorn: state }).then(fetchAndRender);
+   }
+
    function editBottle(id) {
      alert("Editing not yet implemented.");
    }
@@ -302,7 +329,8 @@
      }
    });
 
-   [searchBar, distilleryFilter, favoriteFilter, killedFilter, shelfFilter].forEach(el => {
+   // Add unicornFilter to listeners
+   [searchBar, distilleryFilter, favoriteFilter, killedFilter, unicornFilter, shelfFilter].forEach(el => {
      el.addEventListener('input', applyFilters);
    });
 
@@ -311,6 +339,7 @@
      const dist = distilleryFilter.value.toLowerCase();
      const fav = favoriteFilter.value;
      const kill = killedFilter.value;
+     const unicorn = unicornFilter.value;  // NEW
      const shelf = shelfFilter.value.toLowerCase();
 
      [...bottleList.children].forEach(row => {
@@ -318,6 +347,7 @@
        const distillery = row.dataset.distillery;
        const favorite = row.dataset.favorite === 'true';
        const killed = row.dataset.killed === 'true';
+       const isUnicorn = row.dataset.unicorn === 'true';  // NEW
        const shelfNum = row.dataset.shelf;
 
        let show = true;
@@ -325,6 +355,7 @@
        if (dist && distillery !== dist) show = false;
        if (fav && String(favorite) !== fav) show = false;
        if (kill && String(killed) !== kill) show = false;
+       if (unicorn && String(isUnicorn) !== unicorn) show = false;  // NEW
        if (shelf && shelfNum !== shelf) show = false;
 
        row.style.display = show ? 'flex' : 'none';
@@ -335,3 +366,5 @@
  </script>
 </body>
 </html>
+
+ 
