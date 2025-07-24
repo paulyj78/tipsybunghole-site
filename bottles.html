@@ -18,11 +18,7 @@
     }
 
     #bottleForm {
-      background: rgba(255,255,255,0.1);
-      border: 2px dashed #ffb347;
-      padding: 10px;
-      margin-bottom: 20px;
-      border-radius: 10px;
+      /* removed since replaced by #addBottleForm */
     }
 
     .filter-container {
@@ -115,25 +111,67 @@
       cursor: pointer;
       font-weight: bold;
       color: #3b2200;
+    }
+
+    /* Collapsible Add Bottle form styles */
+    #addBottleContainer {
+      margin-bottom: 20px;
+      max-width: 400px;
+    }
+
+    #toggleAddBottleBtn {
+      width: 100%;
+      text-align: left;
+      font-size: 1em;
+      user-select: none;
+      display: block;
+      box-sizing: border-box;
+    }
+
+    #addBottleForm {
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      max-height: 0;
+      margin-top: 10px;
+    }
+
+    #addBottleForm input {
+      display: block;
+      margin-bottom: 8px;
+      padding: 5px;
+      width: 100%;
+      box-sizing: border-box;
+      color: #2e1d0e;
+      background-color: #fffef5;
+      border: 1px solid #ccc;
+      border-radius: 4px;
       font-family: 'Courier New', monospace;
     }
 
-    button:hover {
-      background-color: #ffaa00;
+    #addBottleForm button {
+      width: 100%;
     }
 
-    /* Make back-button identical style with margin below */
+    /* Back button */
     .back-button {
-      margin-bottom: 20px;
+      color: #3b2200;
+      font-weight: bold;
+      text-decoration: none;
+      margin-bottom: 15px;
+      display: inline-block;
+      padding: 6px 10px;
+      background-color: #ffb347;
+      border-radius: 5px;
+    }
+    .back-button:hover {
+      background-color: #e6a63b;
     }
   </style>
 </head>
 <body>
 
   <h1>📦 The Tipsy Bunghole Bottle Inventory</h1>
-
-  <!-- Changed <a> to <button> with onclick -->
-  <button class="back-button" onclick="location.href='index.html'">🔙 Back to the Bunghole</button>
+  <a href="index.html" class="back-button">🔙 Back to the Bunghole</a>
 
   <div class="filter-container">
     <input type="text" id="searchBar" placeholder="Search...">
@@ -160,12 +198,15 @@
     </select>
   </div>
 
-  <div id="bottleForm">
-    <input type="text" id="nameInput" placeholder="Bottle Name">
-    <input type="text" id="distilleryInput" placeholder="Distillery">
-    <input type="text" id="proofInput" placeholder="Proof">
-    <input type="text" id="shelfInput" placeholder="Shelf#">
-    <button onclick="addBottle()">Add Bottle</button>
+  <div id="addBottleContainer">
+    <button id="toggleAddBottleBtn" onclick="toggleAddBottle()">➕ Add Bottle ▼</button>
+    <div id="addBottleForm">
+      <input type="text" id="nameInput" placeholder="Bottle Name" />
+      <input type="text" id="distilleryInput" placeholder="Distillery" />
+      <input type="text" id="proofInput" placeholder="Proof" />
+      <input type="text" id="shelfInput" placeholder="Shelf#" />
+      <button onclick="addBottle()">Add Bottle</button>
+    </div>
   </div>
 
   <div id="bottleList"></div>
@@ -327,9 +368,23 @@
       });
     }
 
+    // Collapsible Add Bottle form
+    let addBottleOpen = false;
+    function toggleAddBottle() {
+      const form = document.getElementById('addBottleForm');
+      const btn = document.getElementById('toggleAddBottleBtn');
+      addBottleOpen = !addBottleOpen;
+      if (addBottleOpen) {
+        form.style.maxHeight = form.scrollHeight + "px";
+        btn.innerHTML = "➖ Add Bottle ▲";
+      } else {
+        form.style.maxHeight = "0";
+        btn.innerHTML = "➕ Add Bottle ▼";
+      }
+    }
+
     fetchAndRender();
   </script>
 
 </body>
 </html>
-
