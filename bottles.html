@@ -115,13 +115,25 @@
       cursor: pointer;
       font-weight: bold;
       color: #3b2200;
+      font-family: 'Courier New', monospace;
+    }
+
+    button:hover {
+      background-color: #ffaa00;
+    }
+
+    /* Make back-button identical style with margin below */
+    .back-button {
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
 
   <h1>📦 The Tipsy Bunghole Bottle Inventory</h1>
-<a href="index.html" class="back-button">🔙 Back to the Bunghole</a>
+
+  <!-- Changed <a> to <button> with onclick -->
+  <button class="back-button" onclick="location.href='index.html'">🔙 Back to the Bunghole</button>
 
   <div class="filter-container">
     <input type="text" id="searchBar" placeholder="Search...">
@@ -320,3 +332,4 @@
 
 </body>
 </html>
+
