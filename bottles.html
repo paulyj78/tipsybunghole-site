@@ -1,210 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The Tipsy Bunghole Bottles</title>
-  <style>
-    /* Reset and full viewport */
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100vh;
-      font-family: 'Courier New', monospace;
-      overflow-x: hidden;
-      position: relative;
-      color: #f5f0e6;
-      background: linear-gradient(270deg, #ffb347, #ffcc66, #f0a500, #ffb347, #ffcc66);
-      background-size: 1000% 1000%;
-      animation: warmGradientShift 5s ease infinite;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Tipsy Bunghole Bottles</title>
+<style>
+  html, body {
+    margin: 0; padding: 0; height: 100vh;
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(270deg, #ffb347, #ffcc66, #f0a500, #ffb347, #ffcc66);
+    background-size: 1000% 1000%;
+    animation: warmGradientShift 5s ease infinite;
+    color: #f5f0e6;
+  }
+  body::before {
+    content: "";
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(40, 20, 0, 0.25);
+    pointer-events: none; z-index: 0;
+  }
+  @keyframes warmGradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
 
-    /* Dark transparent overlay for depth */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(40, 20, 0, 0.25);
-      pointer-events: none;
-      z-index: 0;
-    }
+  #mainContainer {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+  }
 
-    @keyframes warmGradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+  h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #3b2200;
+    text-align: center;
+  }
 
-    /* Main container to hold padding & keep content above overlay */
-    #mainContainer {
-      position: relative;
-      z-index: 1; /* above overlay */
-      padding: 20px;
-      min-height: 100vh;
-      box-sizing: border-box;
-    }
+  .filter-container {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .filter-container input,
+  .filter-container select {
+    margin: 5px 8px;
+    padding: 5px 8px;
+    color: #2e1d0e;
+    background-color: #fffef5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
 
-    h1 {
-      font-size: 2em;
-      margin-bottom: 20px;
-      color: #3b2200;
-    }
+  /* Center the bottle list container and restrict its width */
+  #bottleList {
+    max-width: 420px;  /* Slightly wider than the row max width */
+    margin: 0 auto;
+  }
 
-    .filter-container {
-      margin-bottom: 20px;
-    }
+  /* Bottle rows fixed max width, centered inside bottleList */
+  .bottle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fffef0;
+    padding: 12px 16px;
+    margin: 10px auto;   /* auto left/right margin centers the row */
+    border-radius: 6px;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.15);
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    max-width: 400px;  /* Fixed max width */
+    width: 100%;       /* Fill up to max-width */
+  }
+  .bottle-row.killed {
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+  .bottle-row.unicorn {
+    border: 2px solid purple;
+    background-color: #f3e6ff;
+  }
 
-    .filter-container input,
-    .filter-container select {
-      margin-right: 10px;
-      padding: 5px;
-      color: #2e1d0e;
-      background-color: #fffef5;
-      border: 1px solid #ccc;
-    }
+  .bottle-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    margin-left: 10px;
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
+  .bottle-info span {
+    color: #2e1d0e;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
 
-    .bottle-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #fffef0;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-    }
+  .favorite-toggle {
+    font-size: 2.5em;
+    cursor: pointer;
+    color: gold;
+    margin-left: 10px;
+  }
+  .favorite-toggle.inactive {
+    color: #ccc;
+  }
 
-    .bottle-row.killed {
-      opacity: 0.4;
-      text-decoration: line-through;
-    }
+  .toggle-icon {
+    cursor: pointer;
+    font-size: 1.4em;
+    margin: 0 6px;
+  }
 
-    .bottle-row.unicorn {
-      border: 2px solid purple;
-      background-color: #f3e6ff;
-    }
+  .edit-icon {
+    cursor: pointer;
+    font-size: 1.2em;
+    margin-left: 12px;
+    color: #444;
+  }
 
-    .bottle-info {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      flex: 1;
-      min-width: 0;
-      overflow-wrap: break-word;
-    }
+  .drag-handle {
+    cursor: grab;
+    margin-right: 12px;
+    font-size: 1.5em;
+  }
 
-    .bottle-info span {
-      display: block;
-      color: #2e1d0e;
-      font-weight: bold;
-    }
+  button {
+    background-color: #ffb347;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #3b2200;
+  }
 
-    .bottle-info .distillery { color: #0056b3; }
-    .bottle-info .proof { color: #b30000; }
-    .bottle-info .shelf { color: #000000; }
+  #addBottleContainer {
+    margin-bottom: 20px;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #toggleAddBottleBtn {
+    width: 100%;
+    font-size: 1.1em;
+    user-select: none;
+    text-align: left;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  #addBottleForm {
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    max-height: 0;
+    margin-top: 10px;
+  }
+  #addBottleForm input {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    color: #2e1d0e;
+    font-family: 'Courier New', monospace;
+  }
+  #addBottleForm button {
+    width: 100%;
+  }
 
-    .favorite-toggle {
-      font-size: 3.0em;
-      cursor: pointer;
-      color: gold;
-    }
-
-    .favorite-toggle.inactive {
-      color: #ccc;
-    }
-
-    .toggle-icon {
-      cursor: pointer;
-      font-size: 1.4em;
-      margin: 0 5px;
-    }
-
-    .edit-icon {
-      cursor: pointer;
-      font-size: 1em;
-      margin-left: 10px;
-      color: #444;
-    }
-
-    .drag-handle {
-      cursor: grab;
-      margin-right: 10px;
-    }
-
-    button {
-      background-color: #ffb347;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-      color: #3b2200;
-    }
-
-    /* Collapsible Add Bottle form styles */
-    #addBottleContainer {
-      margin-bottom: 20px;
-      max-width: 400px;
-    }
-
-    #toggleAddBottleBtn {
-      width: 100%;
-      text-align: left;
-      font-size: 1em;
-      user-select: none;
-      display: block;
-      box-sizing: border-box;
-    }
-
-    #addBottleForm {
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-      max-height: 0;
-      margin-top: 10px;
-    }
-
-    #addBottleForm input {
-      display: block;
-      margin-bottom: 8px;
-      padding: 5px;
-      width: 100%;
-      box-sizing: border-box;
-      color: #2e1d0e;
-      background-color: #fffef5;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-family: 'Courier New', monospace;
-    }
-
-    #addBottleForm button {
-      width: 100%;
-    }
-
-    /* Back button */
-    .back-button {
-      color: #3b2200;
-      font-weight: bold;
-      text-decoration: none;
-      margin-bottom: 15px;
-      display: inline-block;
-      padding: 6px 10px;
-      background-color: #ffb347;
-      border-radius: 5px;
-    }
-    .back-button:hover {
-      background-color: #e6a63b;
-    }
-  </style>
+  .back-button {
+    color: #3b2200;
+    font-weight: bold;
+    text-decoration: none;
+    margin-bottom: 15px;
+    display: inline-block;
+    padding: 6px 12px;
+    background-color: #ffb347;
+    border-radius: 5px;
+  }
+  .back-button:hover {
+    background-color: #e6a63b;
+  }
+</style>
 </head>
 <body>
   <div id="mainContainer">
-
     <h1>📦 The Tipsy Bunghole Bottle Inventory</h1>
     <a href="index.html" class="back-button">🔙 Back to the Bunghole</a>
 
     <div class="filter-container">
-      <input type="text" id="searchBar" placeholder="Search...">
+      <input type="text" id="searchBar" placeholder="Search..." />
       <select id="filterDistillery">
         <option value="">All Distilleries</option>
       </select>
@@ -240,7 +228,6 @@
     </div>
 
     <div id="bottleList"></div>
-
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -248,7 +235,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 
   <script>
-    // Firebase config and init
     const firebaseConfig = {
       apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
       authDomain: "tipsy-bunghole-photos.firebaseapp.com",
@@ -331,7 +317,7 @@
       const distillery = document.getElementById('distilleryInput').value.trim();
       const proof = document.getElementById('proofInput').value.trim();
       const shelf = document.getElementById('shelfInput').value.trim();
-      if (!name || !distillery) return;
+      if (!name || !distillery) return alert("Please fill at least Bottle Name and Distillery.");
 
       db.collection('bottles').add({
         name, distillery, proof, shelf,
@@ -402,12 +388,11 @@
       });
     }
 
-    // Toggle Add Bottle Form Collapse
     function toggleAddBottle() {
       const form = document.getElementById('addBottleForm');
       const btn = document.getElementById('toggleAddBottleBtn');
       if (form.style.maxHeight && form.style.maxHeight !== '0px') {
-        form.style.maxHeight = '0px';
+        form.style.maxHeight = '0';
         btn.textContent = '➕ Add Bottle ▼';
       } else {
         form.style.maxHeight = form.scrollHeight + 'px';
@@ -415,7 +400,6 @@
       }
     }
 
-    // Initial fetch
     fetchAndRender();
   </script>
 </body>
