@@ -1,347 +1,390 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>The Tipsy Bunghole Bottles</title>
-<style>
-  html, body {
-    margin: 0; padding: 0; height: 100vh;
-    font-family: 'Courier New', monospace;
-    background: linear-gradient(270deg, #ffb347, #ffcc66, #f0a500, #ffb347, #ffcc66);
-    background-size: 1000% 1000%;
-    animation: warmGradientShift 5s ease infinite;
-    color: #f5f0e6;
-  }
-  body::before {
-    content: "";
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(40, 20, 0, 0.25);
-    pointer-events: none; z-index: 0;
-  }
-  @keyframes warmGradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <title>The Tipsy Bunghole Bottles</title>
+ <style>
+   body {
+     font-family: 'Courier New', monospace;
+     color: #f5f0e6;
+     padding: 20px;
+   }
 
-  #mainContainer {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 20px;
-    position: relative;
-    z-index: 1;
-  }
+   h1 {
+     font-size: 2em;
+     margin-bottom: 20px;
+     color: #3b2200;
+   }
 
-  h1 {
-    font-size: 2em;
-    margin-bottom: 20px;
-    color: #3b2200;
-    text-align: center;
-  }
+   #bottleForm {
+     /* removed since replaced by #addBottleForm */
+   }
 
-  .filter-container {
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  .filter-container input,
-  .filter-container select {
-    margin: 5px 8px;
-    padding: 5px 8px;
-    color: #2e1d0e;
-    background-color: #fffef5;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
+   .filter-container {
+     margin-bottom: 20px;
+   }
 
-  /* Center the bottle list container and restrict its width */
-  #bottleList {
-    max-width: 420px;  /* Slightly wider than the row max width */
-    margin: 0 auto;
-  }
+   .filter-container input,
+   .filter-container select {
+     margin-right: 10px;
+     padding: 5px;
+     color: #2e1d0e;
+     background-color: #fffef5;
+     border: 1px solid #ccc;
+   }
 
-  /* Bottle rows fixed max width, centered inside bottleList */
-  .bottle-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #fffef0;
-    padding: 12px 16px;
-    margin: 10px auto;   /* auto left/right margin centers the row */
-    border-radius: 6px;
-    box-shadow: 2px 2px 6px rgba(0,0,0,0.15);
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    max-width: 400px;  /* Fixed max width */
-    width: 100%;       /* Fill up to max-width */
-  }
-  .bottle-row.killed {
-    opacity: 0.5;
-    text-decoration: line-through;
-  }
-  .bottle-row.unicorn {
-    border: 2px solid purple;
-    background-color: #f3e6ff;
-  }
+   .bottle-row {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     background: #fffef0;
+     padding: 10px;
+     margin: 8px 0;
+     border-radius: 6px;
+     border: 1px solid #ccc;
+     box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+   }
 
-  .bottle-info {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    margin-left: 10px;
-    min-width: 0;
-    overflow-wrap: break-word;
-  }
-  .bottle-info span {
-    color: #2e1d0e;
-    font-weight: bold;
-    margin-bottom: 4px;
-  }
+   .bottle-row.killed {
+     opacity: 0.4;
+     text-decoration: line-through;
+   }
 
-  .favorite-toggle {
-    font-size: 2.5em;
-    cursor: pointer;
-    color: gold;
-    margin-left: 10px;
-  }
-  .favorite-toggle.inactive {
-    color: #ccc;
-  }
+   .bottle-row.unicorn {
+     border: 2px solid purple;
+     background-color: #f3e6ff;
+   }
 
-  .toggle-icon {
-    cursor: pointer;
-    font-size: 1.4em;
-    margin: 4px 0;
-  }
+   .bottle-info {
+     display: flex;
+     flex-direction: column;
+     gap: 5px;
+     flex: 1;
+     min-width: 0;
+     overflow-wrap: break-word;
+   }
 
-  .edit-icon {
-    cursor: pointer;
-    font-size: 1.2em;
-    margin-left: 12px;
-    color: #444;
-  }
+   .bottle-info span {
+     display: block;
+     color: #2e1d0e;
+     font-weight: bold;
+   }
 
-  .drag-handle {
-    cursor: grab;
-    margin-right: 12px;
-    font-size: 1.5em;
-  }
+   .bottle-info .distillery { color: #0056b3; }
+   .bottle-info .proof { color: #b30000; }
+   .bottle-info .shelf { color: #000000; }
 
-  button {
-    background-color: #ffb347;
-    border: none;
-    padding: 10px 14px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    color: #3b2200;
-  }
+   .favorite-toggle {
+     font-size: 3.0em;
+     cursor: pointer;
+     color: gold;
+   }
 
-  #addBottleContainer {
-    margin-bottom: 20px;
-    max-width: 420px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  #toggleAddBottleBtn {
-    width: 100%;
-    font-size: 1.1em;
-    user-select: none;
-    text-align: left;
-    padding: 10px;
-    box-sizing: border-box;
-  }
-  #addBottleForm {
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-    max-height: 0;
-    margin-top: 10px;
-  }
-  #addBottleForm input {
-    width: 100%;
-    padding: 8px 10px;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    color: #2e1d0e;
-    font-family: 'Courier New', monospace;
-  }
-  #addBottleForm button {
-    width: 100%;
-  }
+   .favorite-toggle.inactive {
+     color: #ccc;
+   }
 
-  .back-button {
-    color: #3b2200;
-    font-weight: bold;
-    text-decoration: none;
-    margin-bottom: 15px;
-    display: inline-block;
-    padding: 6px 12px;
-    background-color: #ffb347;
-    border-radius: 5px;
-  }
-  .back-button:hover {
-    background-color: #e6a63b;
-  }
+   .toggle-icon {
+     cursor: pointer;
+     font-size: 1.4em;
+     margin: 0 5px;
+   }
 
-  /* Added this to stack the icons vertically */
-  .icons-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: center;
-  }
-</style>
+   .edit-icon {
+     cursor: pointer;
+     font-size: 1em;
+     margin-left: 10px;
+     color: #444;
+   }
+
+   .drag-handle {
+     cursor: grab;
+     margin-right: 10px;
+   }
+
+   button {
+     background-color: #ffb347;
+     border: none;
+     padding: 8px 12px;
+     border-radius: 4px;
+     cursor: pointer;
+     font-weight: bold;
+     color: #3b2200;
+   }
+
+   /* Collapsible Add Bottle form styles */
+   #addBottleContainer {
+     margin-bottom: 20px;
+     max-width: 400px;
+   }
+
+   #toggleAddBottleBtn {
+     width: 100%;
+     text-align: left;
+     font-size: 1em;
+     user-select: none;
+     display: block;
+     box-sizing: border-box;
+   }
+
+   #addBottleForm {
+     overflow: hidden;
+     transition: max-height 0.3s ease;
+     max-height: 0;
+     margin-top: 10px;
+   }
+
+   #addBottleForm input {
+     display: block;
+     margin-bottom: 8px;
+     padding: 5px;
+     width: 100%;
+     box-sizing: border-box;
+     color: #2e1d0e;
+     background-color: #fffef5;
+     border: 1px solid #ccc;
+     border-radius: 4px;
+     font-family: 'Courier New', monospace;
+   }
+
+   #addBottleForm button {
+     width: 100%;
+   }
+
+   /* Back button */
+   .back-button {
+     color: #3b2200;
+     font-weight: bold;
+     text-decoration: none;
+     margin-bottom: 15px;
+     display: inline-block;
+     padding: 6px 10px;
+     background-color: #ffb347;
+     border-radius: 5px;
+   }
+   .back-button:hover {
+     background-color: #e6a63b;
+   }
+ </style>
 </head>
 <body>
-  <div id="mainContainer">
-    <h1>📦 The Tipsy Bunghole Bottle Inventory</h1>
-    <a href="index.html" class="back-button">🔙 Back to the Bunghole</a>
 
-    <div class="filter-container">
-      <input type="text" id="searchBar" placeholder="Search..." />
-      <select id="filterDistillery">
-        <option value="">All Distilleries</option>
-      </select>
-      <select id="filterFavorite">
-        <option value="">All</option>
-        <option value="true">Favorites</option>
-        <option value="false">Non-Favorites</option>
-      </select>
-      <select id="filterKilled">
-        <option value="">All</option>
-        <option value="true">Killed</option>
-        <option value="false">Alive</option>
-      </select>
-      <select id="filterUnicorn">
-        <option value="">All</option>
-        <option value="true">Unicorns</option>
-        <option value="false">Non-Unicorns</option>
-      </select>
-      <select id="filterShelf">
-        <option value="">All Shelves</option>
-      </select>
-    </div>
+ <h1>📦 The Tipsy Bunghole Bottle Inventory</h1>
+ <a href="index.html" class="back-button">🔙 Back to the Bunghole</a>
 
-    <div id="addBottleContainer">
-      <button id="toggleAddBottleBtn" onclick="toggleAddBottle()">➕ Add Bottle ▼</button>
-      <div id="addBottleForm">
-        <input type="text" id="nameInput" placeholder="Bottle Name" />
-        <input type="text" id="distilleryInput" placeholder="Distillery" />
-        <input type="text" id="proofInput" placeholder="Proof" />
-        <input type="text" id="shelfInput" placeholder="Shelf#" />
-        <button onclick="addBottle()">Add Bottle</button>
-      </div>
-    </div>
+ <div class="filter-container">
+   <input type="text" id="searchBar" placeholder="Search...">
+   <select id="filterDistillery">
+     <option value="">All Distilleries</option>
+   </select>
+   <select id="filterFavorite">
+     <option value="">All</option>
+     <option value="true">Favorites</option>
+     <option value="false">Non-Favorites</option>
+   </select>
+   <select id="filterKilled">
+     <option value="">All</option>
+     <option value="true">Killed</option>
+     <option value="false">Alive</option>
+   </select>
+   <select id="filterUnicorn">
+     <option value="">All</option>
+     <option value="true">Unicorns</option>
+     <option value="false">Non-Unicorns</option>
+   </select>
+   <select id="filterShelf">
+     <option value="">All Shelves</option>
+   </select>
+ </div>
 
-    <div id="bottleList"></div>
-  </div>
+ <div id="addBottleContainer">
+   <button id="toggleAddBottleBtn" onclick="toggleAddBottle()">➕ Add Bottle ▼</button>
+   <div id="addBottleForm">
+     <input type="text" id="nameInput" placeholder="Bottle Name" />
+     <input type="text" id="distilleryInput" placeholder="Distillery" />
+     <input type="text" id="proofInput" placeholder="Proof" />
+     <input type="text" id="shelfInput" placeholder="Shelf#" />
+     <button onclick="addBottle()">Add Bottle</button>
+   </div>
+ </div>
 
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+ <div id="bottleList"></div>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
-      authDomain: "tipsy-bunghole-photos.firebaseapp.com",
-      projectId: "tipsy-bunghole-photos",
-      storageBucket: "tipsy-bunghole-photos.appspot.com",
-      messagingSenderId: "183586489596",
-      appId: "1:183586489596:web:3f7dd0d0f9ae30c9e059f2"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+ <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+ <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 
-    const bottleList = document.getElementById('bottleList');
-    const distilleryFilter = document.getElementById('filterDistillery');
-    const favoriteFilter = document.getElementById('filterFavorite');
-    const killedFilter = document.getElementById('filterKilled');
-    const unicornFilter = document.getElementById('filterUnicorn');
-    const shelfFilter = document.getElementById('filterShelf');
-    const searchBar = document.getElementById('searchBar');
+ <script>
+   const firebaseConfig = {
+     apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
+     authDomain: "tipsy-bunghole-photos.firebaseapp.com",
+     projectId: "tipsy-bunghole-photos",
+     storageBucket: "tipsy-bunghole-photos.appspot.com",
+     messagingSenderId: "183586489596",
+     appId: "1:183586489596:web:3f7dd0d0f9ae30c9e059f2"
+   };
+   firebase.initializeApp(firebaseConfig);
+   const db = firebase.firestore();
 
-    let bottlesData = [];
+   const bottleList = document.getElementById('bottleList');
+   const distilleryFilter = document.getElementById('filterDistillery');
+   const favoriteFilter = document.getElementById('filterFavorite');
+   const killedFilter = document.getElementById('filterKilled');
+   const unicornFilter = document.getElementById('filterUnicorn');
+   const shelfFilter = document.getElementById('filterShelf');
+   const searchBar = document.getElementById('searchBar');
 
-    function updateBottleList() {
-      bottleList.innerHTML = '';
-      bottlesData.forEach(bottle => renderBottle(bottle));
-    }
+   function renderBottle(doc) {
+     const data = doc.data();
+     const div = document.createElement('div');
+     div.className = 'bottle-row';
+     if (data.killed) div.classList.add('killed');
+     if (data.unicorn) div.classList.add('unicorn');
+     div.setAttribute('data-id', doc.id);
+     div.setAttribute('data-name', data.name?.toLowerCase() || '');
+     div.setAttribute('data-distillery', data.distillery?.toLowerCase() || '');
+     div.setAttribute('data-favorite', data.favorite || false);
+     div.setAttribute('data-killed', data.killed || false);
+     div.setAttribute('data-unicorn', data.unicorn || false);
+     div.setAttribute('data-shelf', data.shelf?.toLowerCase() || '');
 
-    function renderBottle(doc) {
-      const data = doc.data();
-      const div = document.createElement('div');
-      div.classList.add('bottle-row');
-      if (data.killed) div.classList.add('killed');
-      if (data.unicorn) div.classList.add('unicorn');
-      div.innerHTML = `
-        <span class="drag-handle">☰</span>
-        <div class="bottle-info">
-          <span><strong>Name:</strong> ${data.name}</span>
-          <span class="distillery"><strong>Distillery:</strong> ${data.distillery}</span>
-          <span class="proof"><strong>Proof:</strong> ${data.proof}</span>
-          <span class="shelf"><strong>Shelf:</strong> ${data.shelf || 'N/A'}</span>
-        </div>
-        <div class="icons-container">
-          <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" onclick="toggleFavorite('${doc.id}', this)">★</span>
-          <span class="toggle-icon" title="Toggle Killed" onclick="toggleKilled('${doc.id}', ${!data.killed})">🪦</span>
-          <span class="toggle-icon" title="Toggle Unicorn" onclick="toggleUnicorn('${doc.id}', ${!data.unicorn})">🦄</span>
-          <span class="edit-icon" onclick="editBottle('${doc.id}')">✏️</span>
-        </div>
-      `;
-      bottleList.appendChild(div);
-    }
+     div.innerHTML = `
+       <span class="drag-handle">☰</span>
+       <div class="bottle-info">
+         <span><strong>Name:</strong> ${data.name}</span>
+         <span class="distillery"><strong>Distillery:</strong> ${data.distillery}</span>
+         <span class="proof"><strong>Proof:</strong> ${data.proof}</span>
+         <span class="shelf"><strong>Shelf:</strong> ${data.shelf || 'N/A'}</span>
+       </div>
+       <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" onclick="toggleFavorite('${doc.id}', this)">★</span>
+       <span class="toggle-icon" title="Toggle Killed" onclick="toggleKilled('${doc.id}', ${!data.killed})">🪦</span>
+       <span class="toggle-icon" title="Toggle Unicorn" onclick="toggleUnicorn('${doc.id}', ${!data.unicorn})">🦄</span>
+       <span class="edit-icon" onclick="editBottle('${doc.id}')">✏️</span>
+     `;
+     bottleList.appendChild(div);
+   }
 
-    function toggleFavorite(id, element) {
-      const bottle = bottlesData.find(bottle => bottle.id === id);
-      const newFavoriteStatus = !bottle.data().favorite;
-      db.collection('bottles').doc(id).update({
-        favorite: newFavoriteStatus
-      });
-      element.classList.toggle('inactive', !newFavoriteStatus);
-    }
+   function fetchAndRender() {
+     bottleList.innerHTML = '';
+     const distilleries = new Set(), shelves = new Set();
 
-    function toggleKilled(id, currentKilledStatus) {
-      db.collection('bottles').doc(id).update({ killed: currentKilledStatus });
-    }
+     db.collection('bottles').orderBy('order').get().then(snapshot => {
+       snapshot.forEach(doc => {
+         const d = doc.data();
+         if (d.distillery) distilleries.add(d.distillery);
+         if (d.shelf) shelves.add(d.shelf);
+         renderBottle(doc);
+       });
+       populateFilters(distilleries, shelves);
+       applyFilters();
+     });
+   }
 
-    function toggleUnicorn(id, currentUnicornStatus) {
-      db.collection('bottles').doc(id).update({ unicorn: currentUnicornStatus });
-    }
+   function populateFilters(distilleries, shelves) {
+     distilleryFilter.innerHTML = '<option value="">All Distilleries</option>';
+     Array.from(distilleries).sort().forEach(d => {
+       distilleryFilter.innerHTML += `<option value="${d}">${d}</option>`;
+     });
 
-    function editBottle(id) {
-      // Your edit functionality here
-    }
+     shelfFilter.innerHTML = '<option value="">All Shelves</option>';
+     Array.from(shelves).sort().forEach(s => {
+       shelfFilter.innerHTML += `<option value="${s}">${s}</option>`;
+     });
+   }
 
-    function toggleAddBottle() {
-      const form = document.getElementById('addBottleForm');
-      form.style.maxHeight = form.style.maxHeight === '0px' ? '200px' : '0px';
-    }
+   function addBottle() {
+     const name = document.getElementById('nameInput').value.trim();
+     const distillery = document.getElementById('distilleryInput').value.trim();
+     const proof = document.getElementById('proofInput').value.trim();
+     const shelf = document.getElementById('shelfInput').value.trim();
+     if (!name || !distillery) return;
 
-    function addBottle() {
-      const name = document.getElementById('nameInput').value;
-      const distillery = document.getElementById('distilleryInput').value;
-      const proof = document.getElementById('proofInput').value;
-      const shelf = document.getElementById('shelfInput').value;
-      db.collection('bottles').add({
-        name,
-        distillery,
-        proof,
-        shelf,
-        favorite: false,
-        killed: false,
-        unicorn: false
-      });
-    }
+     db.collection('bottles').add({
+       name, distillery, proof, shelf,
+       killed: false, favorite: false, unicorn: false,
+       order: Date.now()
+     }).then(() => {
+       ['nameInput','distilleryInput','proofInput','shelfInput'].forEach(id => document.getElementById(id).value = '');
+       fetchAndRender();
+     });
+   }
 
-    db.collection('bottles').onSnapshot(snapshot => {
-      bottlesData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        data: doc.data()
-      }));
-      updateBottleList();
-    });
-  </script>
+   function toggleKilled(id, state) {
+     db.collection('bottles').doc(id).update({ killed: state }).then(fetchAndRender);
+   }
+
+   function toggleUnicorn(id, state) {
+     db.collection('bottles').doc(id).update({ unicorn: state }).then(fetchAndRender);
+   }
+
+   function toggleFavorite(id, el) {
+     const isActive = !el.classList.contains('inactive');
+     db.collection('bottles').doc(id).update({ favorite: !isActive }).then(() => {
+       el.classList.toggle('inactive', isActive);
+       el.parentElement.setAttribute('data-favorite', String(!isActive));
+       applyFilters();
+     });
+   }
+
+   function editBottle(id) {
+     alert("Editing not yet implemented.");
+   }
+
+   new Sortable(bottleList, {
+     handle: '.drag-handle', animation: 150,
+     onEnd: () => [...bottleList.children].forEach((el,i) => {
+       db.collection('bottles').doc(el.dataset.id).update({order: i});
+     })
+   });
+
+   [searchBar, distilleryFilter, favoriteFilter, killedFilter, unicornFilter, shelfFilter].forEach(el => {
+     el.addEventListener('input', applyFilters);
+   });
+
+   function applyFilters() {
+     const search = searchBar.value.toLowerCase();
+     const dist = distilleryFilter.value.toLowerCase();
+     const fav = favoriteFilter.value;
+     const kill = killedFilter.value;
+     const uni = unicornFilter.value;
+     const shelf = shelfFilter.value.toLowerCase();
+
+     [...bottleList.children].forEach(row => {
+       const nm = row.dataset.name;
+       const dt = row.dataset.distillery;
+       const favB = row.dataset.favorite==='true';
+       const killB = row.dataset.killed==='true';
+       const uniB = row.dataset.unicorn==='true';
+       const shelfB = row.dataset.shelf;
+       let show = true;
+       if (search && !nm.includes(search) && !dt.includes(search)) show = false;
+       if (dist && dt!==dist) show = false;
+       if (fav && String(favB)!==fav) show = false;
+       if (kill && String(killB)!==kill) show = false;
+       if (uni && String(uniB)!==uni) show = false;
+       if (shelf && shelfB!==shelf) show = false;
+       row.style.display = show ? 'flex' : 'none';
+     });
+   }
+
+   // Collapsible Add Bottle form
+   let addBottleOpen = false;
+   function toggleAddBottle() {
+     const form = document.getElementById('addBottleForm');
+     const btn = document.getElementById('toggleAddBottleBtn');
+     addBottleOpen = !addBottleOpen;
+     if (addBottleOpen) {
+       form.style.maxHeight = form.scrollHeight + "px";
+       btn.innerHTML = "➖ Add Bottle ▲";
+     } else {
+       form.style.maxHeight = "0";
+       btn.innerHTML = "➕ Add Bottle ▼";
+     }
+   }
+
+   fetchAndRender();
+ </script>
+
 </body>
 </html>
