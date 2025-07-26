@@ -17,10 +17,6 @@
      color: #3b2200;
    }
 
-   #bottleForm {
-     /* removed since replaced by #addBottleForm */
-   }
-
    .filter-container {
      margin-bottom: 20px;
    }
@@ -75,8 +71,16 @@
    .bottle-info .proof { color: #b30000; }
    .bottle-info .shelf { color: #000000; }
 
+   .icon-stack {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     gap: 6px;
+     margin-left: 10px;
+   }
+
    .favorite-toggle {
-     font-size: 3.0em;
+     font-size: 3em;
      cursor: pointer;
      color: gold;
    }
@@ -88,13 +92,11 @@
    .toggle-icon {
      cursor: pointer;
      font-size: 1.4em;
-     margin: 0 5px;
    }
 
    .edit-icon {
      cursor: pointer;
      font-size: 1em;
-     margin-left: 10px;
      color: #444;
    }
 
@@ -113,7 +115,6 @@
      color: #3b2200;
    }
 
-   /* Collapsible Add Bottle form styles */
    #addBottleContainer {
      margin-bottom: 20px;
      max-width: 400px;
@@ -152,7 +153,6 @@
      width: 100%;
    }
 
-   /* Back button */
    .back-button {
      color: #3b2200;
      font-weight: bold;
@@ -257,10 +257,12 @@
          <span class="proof"><strong>Proof:</strong> ${data.proof}</span>
          <span class="shelf"><strong>Shelf:</strong> ${data.shelf || 'N/A'}</span>
        </div>
-       <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" onclick="toggleFavorite('${doc.id}', this)">★</span>
-       <span class="toggle-icon" title="Toggle Killed" onclick="toggleKilled('${doc.id}', ${!data.killed})">🪦</span>
-       <span class="toggle-icon" title="Toggle Unicorn" onclick="toggleUnicorn('${doc.id}', ${!data.unicorn})">🦄</span>
-       <span class="edit-icon" onclick="editBottle('${doc.id}')">✏️</span>
+       <div class="icon-stack">
+         <span class="favorite-toggle ${data.favorite ? '' : 'inactive'}" onclick="toggleFavorite('${doc.id}', this)">★</span>
+         <span class="toggle-icon" title="Toggle Killed" onclick="toggleKilled('${doc.id}', ${!data.killed})">🪦</span>
+         <span class="toggle-icon" title="Toggle Unicorn" onclick="toggleUnicorn('${doc.id}', ${!data.unicorn})">🦄</span>
+         <span class="edit-icon" onclick="editBottle('${doc.id}')">✏️</span>
+       </div>
      `;
      bottleList.appendChild(div);
    }
@@ -322,7 +324,7 @@
      const isActive = !el.classList.contains('inactive');
      db.collection('bottles').doc(id).update({ favorite: !isActive }).then(() => {
        el.classList.toggle('inactive', isActive);
-       el.parentElement.setAttribute('data-favorite', String(!isActive));
+       el.parentElement.parentElement.setAttribute('data-favorite', String(!isActive));
        applyFilters();
      });
    }
@@ -368,13 +370,11 @@
      });
    }
 
-   // Collapsible Add Bottle form
-   let addBottleOpen = false;
    function toggleAddBottle() {
      const form = document.getElementById('addBottleForm');
      const btn = document.getElementById('toggleAddBottleBtn');
-     addBottleOpen = !addBottleOpen;
-     if (addBottleOpen) {
+     const open = form.style.maxHeight !== "0px";
+     if (!open) {
        form.style.maxHeight = form.scrollHeight + "px";
        btn.innerHTML = "➖ Add Bottle ▲";
      } else {
