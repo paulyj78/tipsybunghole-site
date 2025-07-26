@@ -2,272 +2,153 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The Tipsy Bunghole Bottles</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Tipsy Bunghole Bottle Inventory</title>
   <style>
     body {
-      font-family: 'Courier New', monospace;
-      background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
-      background-size: cover;
-      background-attachment: fixed;
       margin: 0;
-      padding: 0;
+      font-family: 'Courier New', monospace;
+      background: url("https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db")
+                 no-repeat center center fixed;
+      background-size: cover;
     }
-
     #headerBar {
-      width: 100%;
       text-align: center;
-      padding: 20px 10px;
-      background-color: rgba(255, 255, 240, 0.9);
+      padding: 20px;
+      background-color: rgba(255,255,240,0.9);
       border-bottom: 2px solid #ccc;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
     }
-
-    #headerBar h1 {
-      margin: 0;
-    }
-
     .return-btn {
       background-color: #e6c07b;
       border: none;
       padding: 10px 15px;
       margin-top: 10px;
-      font-size: 1em;
       cursor: pointer;
       border-radius: 5px;
+      font-size: 1em;
       box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
     }
-
-    #bottleFormSection, #filtersContainer {
-      width: 100%;
-      max-width: 1000px;
-      margin: 0 auto 20px auto;
-      padding: 10px;
-      background: rgba(255, 255, 240, 0.9);
+    #bottleForm {
+      background-color: rgba(255,255,240,0.9);
+      margin: 20px auto;
+      padding: 15px;
+      width: 95%;
+      max-width: 900px;
+      border: 2px dashed #666;
       border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-
     #bottleList {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
       gap: 20px;
       padding: 20px;
     }
-
-    .bottle-card {
-      width: 300px;
-      padding: 15px;
-      background: rgba(255, 255, 255, 0.85);
-      border: 2px dashed #ccc;
+    .bottleEntry {
+      background-color: #fffce0;
+      padding: 12px;
+      border: 1px solid #ccc;
       border-radius: 8px;
-      box-shadow: 4px 4px 10px rgba(0,0,0,0.2);
-      position: relative;
-      transform: rotateZ(calc(-2deg + 4deg * random()));
+      box-shadow: 3px 3px 6px rgba(0,0,0,0.2);
     }
-
-    .bottle-card h3 {
-      margin: 0 0 10px;
+    .bottleEntry h3 { margin: 0 0 5px; }
+    label {
+      display: inline-block;
+      width: 120px;
+      font-weight: bold;
     }
-
-    .form-row, .filter-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+    input[type="text"], select {
+      width: calc(100% - 130px);
+      padding: 5px;
       margin-bottom: 10px;
     }
-
-    input, select {
-      padding: 5px;
-      font-family: inherit;
-    }
-
-    .bottle-card .actions {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }
-
-    .bottle-card .actions button {
-      font-size: 0.8em;
-      padding: 5px;
+    button {
+      padding: 6px 10px;
+      background: #d6ae7b;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
     }
-
-    .favorite {
-      color: gold;
-      font-size: 1.2em;
-      cursor: pointer;
-    }
-
-    .killed {
-      text-decoration: line-through;
-      opacity: 0.6;
-    }
+    .favorite { color: red; font-size: 1.2em; }
+    .rare { font-weight: bold; color: purple; }
   </style>
 </head>
 <body>
   <div id="headerBar">
     <h1>The Tipsy Bunghole Bottle Inventory</h1>
-    <button onclick="window.location.href='index.html'" class="return-btn">← Return to Bunghole</button>
+    <button class="return-btn" onclick="window.location.href='index.html'">← Return to Bunghole</button>
   </div>
 
-  <div id="bottleFormSection">
-    <details>
-      <summary>Add New Bottle</summary>
-      <div class="form-row">
-        <input id="distilleryInput" placeholder="Distillery" />
-        <input id="nameInput" placeholder="Bottle Name" />
-        <input id="abvInput" placeholder="ABV" />
-        <input id="barcodeInput" placeholder="Barcode (optional)" />
-        <button onclick="addBottle()">Add</button>
-      </div>
-    </details>
-  </div>
-
-  <div id="filtersContainer">
-    <div class="filter-row">
-      <select id="filterDistillery" onchange="renderBottles()">
-        <option value="">All Distilleries</option>
-      </select>
-      <select id="filterKilled" onchange="renderBottles()">
-        <option value="">All Bottles</option>
-        <option value="true">Killed Only</option>
-        <option value="false">Alive Only</option>
-      </select>
-      <select id="filterFavorite" onchange="renderBottles()">
-        <option value="">All</option>
-        <option value="true">Favorites</option>
-      </select>
-      <button onclick="clearFilters()">Clear Filters</button>
-    </div>
-  </div>
+  <form id="bottleForm" onsubmit="addBottle(event)">
+    <label>Name:</label><input type="text" id="name" required><br>
+    <label>Distillery:</label><input type="text" id="distillery"><br>
+    <label>Age:</label><input type="text" id="age"><br>
+    <label>Proof:</label><input type="text" id="proof"><br>
+    <label>Notes:</label><input type="text" id="notes"><br>
+    <label>Favorite:</label>
+      <select id="favorite"><option value="no">No</option><option value="yes">Yes</option></select><br>
+    <label>Rare:</label>
+      <select id="rare"><option value="no">No</option><option value="yes">Yes</option></select><br>
+    <button type="submit">Add Bottle</button>
+  </form>
 
   <div id="bottleList"></div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import {
-      getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc,
-      doc, onSnapshot, query, orderBy
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
       authDomain: "tipsy-bunghole-photos.firebaseapp.com",
       projectId: "tipsy-bunghole-photos",
       storageBucket: "tipsy-bunghole-photos.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      messagingSenderId: "183586489596",
+      appId: "1:183586489596:web:3f7dd0d0f9ae30c9e059f2"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const bottlesRef = collection(db, "bottles");
 
-    let bottles = [];
-
-    async function addBottle() {
-      const distillery = document.getElementById("distilleryInput").value.trim();
-      const name = document.getElementById("nameInput").value.trim();
-      const abv = document.getElementById("abvInput").value.trim();
-      const barcode = document.getElementById("barcodeInput").value.trim();
-
-      if (!distillery || !name) return;
-
-      await addDoc(bottlesRef, {
-        distillery,
-        name,
-        abv,
-        barcode,
-        killed: false,
-        favorite: false,
-        timestamp: Date.now()
-      });
-
-      document.getElementById("distilleryInput").value = "";
-      document.getElementById("nameInput").value = "";
-      document.getElementById("abvInput").value = "";
-      document.getElementById("barcodeInput").value = "";
+    async function addBottle(e) {
+      e.preventDefault();
+      const data = {
+        name: document.getElementById('name').value,
+        distillery: document.getElementById('distillery').value,
+        age: document.getElementById('age').value,
+        proof: document.getElementById('proof').value,
+        notes: document.getElementById('notes').value,
+        favorite: document.getElementById('favorite').value,
+        rare: document.getElementById('rare').value
+      };
+      await addDoc(collection(db, "bottles"), data);
+      document.getElementById('bottleForm').reset();
+      getBottles();
     }
 
-    function renderBottles() {
-      const container = document.getElementById("bottleList");
-      container.innerHTML = "";
-
-      const distilleryFilter = document.getElementById("filterDistillery").value;
-      const killedFilter = document.getElementById("filterKilled").value;
-      const favFilter = document.getElementById("filterFavorite").value;
-
-      bottles
-        .filter(bottle => {
-          if (distilleryFilter && bottle.distillery !== distilleryFilter) return false;
-          if (killedFilter && String(bottle.killed) !== killedFilter) return false;
-          if (favFilter && String(bottle.favorite) !== favFilter) return false;
-          return true;
-        })
-        .forEach(bottle => {
-          const card = document.createElement("div");
-          card.className = "bottle-card" + (bottle.killed ? " killed" : "");
-
-          card.innerHTML = `
-            <h3>${bottle.name}</h3>
-            <p><strong>Distillery:</strong> ${bottle.distillery}</p>
-            <p><strong>ABV:</strong> ${bottle.abv || "N/A"}</p>
-            <div class="actions">
-              <button onclick="toggleKilled('${bottle.id}', ${bottle.killed})">
-                ${bottle.killed ? "Revive" : "Kill"}
-              </button>
-              <span class="favorite" onclick="toggleFavorite('${bottle.id}', ${bottle.favorite})">
-                ${bottle.favorite ? "★" : "☆"}
-              </span>
-              <button onclick="deleteBottle('${bottle.id}')">🗑</button>
-            </div>
-          `;
-
-          container.appendChild(card);
-        });
-
-      updateDistilleryOptions();
+    async function getBottles() {
+      const bottleList = document.getElementById("bottleList");
+      bottleList.innerHTML = "";
+      const snapshot = await getDocs(collection(db, "bottles"));
+      snapshot.forEach(doc => renderBottle(doc.id, doc.data()));
     }
 
-    function updateDistilleryOptions() {
-      const filter = document.getElementById("filterDistillery");
-      const uniqueDistilleries = [...new Set(bottles.map(b => b.distillery))];
-      filter.innerHTML = `<option value="">All Distilleries</option>`;
-      uniqueDistilleries.forEach(d => {
-        filter.innerHTML += `<option value="${d}">${d}</option>`;
-      });
+    function renderBottle(id, data) {
+      const div = document.createElement("div");
+      div.className = "bottleEntry";
+      div.innerHTML = `
+        <h3>${data.name || 'Unnamed'}</h3>
+        <p><strong>Distillery:</strong> ${data.distillery || 'n/a'}</p>
+        <p><strong>Age:</strong> ${data.age || 'n/a'}</p>
+        <p><strong>Proof:</strong> ${data.proof || 'n/a'}</p>
+        <p><strong>Notes:</strong> ${data.notes || ''}</p>
+        <p><strong>Favorite:</strong> ${data.favorite==='yes' ? '<span class="favorite">❤️</span>' : 'No'}</p>
+        <p><strong>Rare:</strong> ${data.rare==='yes' ? '<span class="rare">🦄 Rare</span>' : 'No'}</p>
+      `;
+      document.getElementById("bottleList").appendChild(div);
     }
 
-    async function toggleKilled(id, current) {
-      await updateDoc(doc(db, "bottles", id), { killed: !current });
-    }
-
-    async function toggleFavorite(id, current) {
-      await updateDoc(doc(db, "bottles", id), { favorite: !current });
-    }
-
-    async function deleteBottle(id) {
-      if (confirm("Delete this bottle?")) {
-        await deleteDoc(doc(db, "bottles", id));
-      }
-    }
-
-    function clearFilters() {
-      document.getElementById("filterDistillery").value = "";
-      document.getElementById("filterKilled").value = "";
-      document.getElementById("filterFavorite").value = "";
-      renderBottles();
-    }
-
-    const q = query(bottlesRef, orderBy("timestamp", "desc"));
-    onSnapshot(q, snapshot => {
-      bottles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      renderBottles();
-    });
+    window.onload = getBottles;
   </script>
 </body>
 </html>
