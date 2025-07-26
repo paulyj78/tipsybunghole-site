@@ -2,99 +2,116 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>The Tipsy Bunghole Bottle Inventory</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Tipsy Bunghole Bottles</title>
   <style>
     body {
-      margin: 0;
       font-family: 'Courier New', monospace;
-      background: url("https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db")
-                 no-repeat center center fixed;
+      background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
       background-size: cover;
+      background-attachment: fixed;
+      margin: 0;
+      padding: 20px;
     }
-    #headerBar {
+
+    h1 {
       text-align: center;
-      padding: 20px;
-      background-color: rgba(255,255,240,0.9);
-      border-bottom: 2px solid #ccc;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      color: #fff3dc;
+      text-shadow: 2px 2px #000;
     }
-    .return-btn {
-      background-color: #e6c07b;
-      border: none;
-      padding: 10px 15px;
-      margin-top: 10px;
+
+    .collapsible {
+      background-color: #a6794a;
+      color: white;
       cursor: pointer;
-      border-radius: 5px;
-      font-size: 1em;
-      box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      padding: 10px;
+      width: 100%;
+      border: none;
+      text-align: left;
+      font-size: 1.1em;
+      margin-bottom: 5px;
     }
-    #bottleForm {
-      background-color: rgba(255,255,240,0.9);
-      margin: 20px auto;
-      padding: 15px;
-      width: 95%;
-      max-width: 900px;
-      border: 2px dashed #666;
-      border-radius: 8px;
+
+    .collapsible.active, .collapsible:hover {
+      background-color: #8b6434;
     }
-    #bottleList {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
-      gap: 20px;
-      padding: 20px;
-    }
-    .bottleEntry {
-      background-color: #fffce0;
-      padding: 12px;
+
+    .content {
+      padding: 10px;
+      display: none;
+      overflow: hidden;
       border: 1px solid #ccc;
+      background-color: #fff8e6;
+      margin-bottom: 15px;
+    }
+
+    #bottleForm input, #bottleForm select {
+      margin: 5px 0;
+      width: 100%;
+      padding: 6px;
+    }
+
+    .bottle-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+    }
+
+    .bottle-entry {
+      background: rgba(255, 255, 240, 0.95);
+      padding: 10px;
       border-radius: 8px;
-      box-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+      box-shadow: 2px 2px 5px #333;
+      transform: rotate(calc(var(--angle, 0deg)));
     }
-    .bottleEntry h3 { margin: 0 0 5px; }
-    label {
-      display: inline-block;
-      width: 120px;
-      font-weight: bold;
+
+    .bottle-entry h3 {
+      margin: 0 0 5px 0;
+      font-size: 1.1em;
     }
-    input[type="text"], select {
-      width: calc(100% - 130px);
-      padding: 5px;
-      margin-bottom: 10px;
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
     }
-    button {
-      padding: 6px 10px;
-      background: #d6ae7b;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+
+    .return-link {
+      background: #a6794a;
+      color: white;
+      padding: 6px 12px;
+      text-decoration: none;
+      border-radius: 4px;
     }
-    .favorite { color: red; font-size: 1.2em; }
-    .rare { font-weight: bold; color: purple; }
+
+    .return-link:hover {
+      background: #8b6434;
+    }
   </style>
 </head>
 <body>
-  <div id="headerBar">
-    <h1>The Tipsy Bunghole Bottle Inventory</h1>
-    <button class="return-btn" onclick="window.location.href='index.html'">← Return to Bunghole</button>
+  <div class="header-bar">
+    <h1>The Tipsy Bunghole Bottles</h1>
+    <a href="index.html" class="return-link">Return to Bunghole</a>
   </div>
 
-  <form id="bottleForm" onsubmit="addBottle(event)">
-    <label>Name:</label><input type="text" id="name" required><br>
-    <label>Distillery:</label><input type="text" id="distillery"><br>
-    <label>Age:</label><input type="text" id="age"><br>
-    <label>Proof:</label><input type="text" id="proof"><br>
-    <label>Notes:</label><input type="text" id="notes"><br>
-    <label>Favorite:</label>
-      <select id="favorite"><option value="no">No</option><option value="yes">Yes</option></select><br>
-    <label>Rare:</label>
-      <select id="rare"><option value="no">No</option><option value="yes">Yes</option></select><br>
-    <button type="submit">Add Bottle</button>
-  </form>
+  <button class="collapsible">➕ Add a Bottle</button>
+  <div class="content">
+    <form id="bottleForm">
+      <input type="text" id="name" placeholder="Bottle Name" required />
+      <input type="text" id="distillery" placeholder="Distillery" />
+      <input type="text" id="age" placeholder="Age (Years)" />
+      <input type="text" id="proof" placeholder="Proof" />
+      <button type="submit">Save Bottle</button>
+    </form>
+  </div>
 
-  <div id="bottleList"></div>
+  <div class="bottle-grid" id="bottleList"></div>
 
+  <!-- Firebase & JS -->
   <script type="module">
+    // Firebase setup
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -103,52 +120,62 @@
       authDomain: "tipsy-bunghole-photos.firebaseapp.com",
       projectId: "tipsy-bunghole-photos",
       storageBucket: "tipsy-bunghole-photos.appspot.com",
-      messagingSenderId: "183586489596",
-      appId: "1:183586489596:web:3f7dd0d0f9ae30c9e059f2"
+      messagingSenderId: "798485446663",
+      appId: "1:798485446663:web:9e0ee6cb8d326e17797c26"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const bottleRef = collection(db, "bottles");
 
-    async function addBottle(e) {
+    // Add bottle
+    document.getElementById("bottleForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const data = {
-        name: document.getElementById('name').value,
-        distillery: document.getElementById('distillery').value,
-        age: document.getElementById('age').value,
-        proof: document.getElementById('proof').value,
-        notes: document.getElementById('notes').value,
-        favorite: document.getElementById('favorite').value,
-        rare: document.getElementById('rare').value
-      };
-      await addDoc(collection(db, "bottles"), data);
-      document.getElementById('bottleForm').reset();
-      getBottles();
+      const name = document.getElementById("name").value;
+      const distillery = document.getElementById("distillery").value;
+      const age = document.getElementById("age").value;
+      const proof = document.getElementById("proof").value;
+
+      await addDoc(bottleRef, { name, distillery, age, proof });
+
+      e.target.reset();
+      loadBottles(); // refresh UI
+    });
+
+    // Load bottles
+    async function loadBottles() {
+      const snapshot = await getDocs(bottleRef);
+      const list = document.getElementById("bottleList");
+      list.innerHTML = "";
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.className = "bottle-entry";
+        div.style.setProperty("--angle", `${Math.floor(Math.random() * 7 - 3)}deg`);
+        div.innerHTML = `
+          <h3>${data.name}</h3>
+          <p><strong>Distillery:</strong> ${data.distillery || "N/A"}</p>
+          <p><strong>Age:</strong> ${data.age || "N/A"}</p>
+          <p><strong>Proof:</strong> ${data.proof || "N/A"}</p>
+        `;
+        list.appendChild(div);
+      });
     }
 
-    async function getBottles() {
-      const bottleList = document.getElementById("bottleList");
-      bottleList.innerHTML = "";
-      const snapshot = await getDocs(collection(db, "bottles"));
-      snapshot.forEach(doc => renderBottle(doc.id, doc.data()));
-    }
+    loadBottles();
+  </script>
 
-    function renderBottle(id, data) {
-      const div = document.createElement("div");
-      div.className = "bottleEntry";
-      div.innerHTML = `
-        <h3>${data.name || 'Unnamed'}</h3>
-        <p><strong>Distillery:</strong> ${data.distillery || 'n/a'}</p>
-        <p><strong>Age:</strong> ${data.age || 'n/a'}</p>
-        <p><strong>Proof:</strong> ${data.proof || 'n/a'}</p>
-        <p><strong>Notes:</strong> ${data.notes || ''}</p>
-        <p><strong>Favorite:</strong> ${data.favorite==='yes' ? '<span class="favorite">❤️</span>' : 'No'}</p>
-        <p><strong>Rare:</strong> ${data.rare==='yes' ? '<span class="rare">🦄 Rare</span>' : 'No'}</p>
-      `;
-      document.getElementById("bottleList").appendChild(div);
-    }
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const coll = document.querySelector(".collapsible");
+      const content = document.querySelector(".content");
 
-    window.onload = getBottles;
+      coll.addEventListener("click", function () {
+        this.classList.toggle("active");
+        content.style.display = content.style.display === "block" ? "none" : "block";
+      });
+    });
   </script>
 </body>
 </html>
