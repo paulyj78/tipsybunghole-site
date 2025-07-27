@@ -122,14 +122,14 @@
   <form id="bottleForm">
     <input type="text" id="name" placeholder="Bottle Name" required />
     <input type="text" id="distillery" placeholder="Distillery" />
-    <input type="text" id="type" placeholder="Type" />
+    <input type="text" id="year" placeholder="Year" />
+    <input type="text" id="proof" placeholder="Proof" />
     <button type="submit">Add Bottle</button>
   </form>
 </div>
 
 <div class="bottle-grid" id="bottleGrid"></div>
 
-<!-- Firebase & Script -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
@@ -158,7 +158,8 @@
     const newBottle = {
       name: form.name.value,
       distillery: form.distillery.value,
-      type: form.type.value,
+      year: form.year.value,
+      proof: form.proof.value,
       killed: false,
       favorite: false,
       rare: false,
@@ -174,15 +175,16 @@
       const card = document.createElement("div");
       card.className = "bottle-card";
 
-      // Editable fields
-      const name = document.createElement("div");
-      name.innerHTML = `<span contenteditable="false" class="bottle-name">${data.name || "Unnamed"}</span>`;
+      const makeField = (label, field, fallback = "N/A") => {
+        const container = document.createElement("div");
+        container.innerHTML = `<strong>${label}:</strong> <span contenteditable="false" class="field-${field}">${data[field] || fallback}</span>`;
+        return container;
+      };
 
-      const distillery = document.createElement("div");
-      distillery.innerHTML = `<span contenteditable="false" class="bottle-distillery">${data.distillery || "N/A"}</span>`;
-
-      const type = document.createElement("div");
-      type.innerHTML = `<span contenteditable="false" class="bottle-type">${data.type || "N/A"}</span>`;
+      card.appendChild(makeField("Name", "name", "Unnamed"));
+      card.appendChild(makeField("Distillery", "distillery"));
+      card.appendChild(makeField("Year", "year"));
+      card.appendChild(makeField("Proof", "proof"));
 
       // Toggles
       const toggles = document.createElement("div");
@@ -204,15 +206,15 @@
       editBtn.className = "edit-btn";
       editBtn.innerHTML = "✏️";
       editBtn.addEventListener("click", async () => {
-        const editable = card.querySelectorAll("span[contenteditable]");
-        const updates = {};
-        editable.forEach(span => {
-          const field = span.classList[0].split("-")[1];
-          if (span.isContentEditable) {
-            updates[field] = span.textContent.trim();
-            span.setAttribute("contenteditable", "false");
+        const spans = card.querySelectorAll("span[contenteditable]");
+        let updates = {};
+        spans.forEach(span => {
+          const field = span.className.replace("field-", "");
+          const isEditable = span.getAttribute("contenteditable") === "true";
+          span.setAttribute("contenteditable", !isEditable);
+          if (isEditable) {
+            updates[field] = span.innerText.trim();
           } else {
-            span.setAttribute("contenteditable", "true");
             span.focus();
           }
         });
@@ -232,9 +234,6 @@
         }
       });
 
-      card.appendChild(name);
-      card.appendChild(distillery);
-      card.appendChild(type);
       card.appendChild(toggles);
       card.appendChild(editBtn);
       card.appendChild(deleteBtn);
@@ -242,7 +241,7 @@
     });
   });
 
-  // Collapsible form logic
+  // Collapsible toggle
   document.querySelector(".collapsible").addEventListener("click", function () {
     this.classList.toggle("active");
     const content = this.nextElementSibling;
