@@ -1,300 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The Tipsy Bunghole Bottles</title>
-  <style>
-    body {
-      font-family: 'Courier New', Courier, monospace;
-      background: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db') no-repeat center center fixed;
-      background-size: cover;
-      margin: 0;
-      padding: 0;
-    }
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+ <title>The Tipsy Bunghole Bottles</title>
+ <style>
+   body {
+     font-family: "Courier New", monospace;
+     background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
+     background-size: cover;
+     background-repeat: no-repeat;
+     margin: 0;
+     padding: 0;
+   }
 
-    header {
-      text-align: center;
-      font-size: 2rem;
-      font-weight: bold;
-      padding: 20px;
-      color: #fff;
-      background-color: rgba(0,0,0,0.6);
-    }
+   header {
+     background-color: rgba(0, 0, 0, 0.7);
+     color: white;
+     text-align: center;
+     padding: 1rem;
+     font-size: 1.5rem;
+     font-weight: bold;
+   }
 
-    #entryForm {
-      background: #fdf5e6;
-      border: 2px dashed #ccc;
-      padding: 15px;
-      margin: 10px auto;
-      max-width: 800px;
-      border-radius: 8px;
-      display: none;
-    }
+   .return-button {
+     display: block;
+     margin: 1rem auto;
+     padding: 10px 20px;
+     background-color: #a6794a;
+     color: white;
+     text-align: center;
+     border: none;
+     cursor: pointer;
+   }
 
-    #bottleGrid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 15px;
-      padding: 20px;
-    }
+   .collapsible {
+     background-color: #a6794a;
+     color: white;
+     cursor: pointer;
+     padding: 10px;
+     width: 100%;
+     border: none;
+     text-align: left;
+     outline: none;
+     font-size: 1.1em;
+   }
 
-    .bottle {
-      background: rgba(255,255,255,0.9);
-      border-left: 5px solid #c19a6b;
-      padding: 10px;
-      border-radius: 5px;
-      position: relative;
-    }
+   .collapsible:hover {
+     background-color: #8b6434;
+   }
 
-    .bottle.rare {
-      border-left: 5px solid gold;
-    }
+   .content {
+     display: none;
+     background-color: #fff8e6;
+     padding: 10px;
+     border: 1px solid #ccc;
+   }
 
-    .bottle.killed {
-      opacity: 0.6;
-      background: #eee;
-    }
+   form input, form select {
+     margin: 5px;
+   }
 
-    .actions {
-      position: absolute;
-      top: 8px;
-      right: 10px;
-      display: flex;
-      gap: 5px;
-    }
+   .bottle-grid {
+     display: grid;
+     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+     gap: 15px;
+     padding: 1rem;
+   }
 
-    .actions button {
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      font-size: 16px;
-    }
+   .bottle-card {
+     background: rgba(255, 255, 255, 0.9);
+     padding: 10px;
+     border: 1px solid #ccc;
+     border-radius: 8px;
+     position: relative;
+   }
 
-    .filters {
-      max-width: 800px;
-      margin: 10px auto;
-      padding: 10px;
-      background: #fff8dc;
-      border-radius: 8px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      justify-content: space-between;
-    }
+   .toggle-group {
+     display: flex;
+     justify-content: space-between;
+     margin-top: 8px;
+   }
 
-    .filters select {
-      padding: 5px;
-    }
+   .toggle-group label {
+     font-size: 0.9em;
+   }
 
-    .toggleForm {
-      margin: 10px auto;
-      text-align: center;
-    }
+   .edit-btn, .delete-btn {
+     position: absolute;
+     top: 5px;
+     background-color: transparent;
+     border: none;
+     cursor: pointer;
+     font-size: 1.1em;
+   }
 
-    .toggleForm button {
-      padding: 8px 14px;
-      font-size: 16px;
-      background: #a67c52;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
+   .edit-btn {
+     right: 30px;
+   }
 
-    .return-btn {
-      position: fixed;
-      bottom: 15px;
-      right: 15px;
-      padding: 10px 15px;
-      background: #333;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-    }
-  </style>
+   .delete-btn {
+     right: 5px;
+     color: red;
+   }
+
+   input[type="text"].edit-field {
+     border: 1px solid #ccc;
+     padding: 3px;
+     width: 90%;
+   }
+ </style>
 </head>
 <body>
-  <header>The Tipsy Bunghole: Bottles</header>
 
-  <div class="toggleForm">
-    <button onclick="toggleForm()">Add a Bottle</button>
-  </div>
+<header>The Tipsy Bunghole Bottle Inventory</header>
 
-  <form id="entryForm">
-    <input type="text" id="name" placeholder="Bottle Name" required />
-    <input type="text" id="distillery" placeholder="Distillery" />
-    <input type="number" id="year" placeholder="Year" />
-    <input type="text" id="proof" placeholder="Proof" />
-    <button type="submit">Add Bottle</button>
-  </form>
+<button onclick="window.location.href='index.html'" class="return-button">Return to Bunghole</button>
 
-  <div class="filters">
-    <select id="distilleryFilter">
-      <option value="">Filter by Distillery</option>
-    </select>
-    <select id="favoriteFilter">
-      <option value="">Favorites</option>
-      <option value="true">Only Favorites</option>
-    </select>
-    <select id="killedFilter">
-      <option value="">Killed?</option>
-      <option value="true">Only Killed</option>
-      <option value="false">Only Alive</option>
-    </select>
-    <button onclick="clearFilters()">Clear Filters</button>
-  </div>
+<button class="collapsible">➕ Add a Bottle</button>
+<div class="content">
+ <form id="bottleForm">
+   <input type="text" id="name" placeholder="Bottle Name" required />
+   <input type="text" id="distillery" placeholder="Distillery" />
+   <input type="text" id="age" placeholder="Age" />
+   <input type="text" id="proof" placeholder="Proof" />
+   <button type="submit">Add Bottle</button>
+ </form>
+</div>
 
-  <div id="bottleGrid"></div>
+<div class="bottle-grid" id="bottleGrid"></div>
 
-  <a href="index.html" class="return-btn">Return to Bunghole</a>
+<script type="module">
+ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+ import {
+   getFirestore, collection, addDoc, getDocs,
+   updateDoc, deleteDoc, doc, onSnapshot
+ } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+ const firebaseConfig = {
+   apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
+   authDomain: "tipsy-bunghole-photos.firebaseapp.com",
+   projectId: "tipsy-bunghole-photos",
+   storageBucket: "tipsy-bunghole-photos.appspot.com",
+   messagingSenderId: "223660009700",
+   appId: "1:223660009700:web:yourappid"
+ };
 
-  <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
-      authDomain: "tipsy-bunghole-photos.firebaseapp.com",
-      projectId: "tipsy-bunghole-photos",
-      storageBucket: "tipsy-bunghole-photos.appspot.com",
-      messagingSenderId: "223660009700",
-      appId: "1:223660009700:web:YOUR_APP_ID"
-    };
+ const app = initializeApp(firebaseConfig);
+ const db = getFirestore(app);
+ const bottlesRef = collection(db, "bottles");
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+ const form = document.getElementById("bottleForm");
+ const bottleGrid = document.getElementById("bottleGrid");
 
-    const bottleGrid = document.getElementById("bottleGrid");
-    const form = document.getElementById("entryForm");
-    const distilleryFilter = document.getElementById("distilleryFilter");
-    const favoriteFilter = document.getElementById("favoriteFilter");
-    const killedFilter = document.getElementById("killedFilter");
+ form.addEventListener("submit", async (e) => {
+   e.preventDefault();
+   const newBottle = {
+     name: form.name.value,
+     distillery: form.distillery.value,
+     age: form.age.value,
+     proof: form.proof.value,
+     killed: false,
+     favorite: false,
+     rare: false,
+   };
+   await addDoc(bottlesRef, newBottle);
+   form.reset();
+ });
 
-    const isAdmin = localStorage.getItem("bungholeRole") === "admin";
+ onSnapshot(bottlesRef, (snapshot) => {
+   bottleGrid.innerHTML = "";
+   snapshot.forEach(docSnap => {
+     const data = docSnap.data();
+     const card = document.createElement("div");
+     card.className = "bottle-card";
 
-    function toggleForm() {
-      form.style.display = form.style.display === "none" ? "block" : "none";
-    }
+     const makeField = (label, field, fallback = "N/A") => {
+       const container = document.createElement("div");
+       container.innerHTML = `<strong>${label}:</strong> <span contenteditable="false" class="field-${field}">${data[field] || fallback}</span>`;
+       return container;
+     };
 
-    function clearFilters() {
-      distilleryFilter.value = "";
-      favoriteFilter.value = "";
-      killedFilter.value = "";
-      fetchBottles();
-    }
+     card.appendChild(makeField("Name", "name", "Unnamed"));
+     card.appendChild(makeField("Distillery", "distillery"));
+     card.appendChild(makeField("Age", "age"));
+     card.appendChild(makeField("Proof", "proof"));
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const newBottle = {
-        name: form.name.value,
-        distillery: form.distillery.value,
-        year: form.year.value,
-        proof: form.proof.value,
-        killed: false,
-        favorite: false,
-        rare: false,
-        timestamp: Date.now()
-      };
-      await db.collection("bottles").add(newBottle);
-      form.reset();
-      toggleForm();
-      fetchBottles();
-    });
+     // Toggles
+     const toggles = document.createElement("div");
+     toggles.className = "toggle-group";
 
-    function renderBottle(doc, id) {
-      const data = doc.data();
-      const bottle = document.createElement("div");
-      bottle.className = "bottle" + (data.killed ? " killed" : "") + (data.rare ? " rare" : "");
-      bottle.innerHTML = `
-        <strong>${data.name}</strong><br>
-        ${data.distillery || ''}<br>
-        ${data.year || ''} | ${data.proof || ''}<br>
-        <label><input type="checkbox" ${data.killed ? 'checked' : ''} onchange="toggleKilled('${doc.id}', this)"> Killed</label>
-        <label><input type="checkbox" ${data.favorite ? 'checked' : ''} onchange="toggleFavorite('${doc.id}', this)"> ❤️</label>
-        <label><input type="checkbox" ${data.rare ? 'checked' : ''} onchange="toggleRare('${doc.id}', this)"> 🦄</label>
-      `;
+     ["killed", "favorite", "rare"].forEach(field => {
+       const label = document.createElement("label");
+       label.innerHTML = `<input type="checkbox" ${data[field] ? "checked" : ""}/> ${field.charAt(0).toUpperCase() + field.slice(1)}`;
+       label.querySelector("input").addEventListener("change", async () => {
+         await updateDoc(doc(db, "bottles", docSnap.id), {
+           [field]: label.querySelector("input").checked
+         });
+       });
+       toggles.appendChild(label);
+     });
 
-      if (isAdmin) {
-        const actions = document.createElement("div");
-        actions.className = "actions";
-        actions.innerHTML = `
-          <button onclick="editBottle('${doc.id}')">✏️</button>
-          <button onclick="deleteBottle('${doc.id}')">🗑️</button>
-        `;
-        bottle.appendChild(actions);
-      }
+     // Edit button
+     const editBtn = document.createElement("button");
+     editBtn.className = "edit-btn";
+     editBtn.innerHTML = "✏️";
+     editBtn.addEventListener("click", async () => {
+       const spans = card.querySelectorAll("span[contenteditable]");
+       let updates = {};
+       spans.forEach(span => {
+         const field = span.className.replace("field-", "");
+         const isEditable = span.getAttribute("contenteditable") === "true";
+         span.setAttribute("contenteditable", !isEditable);
+         if (isEditable) {
+           updates[field] = span.innerText.trim();
+         } else {
+           span.focus();
+         }
+       });
+       if (Object.keys(updates).length > 0) {
+         await updateDoc(doc(db, "bottles", docSnap.id), updates);
+       }
+     });
 
-      bottleGrid.appendChild(bottle);
-    }
+     // Delete button
+     const deleteBtn = document.createElement("button");
+     deleteBtn.className = "delete-btn";
+     deleteBtn.innerHTML = "🗑️";
+     deleteBtn.addEventListener("click", async () => {
+       const confirmed = confirm("Delete this bottle?");
+       if (confirmed) {
+         await deleteDoc(doc(db, "bottles", docSnap.id));
+       }
+     });
 
-    function toggleKilled(id, checkbox) {
-      db.collection("bottles").doc(id).update({ killed: checkbox.checked });
-    }
+     card.appendChild(toggles);
+     card.appendChild(editBtn);
+     card.appendChild(deleteBtn);
+     bottleGrid.appendChild(card);
+   });
+ });
 
-    function toggleFavorite(id, checkbox) {
-      db.collection("bottles").doc(id).update({ favorite: checkbox.checked });
-    }
+ // Collapsible toggle
+ document.querySelector(".collapsible").addEventListener("click", function () {
+   this.classList.toggle("active");
+   const content = this.nextElementSibling;
+   content.style.display = content.style.display === "block" ? "none" : "block";
+ });
+</script>
 
-    function toggleRare(id, checkbox) {
-      db.collection("bottles").doc(id).update({ rare: checkbox.checked });
-    }
-
-    function deleteBottle(id) {
-      if (confirm("Delete this bottle?")) {
-        db.collection("bottles").doc(id).delete();
-        fetchBottles();
-      }
-    }
-
-    function editBottle(id) {
-      const name = prompt("Enter new name:");
-      if (name) {
-        db.collection("bottles").doc(id).update({ name });
-        fetchBottles();
-      }
-    }
-
-    async function fetchBottles() {
-      bottleGrid.innerHTML = "";
-      const snapshot = await db.collection("bottles").orderBy("timestamp").get();
-      const distilleries = new Set();
-
-      snapshot.docs.forEach(doc => {
-        const data = doc.data();
-        distilleries.add(data.distillery);
-
-        if (
-          (distilleryFilter.value && data.distillery !== distilleryFilter.value) ||
-          (favoriteFilter.value === "true" && !data.favorite) ||
-          (killedFilter.value === "true" && !data.killed) ||
-          (killedFilter.value === "false" && data.killed)
-        ) {
-          return;
-        }
-
-        renderBottle(doc, doc.id);
-      });
-
-      distilleryFilter.innerHTML = `<option value="">Filter by Distillery</option>`;
-      distilleries.forEach(d => {
-        if (d) {
-          const opt = document.createElement("option");
-          opt.value = d;
-          opt.textContent = d;
-          distilleryFilter.appendChild(opt);
-        }
-      });
-    }
-
-    distilleryFilter.addEventListener("change", fetchBottles);
-    favoriteFilter.addEventListener("change", fetchBottles);
-    killedFilter.addEventListener("change", fetchBottles);
-
-    fetchBottles();
-  </script>
 </body>
 </html>
