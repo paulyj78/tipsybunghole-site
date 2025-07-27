@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: "Courier New", monospace;
-      background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db);
+      background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
       background-size: cover;
       background-repeat: no-repeat;
       margin: 0;
@@ -29,6 +29,7 @@
       padding: 10px 20px;
       background-color: #a6794a;
       color: white;
+      text-align: center;
       border: none;
       cursor: pointer;
     }
@@ -56,18 +57,8 @@
       border: 1px solid #ccc;
     }
 
-    form input {
+    form input, form select {
       margin: 5px;
-    }
-
-    .controls {
-      padding: 10px;
-      background-color: rgba(255,255,255,0.9);
-      text-align: center;
-    }
-
-    .controls label, .controls select {
-      margin: 0 10px;
     }
 
     .bottle-grid {
@@ -78,17 +69,23 @@
     }
 
     .bottle-card {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.9);
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 8px;
       position: relative;
+      color: #2f2f2f;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
 
     .toggle-group {
       display: flex;
       justify-content: space-between;
       margin-top: 8px;
+    }
+
+    .toggle-group label {
+      font-size: 0.9em;
     }
 
     .edit-btn, .delete-btn {
@@ -100,8 +97,20 @@
       font-size: 1.1em;
     }
 
-    .edit-btn { right: 30px; }
-    .delete-btn { right: 5px; color: red; }
+    .edit-btn {
+      right: 30px;
+    }
+
+    .delete-btn {
+      right: 5px;
+      color: red;
+    }
+
+    input[type="text"].edit-field {
+      border: 1px solid #ccc;
+      padding: 3px;
+      width: 90%;
+    }
   </style>
 </head>
 <body>
@@ -121,19 +130,6 @@
   </form>
 </div>
 
-<div class="controls">
-  <label><input type="checkbox" id="filterFavorite" /> Show only Favorites</label>
-  <label><input type="checkbox" id="filterRare" /> Show only Rare</label>
-  <label><input type="checkbox" id="filterKilled" /> Show only Killed</label>
-
-  <label for="sortBy">Sort by:</label>
-  <select id="sortBy">
-    <option value="name">Name (A–Z)</option>
-    <option value="age">Age (low → high)</option>
-    <option value="proof">Proof (low → high)</option>
-  </select>
-</div>
-
 <div class="bottle-grid" id="bottleGrid"></div>
 
 <script type="module">
@@ -143,11 +139,15 @@
     updateDoc, deleteDoc, doc, onSnapshot
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+  // Check login and role
   const role = localStorage.getItem("bungholeRole");
   const access = localStorage.getItem("bungholeAccess");
 
-  if (!access || !role) window.location.href = "signin.html";
+  if (!access || !role) {
+    window.location.href = "signin.html";
+  }
 
+  // Hide or show add form based on role
   document.addEventListener("DOMContentLoaded", () => {
     if (role !== "admin") {
       document.querySelector(".collapsible").style.display = "none";
@@ -171,33 +171,6 @@
   const form = document.getElementById("bottleForm");
   const bottleGrid = document.getElementById("bottleGrid");
 
-  const filters = {
-    favorite: false,
-    rare: false,
-    killed: false,
-    sortBy: "name"
-  };
-
-  // UI filter elements
-  document.getElementById("filterFavorite").addEventListener("change", e => {
-    filters.favorite = e.target.checked;
-    renderFiltered();
-  });
-  document.getElementById("filterRare").addEventListener("change", e => {
-    filters.rare = e.target.checked;
-    renderFiltered();
-  });
-  document.getElementById("filterKilled").addEventListener("change", e => {
-    filters.killed = e.target.checked;
-    renderFiltered();
-  });
-  document.getElementById("sortBy").addEventListener("change", e => {
-    filters.sortBy = e.target.value;
-    renderFiltered();
-  });
-
-  const allBottles = [];
-
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const newBottle = {
@@ -214,42 +187,16 @@
   });
 
   onSnapshot(bottlesRef, (snapshot) => {
-    allBottles.length = 0;
-    snapshot.forEach(docSnap => {
-      allBottles.push({ id: docSnap.id, ...docSnap.data() });
-    });
-    renderFiltered();
-  });
-
-  function renderFiltered() {
-    let filtered = allBottles.filter(b => {
-      if (filters.favorite && !b.favorite) return false;
-      if (filters.rare && !b.rare) return false;
-      if (filters.killed && !b.killed) return false;
-      return true;
-    });
-
-    if (filters.sortBy === "name") {
-      filtered.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-    } else if (filters.sortBy === "age") {
-      filtered.sort((a, b) => (parseFloat(a.age) || 0) - (parseFloat(b.age) || 0));
-    } else if (filters.sortBy === "proof") {
-      filtered.sort((a, b) => (parseFloat(a.proof) || 0) - (parseFloat(b.proof) || 0));
-    }
-
-    renderBottles(filtered);
-  }
-
-  function renderBottles(bottles) {
     bottleGrid.innerHTML = "";
-    bottles.forEach(b => {
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
       const card = document.createElement("div");
       card.className = "bottle-card";
 
       const makeField = (label, field, fallback = "N/A") => {
         const editable = role === "admin" ? "true" : "false";
         const container = document.createElement("div");
-        container.innerHTML = `<strong>${label}:</strong> <span contenteditable="${editable}" class="field-${field}">${b[field] || fallback}</span>`;
+        container.innerHTML = `<strong>${label}:</strong> <span contenteditable="${editable}" class="field-${field}">${data[field] || fallback}</span>`;
         return container;
       };
 
@@ -263,10 +210,10 @@
 
       ["killed", "favorite", "rare"].forEach(field => {
         const label = document.createElement("label");
-        label.innerHTML = `<input type="checkbox" ${b[field] ? "checked" : ""} ${role !== "admin" ? "disabled" : ""}/> ${field}`;
+        label.innerHTML = `<input type="checkbox" ${data[field] ? "checked" : ""} ${role !== "admin" ? "disabled" : ""}/> ${field.charAt(0).toUpperCase() + field.slice(1)}`;
         if (role === "admin") {
           label.querySelector("input").addEventListener("change", async () => {
-            await updateDoc(doc(db, "bottles", b.id), {
+            await updateDoc(doc(db, "bottles", docSnap.id), {
               [field]: label.querySelector("input").checked
             });
           });
@@ -274,6 +221,7 @@
         toggles.appendChild(label);
       });
 
+      // Buttons only for admin
       if (role === "admin") {
         const editBtn = document.createElement("button");
         editBtn.className = "edit-btn";
@@ -285,11 +233,14 @@
             const field = span.className.replace("field-", "");
             const isEditable = span.getAttribute("contenteditable") === "true";
             span.setAttribute("contenteditable", !isEditable);
-            if (!isEditable) span.focus();
-            else updates[field] = span.innerText.trim();
+            if (!isEditable) {
+              span.focus();
+            } else {
+              updates[field] = span.innerText.trim();
+            }
           });
           if (Object.keys(updates).length > 0) {
-            await updateDoc(doc(db, "bottles", b.id), updates);
+            await updateDoc(doc(db, "bottles", docSnap.id), updates);
           }
         });
 
@@ -297,8 +248,9 @@
         deleteBtn.className = "delete-btn";
         deleteBtn.innerHTML = "🗑️";
         deleteBtn.addEventListener("click", async () => {
-          if (confirm("Delete this bottle?")) {
-            await deleteDoc(doc(db, "bottles", b.id));
+          const confirmed = confirm("Delete this bottle?");
+          if (confirmed) {
+            await deleteDoc(doc(db, "bottles", docSnap.id));
           }
         });
 
@@ -309,14 +261,18 @@
       card.appendChild(toggles);
       bottleGrid.appendChild(card);
     });
-  }
+  });
 
+  // Collapsible toggle
   document.querySelector(".collapsible")?.addEventListener("click", function () {
     this.classList.toggle("active");
     const content = this.nextElementSibling;
-    content.style.display = content.style.display === "block" ? "none" : "block";
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
   });
 </script>
-
 </body>
 </html>
