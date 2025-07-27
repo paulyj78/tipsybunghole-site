@@ -3,120 +3,120 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Speakeasy Login</title>
+  <title>Welcome to The Tipsy Bunghole</title>
   <style>
-    body {
+    html, body {
       margin: 0;
-      background: url('your-background.jpg') no-repeat center center fixed;
+      padding: 0;
+      height: 100%;
+      background: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.firebasestorage.app/o/IMG_0035.webp?alt=media&token=4573bdc6-43e9-4cdf-bff9-bd7ffe9d29fd') no-repeat center center fixed;
       background-size: cover;
       font-family: 'Georgia', serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
     }
 
-    .hatch {
-      background: #111;
-      border: 5px solid #654321;
+    #door {
       width: 300px;
-      height: 150px;
-      position: relative;
-      overflow: hidden;
+      padding: 25px;
+      border-radius: 20px;
       text-align: center;
+      box-shadow: 0 0 30px rgba(0,0,0,0.8);
+      border: 4px solid #6b4c2e;
+      background: linear-gradient(135deg, #5a3e36, #7a5e4b, #b8a27e, #a3c1ad);
+      background-blend-mode: overlay;
+      background-image: url('https://www.transparenttextures.com/patterns/dark-denim-3.png');
       color: #fff;
-      box-shadow: 0 0 30px rgba(0,0,0,0.7);
     }
 
-    .slider {
-      background: #222;
-      height: 100%;
-      width: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-      transform: translateY(0%);
-      transition: transform 0.6s ease;
-      z-index: 2;
+    #message {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #f4f4f4;
     }
 
-    .hatch.open .slider {
-      transform: translateY(-100%);
-    }
-
-    .hatch h2 {
-      margin-top: 50px;
-      z-index: 1;
-      position: relative;
-    }
-
-    .password-box {
-      display: none;
-      margin-top: 20px;
-    }
-
-    .hatch.open .password-box {
-      display: block;
-    }
-
-    input[type="password"] {
-      padding: 8px;
+    #passwordInput {
+      padding: 10px;
+      width: 85%;
+      border: none;
+      border-radius: 6px;
       font-size: 16px;
-      width: 80%;
+      text-align: center;
+      background-color: #f0e6d2;
+      color: #2f2f2f;
     }
 
-    button {
-      margin-top: 10px;
-      padding: 8px 20px;
+    #submitBtn {
+      margin-top: 12px;
+      padding: 10px 18px;
       font-size: 16px;
+      border: none;
+      background-color: #a67c52;
+      color: white;
+      border-radius: 6px;
       cursor: pointer;
+      transition: background-color 0.2s ease;
     }
 
-    .error {
-      color: red;
-      margin-top: 10px;
+    #submitBtn:hover {
+      background-color: #8b5e3c;
+    }
+
+    .shake {
+      animation: shake 0.4s;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
     }
   </style>
 </head>
 <body>
-  <div class="hatch" id="hatch">
-    <div class="slider" id="slider"></div>
-    <h2>Password, pal?</h2>
-    <div class="password-box">
-      <input type="password" id="passwordInput" placeholder="••••••••••••" />
-      <br />
-      <button onclick="checkPassword()">Enter</button>
-      <div class="error" id="errorMsg"></div>
-    </div>
+  <div id="door">
+    <div id="message">What's the secret code?</div>
+    <input type="password" id="passwordInput" placeholder="••••••••••" />
+    <br />
+    <button id="submitBtn">Enter</button>
   </div>
 
   <script>
-    const hatch = document.getElementById('hatch');
-    const slider = document.getElementById('slider');
+    const adminPassword = 'barrelproof69';
+    const userPassword = 'neatplease';
+
     const passwordInput = document.getElementById('passwordInput');
-    const errorMsg = document.getElementById('errorMsg');
+    const submitBtn = document.getElementById('submitBtn');
+    const door = document.getElementById('door');
 
-    // Open hatch after 1.5 seconds
-    setTimeout(() => {
-      hatch.classList.add('open');
-    }, 1500);
-
-    function checkPassword() {
-      const password = passwordInput.value.trim();
-
-      if (password === 'barrelproof69') {
-        localStorage.setItem('userRole', 'admin');
-        window.location.href = 'index.html';
-      } else if (password === 'guest') {
-        localStorage.setItem('userRole', 'user');
-        window.location.href = 'index.html';
-      } else {
-        errorMsg.textContent = 'Wrong password, buddy.';
-        passwordInput.value = '';
-        hatch.classList.remove('open');
-        setTimeout(() => hatch.classList.add('open'), 500);
-      }
+    function handleLogin(role) {
+      localStorage.setItem("bungholeAccess", "granted");
+      localStorage.setItem("bungholeRole", role);
+      window.location.href = "index.html";
     }
+
+    submitBtn.addEventListener('click', () => {
+      const entered = passwordInput.value.trim();
+      if (entered === adminPassword) {
+        handleLogin("admin");
+      } else if (entered === userPassword) {
+        handleLogin("user");
+      } else {
+        door.classList.add('shake');
+        setTimeout(() => door.classList.remove('shake'), 400);
+        passwordInput.value = '';
+        passwordInput.placeholder = "Try again, wise guy";
+      }
+    });
+
+    passwordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        submitBtn.click();
+      }
+    });
   </script>
 </body>
 </html>
