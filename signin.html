@@ -85,27 +85,35 @@
   </div>
 
   <script>
-    const correctPassword = 'barrelproof69';
+    const adminPassword = 'barrelproof69';
+    const userPassword = 'whiskeyplease'; // You can change this
+
     const passwordInput = document.getElementById('passwordInput');
     const submitBtn = document.getElementById('submitBtn');
     const door = document.getElementById('door');
 
+    function shakeDoor() {
+      door.classList.add('shake');
+      setTimeout(() => door.classList.remove('shake'), 400);
+      passwordInput.value = '';
+      passwordInput.placeholder = "Try again, wise guy";
+    }
+
     submitBtn.addEventListener('click', () => {
-      if (passwordInput.value.trim() === correctPassword) {
-        localStorage.setItem("bungholeAccess", "granted");
+      const value = passwordInput.value.trim();
+      if (value === adminPassword) {
+        localStorage.setItem("bungholeAccess", "admin");
+        window.location.href = 'index.html';
+      } else if (value === userPassword) {
+        localStorage.setItem("bungholeAccess", "user");
         window.location.href = 'index.html';
       } else {
-        door.classList.add('shake');
-        setTimeout(() => door.classList.remove('shake'), 400);
-        passwordInput.value = '';
-        passwordInput.placeholder = "Try again, wise guy";
+        shakeDoor();
       }
     });
 
     passwordInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        submitBtn.click();
-      }
+      if (e.key === 'Enter') submitBtn.click();
     });
   </script>
 </body>
