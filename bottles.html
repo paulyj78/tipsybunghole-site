@@ -159,6 +159,9 @@
 <div class="bottle-grid" id="bottleGrid"></div>
 
 <script type="module">
+  console.log("✅ Script loaded!");
+document.getElementById("errorMessage").textContent = "🟢 Script loaded!";
+
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
     getFirestore, collection, addDoc, getDocs, updateDoc,
