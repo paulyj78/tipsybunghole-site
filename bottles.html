@@ -1,168 +1,320 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>The Tipsy Bunghole Bottles</title>
-  <style>
-    body { font-family: Courier, monospace; margin: 1rem; }
-    #errorMessage { white-space: pre-wrap; text-align: center; margin: 1rem 0; font-weight: bold; }
-    .filters, .bottle-grid { margin-bottom: 1rem; }
-    .bottle-card img { max-width:100%; max-height:150px; border-radius:6px; }
-  </style>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+ <title>The Tipsy Bunghole Bottles</title>
+ <style>
+   body {
+     font-family: "Courier New", monospace;
+     background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.firebasestorage.app/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
+     background-size: cover;
+     background-repeat: no-repeat;
+     margin: 0;
+     padding: 0;
+   }
+
+   header {
+     background-color: rgba(0, 0, 0, 0.7);
+     color: white;
+     text-align: center;
+     padding: 1rem;
+     font-size: 1.5rem;
+     font-weight: bold;
+   }
+
+   .return-button {
+     display: block;
+     margin: 1rem auto;
+     padding: 10px 20px;
+     background-color: #a6794a;
+     color: white;
+     text-align: center;
+     border: none;
+     cursor: pointer;
+   }
+
+   .collapsible {
+     background-color: #a6794a;
+     color: white;
+     cursor: pointer;
+     padding: 10px;
+     width: 100%;
+     border: none;
+     text-align: left;
+     outline: none;
+     font-size: 1.1em;
+   }
+
+   .content {
+     display: none;
+     background-color: #fff8e6;
+     padding: 10px;
+     border: 1px solid #ccc;
+   }
+
+   form input, form select {
+     margin: 5px;
+   }
+
+   .filters {
+     background: rgba(255,255,255,0.9);
+     padding: 10px;
+     text-align: center;
+   }
+
+   .bottle-grid {
+     display: grid;
+     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+     gap: 15px;
+     padding: 1rem;
+   }
+
+   .bottle-card {
+     background: rgba(255, 255, 255, 0.95);
+     padding: 10px;
+     border: 1px solid #ccc;
+     border-radius: 8px;
+     position: relative;
+   }
+
+   .toggle-group {
+     display: flex;
+     justify-content: space-between;
+     margin-top: 8px;
+   }
+
+   .edit-btn, .delete-btn {
+     position: absolute;
+     top: 5px;
+     background-color: transparent;
+     border: none;
+     cursor: pointer;
+     font-size: 1.1em;
+   }
+
+   .edit-btn {
+     right: 30px;
+   }
+
+   .delete-btn {
+     right: 5px;
+     color: red;
+   }
+
+   img.bottle-photo {
+     max-width: 100%;
+     max-height: 150px;
+     margin-bottom: 8px;
+     border-radius: 6px;
+   }
+ </style>
 </head>
 <body>
 
 <header>The Tipsy Bunghole Bottle Inventory</header>
 
-<button onclick="window.location.href='index.html'">Return to Bunghole</button>
+<button onclick="window.location.href='index.html'" class="return-button">Return to Bunghole</button>
 
+<!-- Filter UI -->
 <div class="filters">
-  <label>Filter:
-    <select id="filterSelect">
-      <option value="all">All</option>
-      <option value="favorite">Favorites</option>
-      <option value="rare">Rare</option>
-      <option value="killed">Killed</option>
-    </select>
-  </label>
-  <label>Sort by:
-    <select id="sortSelect">
-      <option value="name">Name</option>
-      <option value="proof">Proof</option>
-      <option value="age">Age</option>
-    </select>
-  </label>
+ <label>Filter:
+   <select id="filterSelect">
+     <option value="all">All Bottles</option>
+     <option value="favorite">Favorites</option>
+     <option value="rare">Rare</option>
+     <option value="killed">Killed</option>
+   </select>
+ </label>
+ <label>Sort By:
+   <select id="sortSelect">
+     <option value="name">Name</option>
+     <option value="proof">Proof</option>
+     <option value="age">Age</option>
+   </select>
+ </label>
 </div>
 
-<form id="bottleForm">
-  <input id="name" placeholder="Bottle Name" required />
-  <input id="distillery" placeholder="Distillery" />
-  <input id="age" placeholder="Age" />
-  <input id="proof" placeholder="Proof" />
-  <input type="file" id="photo" accept="image/*" />
-  <button type="submit">Add Bottle</button>
-</form>
-
-<div id="errorMessage">🟢 Ready to submit</div>
+<!-- Add Form -->
+<button class="collapsible">➕ Add a Bottle</button>
+<div class="content">
+ <form id="bottleForm">
+   <input type="text" id="name" placeholder="Bottle Name" required />
+   <input type="text" id="distillery" placeholder="Distillery" />
+   <input type="text" id="age" placeholder="Age" />
+   <input type="text" id="proof" placeholder="Proof" />
+   <input type="file" id="photo" accept="image/*" />
+   <button type="submit">Add Bottle</button>
+ </form>
+</div>
 
 <div class="bottle-grid" id="bottleGrid"></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+ import {
+   getFirestore, collection, addDoc, getDocs, updateDoc,
+   deleteDoc, doc, onSnapshot
+ } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+ import {
+   getStorage, ref, uploadBytes, getDownloadURL
+ } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
-  authDomain: "tipsy-bunghole-photos.firebaseapp.com",
-  projectId: "tipsy-bunghole-photos",
-  storageBucket: "tipsy-bunghole-photos.appspot.com",
-  messagingSenderId: "223660009700",
-  appId: "1:223660009700:web:yourappid"
-};
+ // Auth check
+ const role = localStorage.getItem("bungholeRole");
+ const access = localStorage.getItem("bungholeAccess");
+ if (!access || !role) window.location.href = "signin.html";
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const storage = getStorage(app);
-const bottlesRef = collection(db, "bottles");
+ // Firebase config
+ const firebaseConfig = {
+   apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
+   authDomain: "tipsy-bunghole-photos.firebaseapp.com",
+   projectId: "tipsy-bunghole-photos",
+   storageBucket: "tipsy-bunghole-photos.appspot.com",
+   messagingSenderId: "223660009700",
+   appId: "1:223660009700:web:yourappid"
+ };
 
-const form = document.getElementById("bottleForm");
-const errorBox = document.getElementById("errorMessage");
-const filterSelect = document.getElementById("filterSelect");
-const sortSelect = document.getElementById("sortSelect");
-const bottleGrid = document.getElementById("bottleGrid");
+ const app = initializeApp(firebaseConfig);
+ const db = getFirestore(app);
+ const storage = getStorage(app);
+ const bottlesRef = collection(db, "bottles");
 
-let bottleData = [];
+ const form = document.getElementById("bottleForm");
+ const bottleGrid = document.getElementById("bottleGrid");
+ const filterSelect = document.getElementById("filterSelect");
+ const sortSelect = document.getElementById("sortSelect");
 
-form.addEventListener("submit", async e => {
-  e.preventDefault();
-  errorBox.style.color = "black";
-  errorBox.textContent = "🚀 Starting submission…";
+ let bottleData = [];
 
-  try {
-    const name = form.name.value.trim();
-    const distillery = form.distillery.value.trim();
-    const age = form.age.value.trim();
-    const proof = form.proof.value.trim();
+ const renderBottles = () => {
+   bottleGrid.innerHTML = "";
 
-    const file = document.getElementById("photo").files[0];
-    let photoUrl = "";
+   let filtered = [...bottleData];
+   const filter = filterSelect.value;
+   const sort = sortSelect.value;
 
-    if (file) {
-      errorBox.textContent = "🧪 Preparing photo…";
-      const buffer = await file.arrayBuffer();
-      const blob = new Blob([buffer], { type: file.type });
+   if (filter !== "all") {
+     filtered = filtered.filter(b => b[filter]);
+   }
 
-      errorBox.textContent = "📤 Uploading photo…";
-      const storageRef = ref(storage, `bottles/${Date.now()}-${file.name}`);
-      const uploadTask = uploadBytesResumable(storageRef, blob, { contentType: file.type });
+   filtered.sort((a, b) => {
+     const valA = (a[sort] || "").toString().toLowerCase();
+     const valB = (b[sort] || "").toString().toLowerCase();
+     return valA.localeCompare(valB, undefined, { numeric: true });
+   });
 
-      await new Promise((resolve, reject) => {
-        const timer = setTimeout(() => reject(new Error("Upload timed out (30 s)")), 30000);
-        uploadTask.on("state_changed", null,
-          err => { clearTimeout(timer); reject(err); },
-          () => { clearTimeout(timer); resolve(); }
-        );
-      });
+   filtered.forEach(({ id, data }) => {
+     const card = document.createElement("div");
+     card.className = "bottle-card";
 
-      photoUrl = await getDownloadURL(uploadTask.snapshot.ref);
-      errorBox.style.color = "green";
-      errorBox.textContent = "✅ Photo uploaded.";
-    } else {
-      errorBox.textContent = "ℹ️ No photo selected.";
-    }
+     if (data.photoUrl) {
+       const img = document.createElement("img");
+       img.src = data.photoUrl;
+       img.alt = `${data.name} photo`;
+       img.className = "bottle-photo";
+       card.appendChild(img);
+     }
 
-    errorBox.textContent = "⏳ Saving bottle data…";
-    await addDoc(bottlesRef, { name, distillery, age, proof, killed: false, favorite: false, rare: false, photoUrl });
+     const makeField = (label, field) => {
+       const el = document.createElement("div");
+       const editable = role === "admin" ? "true" : "false";
+       el.innerHTML = `<strong>${label}:</strong> <span contenteditable="${editable}" class="field-${field}">${data[field] || "N/A"}</span>`;
+       return el;
+     };
 
-    form.reset();
-    errorBox.style.color = "green";
-    errorBox.textContent = "✅ Bottle added successfully!";
+     card.appendChild(makeField("Name", "name"));
+     card.appendChild(makeField("Distillery", "distillery"));
+     card.appendChild(makeField("Age", "age"));
+     card.appendChild(makeField("Proof", "proof"));
 
-  } catch (err) {
-    console.error("Submission error:", err);
-    errorBox.style.color = "red";
-    errorBox.textContent = `🚨 Error: ${err.message || err}`;
-  }
-});
+     const toggles = document.createElement("div");
+     toggles.className = "toggle-group";
 
-onSnapshot(bottlesRef, snapshot => {
-  bottleData = snapshot.docs.map(d => ({ id: d.id, data: d.data() }));
-  renderBottles();
-});
+     ["killed", "favorite", "rare"].forEach(field => {
+       const label = document.createElement("label");
+       label.innerHTML = `<input type="checkbox" ${data[field] ? "checked" : ""} ${role !== "admin" ? "disabled" : ""}/> ${field}`;
+       const checkbox = label.querySelector("input");
+       if (role === "admin") {
+         checkbox.addEventListener("change", () => {
+           updateDoc(doc(db, "bottles", id), {
+             [field]: checkbox.checked
+           });
+         });
+       }
+       toggles.appendChild(label);
+     });
 
-filterSelect.addEventListener("change", renderBottles);
-sortSelect.addEventListener("change", renderBottles);
+     if (role === "admin") {
+       const editBtn = document.createElement("button");
+       editBtn.className = "edit-btn";
+       editBtn.innerHTML = "✏️";
+       editBtn.addEventListener("click", async () => {
+         const spans = card.querySelectorAll("span[contenteditable='true']");
+         const updates = {};
+         spans.forEach(span => {
+           const field = span.className.replace("field-", "");
+           updates[field] = span.innerText.trim();
+         });
+         await updateDoc(doc(db, "bottles", id), updates);
+       });
 
-function renderBottles() {
-  bottleGrid.innerHTML = "";
-  let list = [...bottleData];
-  const filter = filterSelect.value;
-  const sort = sortSelect.value;
+       const deleteBtn = document.createElement("button");
+       deleteBtn.className = "delete-btn";
+       deleteBtn.innerHTML = "🗑️";
+       deleteBtn.addEventListener("click", async () => {
+         const confirmed = confirm("Delete this bottle?");
+         if (confirmed) await deleteDoc(doc(db, "bottles", id));
+       });
 
-  if (filter !== "all") list = list.filter(b => b.data[filter]);
-  list.sort((a,b) => (a.data[sort]||"").localeCompare(b.data[sort]||"", undefined, { numeric: true }));
+       card.appendChild(editBtn);
+       card.appendChild(deleteBtn);
+     }
 
-  list.forEach(({ id, data }) => {
-    const card = document.createElement("div");
-    card.className = "bottle-card";
+     card.appendChild(toggles);
+     bottleGrid.appendChild(card);
+   });
+ };
 
-    if (data.photoUrl) {
-      const img = document.createElement("img");
-      img.src = data.photoUrl;
-      card.appendChild(img);
-    }
+ form?.addEventListener("submit", async (e) => {
+   e.preventDefault();
+   const file = document.getElementById("photo").files[0];
+   let photoUrl = "";
 
-    ["name","distillery","age","proof"].forEach(field => {
-      const div = document.createElement("div");
-      div.innerHTML = `<strong>${field.slice(0,1).toUpperCase()+field.slice(1)}:</strong> ${data[field]||"N/A"}`;
-      card.appendChild(div);
-    });
+   if (file) {
+     const storageRef = ref(storage, `bottles/${Date.now()}-${file.name}`);
+     const snap = await uploadBytes(storageRef, file);
+     photoUrl = await getDownloadURL(snap.ref);
+   }
 
-    bottleGrid.appendChild(card);
-  });
-}
+   const newBottle = {
+     name: form.name.value,
+     distillery: form.distillery.value,
+     age: form.age.value,
+     proof: form.proof.value,
+     killed: false,
+     favorite: false,
+     rare: false,
+     photoUrl
+   };
+
+   await addDoc(bottlesRef, newBottle);
+   form.reset();
+ });
+
+ onSnapshot(bottlesRef, (snapshot) => {
+   bottleData = snapshot.docs.map(doc => ({ id: doc.id, data: doc.data() }));
+   renderBottles();
+ });
+
+ filterSelect.addEventListener("change", renderBottles);
+ sortSelect.addEventListener("change", renderBottles);
+
+ document.querySelector(".collapsible")?.addEventListener("click", function () {
+   this.classList.toggle("active");
+   const content = this.nextElementSibling;
+   content.style.display = content.style.display === "block" ? "none" : "block";
+ });
 </script>
-
 </body>
 </html>
