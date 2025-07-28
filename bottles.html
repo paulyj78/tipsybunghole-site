@@ -113,6 +113,7 @@
       text-align: center;
       margin-top: 10px;
       font-weight: bold;
+      white-space: pre-wrap;
     }
   </style>
 </head>
@@ -122,7 +123,6 @@
 
 <button onclick="window.location.href='index.html'" class="return-button">Return to Bunghole</button>
 
-<!-- Filter UI -->
 <div class="filters">
   <label>Filter: 
     <select id="filterSelect">
@@ -141,7 +141,6 @@
   </label>
 </div>
 
-<!-- Add Form -->
 <button class="collapsible">➕ Add a Bottle</button>
 <div class="content">
   <form id="bottleForm">
@@ -152,23 +151,26 @@
     <input type="file" id="photo" name="photo" accept="image/*" />
     <button type="submit">Add Bottle</button>
   </form>
-  <div id="errorMessage"></div>
+  <div id="errorMessage">🟢 Script loaded!</div>
 </div>
 
 <div class="bottle-grid" id="bottleGrid"></div>
 
 <script type="module">
-  console.log("✅ Script loaded!");
-  document.getElementById("errorMessage").textContent = "🟢 Script loaded!";
-
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
-    getFirestore, collection, addDoc, updateDoc,
-    deleteDoc, doc, onSnapshot
+    getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   import {
     getStorage, ref, uploadBytes, getDownloadURL
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+  const log = (msg) => {
+    const box = document.getElementById("errorMessage");
+    box.textContent += `\n${msg}`;
+  };
+
+  log("✅ Script started.");
 
   const role = localStorage.getItem("bungholeRole");
   const access = localStorage.getItem("bungholeAccess");
@@ -197,7 +199,6 @@
 
   const renderBottles = () => {
     bottleGrid.innerHTML = "";
-
     let filtered = [...bottleData];
     const filter = filterSelect.value;
     const sort = sortSelect.value;
@@ -284,51 +285,44 @@
     });
   };
 
-  // ✅ REPLACED SUBMIT HANDLER WITH DEBUGGING
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const errorBox = document.getElementById("errorMessage");
-    errorBox.textContent = "";
-    errorBox.style.color = "red";
-
-    console.log("📤 Form submit triggered");
-    errorBox.textContent = "📤 Submitting bottle...";
+    errorBox.textContent = "🚀 Submitting bottle...";
+    errorBox.style.color = "black";
 
     try {
       const file = document.getElementById("photo").files[0];
       let photoUrl = "";
 
       if (file) {
-        console.log("📸 Uploading photo...");
+        errorBox.textContent = "📤 Uploading photo...";
         const storageRef = ref(storage, `bottles/${Date.now()}-${file.name}`);
-        const metadata = { contentType: file.type };
-        const snap = await uploadBytes(storageRef, file, metadata);
+        const snap = await uploadBytes(storageRef, file);
         photoUrl = await getDownloadURL(snap.ref);
-        console.log("✅ Photo uploaded:", photoUrl);
+        errorBox.textContent = "✅ Photo uploaded.";
       } else {
-        console.log("⚠️ No photo selected");
+        errorBox.textContent = "ℹ️ No photo uploaded.";
       }
 
       const newBottle = {
-        name: form.name.value,
-        distillery: form.distillery.value,
-        age: form.age.value,
-        proof: form.proof.value,
+        name: form.name.value.trim(),
+        distillery: form.distillery.value.trim(),
+        age: form.age.value.trim(),
+        proof: form.proof.value.trim(),
         killed: false,
         favorite: false,
         rare: false,
         photoUrl
       };
 
-      console.log("📝 Adding bottle:", newBottle);
+      errorBox.textContent = "💾 Adding bottle to database...";
       await addDoc(bottlesRef, newBottle);
       form.reset();
-
       errorBox.style.color = "green";
       errorBox.textContent = "✅ Bottle added successfully!";
-      console.log("✅ Bottle added to Firestore");
     } catch (error) {
-      console.error("🚨 Error during submit:", error);
+      errorBox.style.color = "red";
       errorBox.textContent = "🚨 Error: " + error.message;
     }
   });
