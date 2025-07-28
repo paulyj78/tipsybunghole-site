@@ -288,12 +288,10 @@
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const errorBox = document.getElementById("errorMessage");
+    errorBox.textContent = "";
     errorBox.style.color = "black";
-    errorBox.textContent = "🚀 Submitting bottle...";
 
     try {
-      console.log("Submit started");
-
       const fileInput = document.getElementById("photo");
       const file = fileInput?.files[0];
       let photoUrl = "";
@@ -301,40 +299,51 @@
       if (file) {
         console.log("Uploading photo...");
         errorBox.textContent = "📤 Uploading photo...";
+        errorBox.style.color = "black";
+
         const storageRef = ref(storage, `bottles/${Date.now()}-${file.name}`);
-        const snap = await uploadBytes(storageRef, file);
+
+        // Upload with 20s timeout
+        const uploadPromise = uploadBytes(storageRef, file);
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Photo upload timeout after 20 seconds")), 20000)
+        );
+
+        const snap = await Promise.race([uploadPromise, timeoutPromise]);
+
         photoUrl = await getDownloadURL(snap.ref);
         console.log("Photo uploaded:", photoUrl);
         errorBox.textContent = "✅ Photo uploaded.";
+        errorBox.style.color = "green";
       } else {
         console.log("No photo to upload");
         errorBox.textContent = "ℹ️ No photo uploaded.";
+        errorBox.style.color = "black";
       }
 
       const newBottle = {
-        name: form.name.value.trim(),
-        distillery: form.distillery.value.trim(),
-        age: form.age.value.trim(),
-        proof: form.proof.value.trim(),
+        name: form.name.value,
+        distillery: form.distillery.value,
+        age: form.age.value,
+        proof: form.proof.value,
         killed: false,
         favorite: false,
         rare: false,
         photoUrl
       };
 
-      console.log("Adding bottle document:", newBottle);
-      errorBox.textContent = "💾 Adding bottle to database...";
+      errorBox.textContent = "⏳ Submitting bottle...";
+      errorBox.style.color = "black";
+
       await addDoc(bottlesRef, newBottle);
 
       form.reset();
-      console.log("Bottle added successfully");
       errorBox.style.color = "green";
       errorBox.textContent = "✅ Bottle added successfully!";
-
     } catch (error) {
-      console.error("Error adding bottle:", error);
+      console.error(error);
       errorBox.style.color = "red";
-      errorBox.textContent = `🚨 Error: ${error.message}`;
+      errorBox.textContent = "🚨 Error: " + error.message;
     }
   });
 
