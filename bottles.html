@@ -108,6 +108,12 @@
       margin-bottom: 8px;
       border-radius: 6px;
     }
+
+    #errorMessage {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -139,13 +145,15 @@
 <button class="collapsible">➕ Add a Bottle</button>
 <div class="content">
   <form id="bottleForm">
-    <input type="text" id="name" placeholder="Bottle Name" required />
-    <input type="text" id="distillery" placeholder="Distillery" />
-    <input type="text" id="age" placeholder="Age" />
-    <input type="text" id="proof" placeholder="Proof" />
-    <input type="file" id="photo" accept="image/*" />
+    <input type="text" id="name" name="name" placeholder="Bottle Name" required />
+    <input type="text" id="distillery" name="distillery" placeholder="Distillery" />
+    <input type="text" id="age" name="age" placeholder="Age" />
+    <input type="text" id="proof" name="proof" placeholder="Proof" />
+    <input type="file" id="photo" name="photo" accept="image/*" />
     <button type="submit">Add Bottle</button>
   </form>
+  <!-- 🔴 Error or success message area -->
+  <div id="errorMessage"></div>
 </div>
 
 <div class="bottle-grid" id="bottleGrid"></div>
@@ -160,12 +168,10 @@
     getStorage, ref, uploadBytes, getDownloadURL
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-  // Auth check
   const role = localStorage.getItem("bungholeRole");
   const access = localStorage.getItem("bungholeAccess");
   if (!access || !role) window.location.href = "signin.html";
 
-  // Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
     authDomain: "tipsy-bunghole-photos.firebaseapp.com",
@@ -278,28 +284,38 @@
 
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const file = document.getElementById("photo").files[0];
-    let photoUrl = "";
+    const errorBox = document.getElementById("errorMessage");
+    errorBox.textContent = "";
+    errorBox.style.color = "red";
 
-    if (file) {
-      const storageRef = ref(storage, `bottles/${Date.now()}-${file.name}`);
-      const snap = await uploadBytes(storageRef, file);
-      photoUrl = await getDownloadURL(snap.ref);
+    try {
+      const file = document.getElementById("photo").files[0];
+      let photoUrl = "";
+
+      if (file) {
+        const storageRef = ref(storage, `bottles/${Date.now()}-${file.name}`);
+        const snap = await uploadBytes(storageRef, file);
+        photoUrl = await getDownloadURL(snap.ref);
+      }
+
+      const newBottle = {
+        name: form.name.value,
+        distillery: form.distillery.value,
+        age: form.age.value,
+        proof: form.proof.value,
+        killed: false,
+        favorite: false,
+        rare: false,
+        photoUrl
+      };
+
+      await addDoc(bottlesRef, newBottle);
+      form.reset();
+      errorBox.style.color = "green";
+      errorBox.textContent = "✅ Bottle added successfully!";
+    } catch (error) {
+      errorBox.textContent = "🚨 Error: " + error.message;
     }
-
-    const newBottle = {
-      name: form.name.value,
-      distillery: form.distillery.value,
-      age: form.age.value,
-      proof: form.proof.value,
-      killed: false,
-      favorite: false,
-      rare: false,
-      photoUrl
-    };
-
-    await addDoc(bottlesRef, newBottle);
-    form.reset();
   });
 
   onSnapshot(bottlesRef, (snapshot) => {
