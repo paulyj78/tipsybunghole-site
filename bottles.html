@@ -13,7 +13,6 @@
       margin: 0;
       padding: 0;
     }
-
     header {
       background-color: rgba(0, 0, 0, 0.7);
       color: white;
@@ -22,7 +21,6 @@
       font-size: 1.5rem;
       font-weight: bold;
     }
-
     .return-button {
       display: block;
       margin: 1rem auto;
@@ -33,7 +31,6 @@
       border: none;
       cursor: pointer;
     }
-
     .collapsible {
       background-color: #a6794a;
       color: white;
@@ -45,31 +42,26 @@
       outline: none;
       font-size: 1.1em;
     }
-
     .content {
       display: none;
       background-color: #fff8e6;
       padding: 10px;
       border: 1px solid #ccc;
     }
-
     form input, form select {
       margin: 5px;
     }
-
     .filters {
       background: rgba(255,255,255,0.9);
       padding: 10px;
       text-align: center;
     }
-
     .bottle-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 15px;
       padding: 1rem;
     }
-
     .bottle-card {
       background: rgba(255, 255, 255, 0.95);
       padding: 10px;
@@ -77,13 +69,11 @@
       border-radius: 8px;
       position: relative;
     }
-
     .toggle-group {
       display: flex;
       justify-content: space-between;
       margin-top: 8px;
     }
-
     .edit-btn, .delete-btn {
       position: absolute;
       top: 5px;
@@ -92,23 +82,19 @@
       cursor: pointer;
       font-size: 1.1em;
     }
-
     .edit-btn {
       right: 30px;
     }
-
     .delete-btn {
       right: 5px;
       color: red;
     }
-
     img.bottle-photo {
       max-width: 100%;
       max-height: 150px;
       margin-bottom: 8px;
       border-radius: 6px;
     }
-
     #errorMessage {
       text-align: center;
       margin-top: 10px;
@@ -152,24 +138,23 @@
     <input type="file" id="photo" name="photo" accept="image/*" />
     <button type="submit">Add Bottle</button>
   </form>
-  <!-- 🔴 Error or success message area -->
   <div id="errorMessage"></div>
 </div>
 
 <div class="bottle-grid" id="bottleGrid"></div>
 
 <script type="module">
-  console.log("✅ Script loaded!");
-  document.getElementById("errorMessage").textContent = "🟢 Script loaded!";
-
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
-    getFirestore, collection, addDoc, getDocs, updateDoc,
+    getFirestore, collection, addDoc, updateDoc,
     deleteDoc, doc, onSnapshot
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   import {
     getStorage, ref, uploadBytes, getDownloadURL
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+  console.log("✅ Script loaded.");
+  document.getElementById("errorMessage").textContent = "🟢 Script initialized.";
 
   const role = localStorage.getItem("bungholeRole");
   const access = localStorage.getItem("bungholeAccess");
@@ -196,9 +181,54 @@
 
   let bottleData = [];
 
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const errorBox = document.getElementById("errorMessage");
+    errorBox.textContent = "Submitting bottle...";
+    errorBox.style.color = "orange";
+
+    try {
+      const file = document.getElementById("photo").files[0];
+      let photoUrl = "";
+
+      if (file) {
+        errorBox.textContent = "📤 Uploading photo...";
+        console.log("Uploading photo:", file.name);
+
+        const storageRef = ref(storage, `bottles/${Date.now()}-${file.name}`);
+        const snap = await uploadBytes(storageRef, file);
+        console.log("✅ Photo uploaded:", snap.metadata.fullPath);
+
+        photoUrl = await getDownloadURL(snap.ref);
+        console.log("📷 Photo URL retrieved:", photoUrl);
+      }
+
+      const newBottle = {
+        name: form.name.value.trim(),
+        distillery: form.distillery.value.trim(),
+        age: form.age.value.trim(),
+        proof: form.proof.value.trim(),
+        killed: false,
+        favorite: false,
+        rare: false,
+        photoUrl
+      };
+
+      console.log("📦 Adding bottle to Firestore:", newBottle);
+      await addDoc(bottlesRef, newBottle);
+
+      form.reset();
+      errorBox.style.color = "green";
+      errorBox.textContent = "✅ Bottle added successfully!";
+    } catch (error) {
+      console.error("❌ Error adding bottle:", error);
+      errorBox.style.color = "red";
+      errorBox.textContent = "🚨 Error: " + error.message;
+    }
+  });
+
   const renderBottles = () => {
     bottleGrid.innerHTML = "";
-
     let filtered = [...bottleData];
     const filter = filterSelect.value;
     const sort = sortSelect.value;
@@ -284,76 +314,6 @@
       bottleGrid.appendChild(card);
     });
   };
-
-  form?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const errorBox = document.getElementById("errorMessage");
-    errorBox.textContent = "";
-    errorBox.style.color = "red";
-
-    try {
-      const fileInput = document.getElementById("photo");
-      const file = fileInput?.files[0];
-      let photoUrl = "";
-
-      if (file) {
-        console.log("Uploading photo...");
-        errorBox.textContent = "📤 Uploading photo...";
-        errorBox.style.color = "black";
-
-        const storageRef = ref(storage, `bottles/${Date.now()}-${file.name}`);
-
-        // Upload with 20s timeout
-        const uploadPromise = uploadBytes(storageRef, file);
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Photo upload timeout after 20 seconds")), 20000)
-        );
-
-        let snap;
-        try {
-          snap = await Promise.race([uploadPromise, timeoutPromise]);
-        } catch (uploadError) {
-          console.error("Upload error caught:", uploadError);
-          throw uploadError;  // rethrow so outer catch catches it
-        }
-
-        photoUrl = await getDownloadURL(snap.ref);
-        console.log("Photo uploaded:", photoUrl);
-        errorBox.textContent = "✅ Photo uploaded.";
-        errorBox.style.color = "green";
-      } else {
-        console.log("No photo to upload");
-        errorBox.textContent = "ℹ️ No photo uploaded.";
-        errorBox.style.color = "black";
-      }
-
-      const newBottle = {
-        name: form.name.value,
-        distillery: form.distillery.value,
-        age: form.age.value,
-        proof: form.proof.value,
-        killed: false,
-        favorite: false,
-        rare: false,
-        photoUrl
-      };
-
-      console.log("Adding bottle data to Firestore:", newBottle);
-      errorBox.textContent = "⏳ Submitting bottle data...";
-      errorBox.style.color = "black";
-
-      await addDoc(bottlesRef, newBottle);
-
-      form.reset();
-      errorBox.style.color = "green";
-      errorBox.textContent = "✅ Bottle added successfully!";
-      console.log("Bottle added successfully.");
-    } catch (error) {
-      console.error("Submission error:", error);
-      errorBox.style.color = "red";
-      errorBox.textContent = "🚨 Error: " + (error.message || "Unknown error");
-    }
-  });
 
   onSnapshot(bottlesRef, (snapshot) => {
     bottleData = snapshot.docs.map(doc => ({ id: doc.id, data: doc.data() }));
