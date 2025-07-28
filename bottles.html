@@ -289,7 +289,7 @@
     e.preventDefault();
     const errorBox = document.getElementById("errorMessage");
     errorBox.textContent = "";
-    errorBox.style.color = "black";
+    errorBox.style.color = "red";
 
     try {
       const fileInput = document.getElementById("photo");
@@ -309,7 +309,13 @@
           setTimeout(() => reject(new Error("Photo upload timeout after 20 seconds")), 20000)
         );
 
-        const snap = await Promise.race([uploadPromise, timeoutPromise]);
+        let snap;
+        try {
+          snap = await Promise.race([uploadPromise, timeoutPromise]);
+        } catch (uploadError) {
+          console.error("Upload error caught:", uploadError);
+          throw uploadError;  // rethrow so outer catch catches it
+        }
 
         photoUrl = await getDownloadURL(snap.ref);
         console.log("Photo uploaded:", photoUrl);
@@ -332,7 +338,8 @@
         photoUrl
       };
 
-      errorBox.textContent = "⏳ Submitting bottle...";
+      console.log("Adding bottle data to Firestore:", newBottle);
+      errorBox.textContent = "⏳ Submitting bottle data...";
       errorBox.style.color = "black";
 
       await addDoc(bottlesRef, newBottle);
@@ -340,10 +347,11 @@
       form.reset();
       errorBox.style.color = "green";
       errorBox.textContent = "✅ Bottle added successfully!";
+      console.log("Bottle added successfully.");
     } catch (error) {
-      console.error(error);
+      console.error("Submission error:", error);
       errorBox.style.color = "red";
-      errorBox.textContent = "🚨 Error: " + error.message;
+      errorBox.textContent = "🚨 Error: " + (error.message || "Unknown error");
     }
   });
 
