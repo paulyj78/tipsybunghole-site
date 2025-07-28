@@ -1,114 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <meta charset="UTF-8" />
- <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
- <title>The Tipsy Bunghole Bottles</title>
- <style>
-   body {
-     font-family: "Courier New", monospace;
-     background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.firebasestorage.app/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
-     background-size: cover;
-     background-repeat: no-repeat;
-     margin: 0;
-     padding: 0;
-   }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Tipsy Bunghole Bottles</title>
+  <style>
+    body {
+      font-family: "Courier New", monospace;
+      background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.firebasestorage.app/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
+      background-size: cover;
+      background-repeat: no-repeat;
+      margin: 0;
+      padding: 0;
+    }
 
-   header {
-     background-color: rgba(0, 0, 0, 0.7);
-     color: white;
-     text-align: center;
-     padding: 1rem;
-     font-size: 1.5rem;
-     font-weight: bold;
-   }
+    header {
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
 
-   .return-button {
-     display: block;
-     margin: 1rem auto;
-     padding: 10px 20px;
-     background-color: #a6794a;
-     color: white;
-     text-align: center;
-     border: none;
-     cursor: pointer;
-   }
+    .return-button {
+      display: block;
+      margin: 1rem auto;
+      padding: 10px 20px;
+      background-color: #a6794a;
+      color: white;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+    }
 
-   .collapsible {
-     background-color: #a6794a;
-     color: white;
-     cursor: pointer;
-     padding: 10px;
-     width: 100%;
-     border: none;
-     text-align: left;
-     outline: none;
-     font-size: 1.1em;
-   }
+    .collapsible {
+      background-color: #a6794a;
+      color: white;
+      cursor: pointer;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      text-align: left;
+      outline: none;
+      font-size: 1.1em;
+    }
 
-   .content {
-     display: none;
-     background-color: #fff8e6;
-     padding: 10px;
-     border: 1px solid #ccc;
-   }
+    .content {
+      display: none;
+      background-color: #fff8e6;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
 
-   form input, form select {
-     margin: 5px;
-   }
+    form input, form select {
+      margin: 5px;
+    }
 
-   .filters {
-     background: rgba(255,255,255,0.9);
-     padding: 10px;
-     text-align: center;
-   }
+    .filters {
+      background: rgba(255,255,255,0.9);
+      padding: 10px;
+      text-align: center;
+    }
 
-   .bottle-grid {
-     display: grid;
-     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-     gap: 15px;
-     padding: 1rem;
-   }
+    .bottle-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 15px;
+      padding: 1rem;
+    }
 
-   .bottle-card {
-     background: rgba(255, 255, 255, 0.95);
-     padding: 10px;
-     border: 1px solid #ccc;
-     border-radius: 8px;
-     position: relative;
-   }
+    .bottle-card {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      position: relative;
+    }
 
-   .toggle-group {
-     display: flex;
-     justify-content: space-between;
-     margin-top: 8px;
-   }
+    .toggle-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
 
-   .edit-btn, .delete-btn {
-     position: absolute;
-     top: 5px;
-     background-color: transparent;
-     border: none;
-     cursor: pointer;
-     font-size: 1.1em;
-   }
+    .edit-btn, .delete-btn {
+      position: absolute;
+      top: 5px;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1em;
+    }
 
-   .edit-btn {
-     right: 30px;
-   }
+    .edit-btn {
+      right: 30px;
+    }
 
-   .delete-btn {
-     right: 5px;
-     color: red;
-   }
+    .delete-btn {
+      right: 5px;
+      color: red;
+    }
 
-   img.bottle-photo {
-     max-width: 100%;
-     max-height: 150px;
-     margin-bottom: 8px;
-     border-radius: 6px;
-   }
- </style>
+    img.bottle-photo {
+      max-width: 100%;
+      max-height: 150px;
+      margin-bottom: 8px;
+      border-radius: 6px;
+    }
+
+    #errorMessage {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+      min-height: 1.5em;
+      color: red;
+    }
+  </style>
 </head>
 <body>
 
@@ -118,203 +126,241 @@
 
 <!-- Filter UI -->
 <div class="filters">
- <label>Filter:
-   <select id="filterSelect">
-     <option value="all">All Bottles</option>
-     <option value="favorite">Favorites</option>
-     <option value="rare">Rare</option>
-     <option value="killed">Killed</option>
-   </select>
- </label>
- <label>Sort By:
-   <select id="sortSelect">
-     <option value="name">Name</option>
-     <option value="proof">Proof</option>
-     <option value="age">Age</option>
-   </select>
- </label>
+  <label>Filter: 
+    <select id="filterSelect">
+      <option value="all">All Bottles</option>
+      <option value="favorite">Favorites</option>
+      <option value="rare">Rare</option>
+      <option value="killed">Killed</option>
+    </select>
+  </label>
+  <label>Sort By: 
+    <select id="sortSelect">
+      <option value="name">Name</option>
+      <option value="proof">Proof</option>
+      <option value="age">Age</option>
+    </select>
+  </label>
 </div>
 
 <!-- Add Form -->
 <button class="collapsible">➕ Add a Bottle</button>
 <div class="content">
- <form id="bottleForm">
-   <input type="text" id="name" placeholder="Bottle Name" required />
-   <input type="text" id="distillery" placeholder="Distillery" />
-   <input type="text" id="age" placeholder="Age" />
-   <input type="text" id="proof" placeholder="Proof" />
-   <input type="file" id="photo" accept="image/*" />
-   <button type="submit">Add Bottle</button>
- </form>
+  <form id="bottleForm">
+    <input type="text" id="name" name="name" placeholder="Bottle Name" required />
+    <input type="text" id="distillery" name="distillery" placeholder="Distillery" />
+    <input type="text" id="age" name="age" placeholder="Age" />
+    <input type="text" id="proof" name="proof" placeholder="Proof" />
+    <input type="file" id="photo" name="photo" accept="image/*" />
+    <button type="submit">Add Bottle</button>
+  </form>
+  <!-- Error or status message area -->
+  <div id="errorMessage"></div>
 </div>
 
 <div class="bottle-grid" id="bottleGrid"></div>
 
 <script type="module">
- import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
- import {
-   getFirestore, collection, addDoc, getDocs, updateDoc,
-   deleteDoc, doc, onSnapshot
- } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
- import {
-   getStorage, ref, uploadBytes, getDownloadURL
- } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+  console.log("✅ Script loaded!");
+  const errorBox = document.getElementById("errorMessage");
+  errorBox.textContent = "🟢 Script loaded!";
 
- // Auth check
- const role = localStorage.getItem("bungholeRole");
- const access = localStorage.getItem("bungholeAccess");
- if (!access || !role) window.location.href = "signin.html";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, updateDoc,
+    deleteDoc, doc, onSnapshot
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import {
+    getStorage, ref, uploadBytes, getDownloadURL
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
- // Firebase config
- const firebaseConfig = {
-   apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
-   authDomain: "tipsy-bunghole-photos.firebaseapp.com",
-   projectId: "tipsy-bunghole-photos",
-   storageBucket: "tipsy-bunghole-photos.appspot.com",
-   messagingSenderId: "223660009700",
-   appId: "1:223660009700:web:yourappid"
- };
+  const role = localStorage.getItem("bungholeRole");
+  const access = localStorage.getItem("bungholeAccess");
+  if (!access || !role) window.location.href = "signin.html";
 
- const app = initializeApp(firebaseConfig);
- const db = getFirestore(app);
- const storage = getStorage(app);
- const bottlesRef = collection(db, "bottles");
+  const firebaseConfig = {
+    apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
+    authDomain: "tipsy-bunghole-photos.firebaseapp.com",
+    projectId: "tipsy-bunghole-photos",
+    storageBucket: "tipsy-bunghole-photos.appspot.com",
+    messagingSenderId: "223660009700",
+    appId: "1:223660009700:web:yourappid"
+  };
 
- const form = document.getElementById("bottleForm");
- const bottleGrid = document.getElementById("bottleGrid");
- const filterSelect = document.getElementById("filterSelect");
- const sortSelect = document.getElementById("sortSelect");
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+  const bottlesRef = collection(db, "bottles");
 
- let bottleData = [];
+  const form = document.getElementById("bottleForm");
+  const bottleGrid = document.getElementById("bottleGrid");
+  const filterSelect = document.getElementById("filterSelect");
+  const sortSelect = document.getElementById("sortSelect");
 
- const renderBottles = () => {
-   bottleGrid.innerHTML = "";
+  let bottleData = [];
 
-   let filtered = [...bottleData];
-   const filter = filterSelect.value;
-   const sort = sortSelect.value;
+  const renderBottles = () => {
+    bottleGrid.innerHTML = "";
 
-   if (filter !== "all") {
-     filtered = filtered.filter(b => b[filter]);
-   }
+    let filtered = [...bottleData];
+    const filter = filterSelect.value;
+    const sort = sortSelect.value;
 
-   filtered.sort((a, b) => {
-     const valA = (a[sort] || "").toString().toLowerCase();
-     const valB = (b[sort] || "").toString().toLowerCase();
-     return valA.localeCompare(valB, undefined, { numeric: true });
-   });
+    if (filter !== "all") {
+      filtered = filtered.filter(b => b[filter]);
+    }
 
-   filtered.forEach(({ id, data }) => {
-     const card = document.createElement("div");
-     card.className = "bottle-card";
+    filtered.sort((a, b) => {
+      const valA = (a.data[sort] || "").toString().toLowerCase();
+      const valB = (b.data[sort] || "").toString().toLowerCase();
+      return valA.localeCompare(valB, undefined, { numeric: true });
+    });
 
-     if (data.photoUrl) {
-       const img = document.createElement("img");
-       img.src = data.photoUrl;
-       img.alt = `${data.name} photo`;
-       img.className = "bottle-photo";
-       card.appendChild(img);
-     }
+    filtered.forEach(({ id, data }) => {
+      const card = document.createElement("div");
+      card.className = "bottle-card";
 
-     const makeField = (label, field) => {
-       const el = document.createElement("div");
-       const editable = role === "admin" ? "true" : "false";
-       el.innerHTML = `<strong>${label}:</strong> <span contenteditable="${editable}" class="field-${field}">${data[field] || "N/A"}</span>`;
-       return el;
-     };
+      if (data.photoUrl) {
+        const img = document.createElement("img");
+        img.src = data.photoUrl;
+        img.alt = `${data.name} photo`;
+        img.className = "bottle-photo";
+        card.appendChild(img);
+      }
 
-     card.appendChild(makeField("Name", "name"));
-     card.appendChild(makeField("Distillery", "distillery"));
-     card.appendChild(makeField("Age", "age"));
-     card.appendChild(makeField("Proof", "proof"));
+      const makeField = (label, field) => {
+        const el = document.createElement("div");
+        const editable = role === "admin" ? "true" : "false";
+        el.innerHTML = `<strong>${label}:</strong> <span contenteditable="${editable}" class="field-${field}">${data[field] || "N/A"}</span>`;
+        return el;
+      };
 
-     const toggles = document.createElement("div");
-     toggles.className = "toggle-group";
+      card.appendChild(makeField("Name", "name"));
+      card.appendChild(makeField("Distillery", "distillery"));
+      card.appendChild(makeField("Age", "age"));
+      card.appendChild(makeField("Proof", "proof"));
 
-     ["killed", "favorite", "rare"].forEach(field => {
-       const label = document.createElement("label");
-       label.innerHTML = `<input type="checkbox" ${data[field] ? "checked" : ""} ${role !== "admin" ? "disabled" : ""}/> ${field}`;
-       const checkbox = label.querySelector("input");
-       if (role === "admin") {
-         checkbox.addEventListener("change", () => {
-           updateDoc(doc(db, "bottles", id), {
-             [field]: checkbox.checked
-           });
-         });
-       }
-       toggles.appendChild(label);
-     });
+      const toggles = document.createElement("div");
+      toggles.className = "toggle-group";
 
-     if (role === "admin") {
-       const editBtn = document.createElement("button");
-       editBtn.className = "edit-btn";
-       editBtn.innerHTML = "✏️";
-       editBtn.addEventListener("click", async () => {
-         const spans = card.querySelectorAll("span[contenteditable='true']");
-         const updates = {};
-         spans.forEach(span => {
-           const field = span.className.replace("field-", "");
-           updates[field] = span.innerText.trim();
-         });
-         await updateDoc(doc(db, "bottles", id), updates);
-       });
+      ["killed", "favorite", "rare"].forEach(field => {
+        const label = document.createElement("label");
+        label.innerHTML = `<input type="checkbox" ${data[field] ? "checked" : ""} ${role !== "admin" ? "disabled" : ""}/> ${field}`;
+        const checkbox = label.querySelector("input");
+        if (role === "admin") {
+          checkbox.addEventListener("change", () => {
+            updateDoc(doc(db, "bottles", id), {
+              [field]: checkbox.checked
+            });
+          });
+        }
+        toggles.appendChild(label);
+      });
 
-       const deleteBtn = document.createElement("button");
-       deleteBtn.className = "delete-btn";
-       deleteBtn.innerHTML = "🗑️";
-       deleteBtn.addEventListener("click", async () => {
-         const confirmed = confirm("Delete this bottle?");
-         if (confirmed) await deleteDoc(doc(db, "bottles", id));
-       });
+      if (role === "admin") {
+        const editBtn = document.createElement("button");
+        editBtn.className = "edit-btn";
+        editBtn.innerHTML = "✏️";
+        editBtn.addEventListener("click", async () => {
+          const spans = card.querySelectorAll("span[contenteditable='true']");
+          const updates = {};
+          spans.forEach(span => {
+            const field = span.className.replace("field-", "");
+            updates[field] = span.innerText.trim();
+          });
+          try {
+            await updateDoc(doc(db, "bottles", id), updates);
+            errorBox.style.color = "green";
+            errorBox.textContent = "✅ Bottle updated!";
+          } catch (e) {
+            errorBox.style.color = "red";
+            errorBox.textContent = "🚨 Update error: " + e.message;
+          }
+        });
 
-       card.appendChild(editBtn);
-       card.appendChild(deleteBtn);
-     }
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-btn";
+        deleteBtn.innerHTML = "🗑️";
+        deleteBtn.addEventListener("click", async () => {
+          const confirmed = confirm("Delete this bottle?");
+          if (confirmed) {
+            try {
+              await deleteDoc(doc(db, "bottles", id));
+              errorBox.style.color = "green";
+              errorBox.textContent = "✅ Bottle deleted!";
+            } catch (e) {
+              errorBox.style.color = "red";
+              errorBox.textContent = "🚨 Delete error: " + e.message;
+            }
+          }
+        });
 
-     card.appendChild(toggles);
-     bottleGrid.appendChild(card);
-   });
- };
+        card.appendChild(editBtn);
+        card.appendChild(deleteBtn);
+      }
 
- form?.addEventListener("submit", async (e) => {
-   e.preventDefault();
-   const file = document.getElementById("photo").files[0];
-   let photoUrl = "";
+      card.appendChild(toggles);
+      bottleGrid.appendChild(card);
+    });
+  };
 
-   if (file) {
-     const storageRef = ref(storage, `bottles/${Date.now()}-${file.name}`);
-     const snap = await uploadBytes(storageRef, file);
-     photoUrl = await getDownloadURL(snap.ref);
-   }
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorBox.style.color = "black";
+    errorBox.textContent = "⏳ Submitting bottle…";
 
-   const newBottle = {
-     name: form.name.value,
-     distillery: form.distillery.value,
-     age: form.age.value,
-     proof: form.proof.value,
-     killed: false,
-     favorite: false,
-     rare: false,
-     photoUrl
-   };
+    try {
+      const fileInput = document.getElementById("photo");
+      const file = fileInput.files[0];
+      let photoUrl = "";
 
-   await addDoc(bottlesRef, newBottle);
-   form.reset();
- });
+      if (file) {
+        errorBox.textContent = "⏳ Uploading photo…";
+        const storageRef = ref(storage, `bottles/${Date.now()}-${file.name}`);
+        const snap = await uploadBytes(storageRef, file);
+        photoUrl = await getDownloadURL(snap.ref);
+        errorBox.textContent = "✅ Photo uploaded";
+      } else {
+        errorBox.textContent = "ℹ️ No photo to upload";
+      }
 
- onSnapshot(bottlesRef, (snapshot) => {
-   bottleData = snapshot.docs.map(doc => ({ id: doc.id, data: doc.data() }));
-   renderBottles();
- });
+      const newBottle = {
+        name: form.name.value.trim(),
+        distillery: form.distillery.value.trim(),
+        age: form.age.value.trim(),
+        proof: form.proof.value.trim(),
+        killed: false,
+        favorite: false,
+        rare: false,
+        photoUrl
+      };
 
- filterSelect.addEventListener("change", renderBottles);
- sortSelect.addEventListener("change", renderBottles);
+      errorBox.textContent = "⏳ Saving bottle data…";
+      await addDoc(bottlesRef, newBottle);
 
- document.querySelector(".collapsible")?.addEventListener("click", function () {
-   this.classList.toggle("active");
-   const content = this.nextElementSibling;
-   content.style.display = content.style.display === "block" ? "none" : "block";
- });
+      form.reset();
+      errorBox.style.color = "green";
+      errorBox.textContent = "✅ Bottle added successfully!";
+    } catch (error) {
+      console.error("Submit error:", error);
+      errorBox.style.color = "red";
+      errorBox.textContent = "🚨 Error: " + error.message;
+    }
+  });
+
+  onSnapshot(bottlesRef, (snapshot) => {
+    bottleData = snapshot.docs.map(doc => ({ id: doc.id, data: doc.data() }));
+    renderBottles();
+  });
+
+  filterSelect.addEventListener("change", renderBottles);
+  sortSelect.addEventListener("change", renderBottles);
+
+  document.querySelector(".collapsible")?.addEventListener("click", function () {
+    this.classList.toggle("active");
+    const content = this.nextElementSibling;
+    content.style.display = content.style.display === "block" ? "none" : "block";
+  });
 </script>
 </body>
 </html>
