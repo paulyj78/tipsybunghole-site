@@ -152,7 +152,6 @@
     <input type="file" id="photo" name="photo" accept="image/*" />
     <button type="submit">Add Bottle</button>
   </form>
-  <!-- 🔴 Error or success message area -->
   <div id="errorMessage"></div>
 </div>
 
@@ -160,11 +159,11 @@
 
 <script type="module">
   console.log("✅ Script loaded!");
-document.getElementById("errorMessage").textContent = "🟢 Script loaded!";
+  document.getElementById("errorMessage").textContent = "🟢 Script loaded!";
 
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
-    getFirestore, collection, addDoc, getDocs, updateDoc,
+    getFirestore, collection, addDoc, updateDoc,
     deleteDoc, doc, onSnapshot
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   import {
@@ -285,20 +284,29 @@ document.getElementById("errorMessage").textContent = "🟢 Script loaded!";
     });
   };
 
+  // ✅ REPLACED SUBMIT HANDLER WITH DEBUGGING
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const errorBox = document.getElementById("errorMessage");
     errorBox.textContent = "";
     errorBox.style.color = "red";
 
+    console.log("📤 Form submit triggered");
+    errorBox.textContent = "📤 Submitting bottle...";
+
     try {
       const file = document.getElementById("photo").files[0];
       let photoUrl = "";
 
       if (file) {
+        console.log("📸 Uploading photo...");
         const storageRef = ref(storage, `bottles/${Date.now()}-${file.name}`);
-        const snap = await uploadBytes(storageRef, file);
+        const metadata = { contentType: file.type };
+        const snap = await uploadBytes(storageRef, file, metadata);
         photoUrl = await getDownloadURL(snap.ref);
+        console.log("✅ Photo uploaded:", photoUrl);
+      } else {
+        console.log("⚠️ No photo selected");
       }
 
       const newBottle = {
@@ -312,11 +320,15 @@ document.getElementById("errorMessage").textContent = "🟢 Script loaded!";
         photoUrl
       };
 
+      console.log("📝 Adding bottle:", newBottle);
       await addDoc(bottlesRef, newBottle);
       form.reset();
+
       errorBox.style.color = "green";
       errorBox.textContent = "✅ Bottle added successfully!";
+      console.log("✅ Bottle added to Firestore");
     } catch (error) {
+      console.error("🚨 Error during submit:", error);
       errorBox.textContent = "🚨 Error: " + error.message;
     }
   });
