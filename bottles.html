@@ -1,4 +1,4 @@
-<!<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -153,10 +153,6 @@
 <div class="bottle-grid" id="bottleGrid"></div>
 
 <script type="module">
-  console.log("✅ Script loaded!");
-  const errorBox = document.getElementById("errorMessage");
-  errorBox.textContent = "🟢 Script loaded!";
-
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
     getFirestore, collection, addDoc, updateDoc,
@@ -207,15 +203,6 @@
     filtered.forEach(({ id, data }) => {
       const card = document.createElement("div");
       card.className = "bottle-card";
-
-      // Removed photo rendering since we're no longer handling photos
-      // if (data.photoUrl) {
-      //   const img = document.createElement("img");
-      //   img.src = data.photoUrl;
-      //   img.alt = `${data.name} photo`;
-      //   img.className = "bottle-photo";
-      //   card.appendChild(img);
-      // }
 
       const makeField = (label, field) => {
         const el = document.createElement("div");
@@ -293,11 +280,8 @@
     });
   };
 
-  onSnapshot(bottlesRef, snapshot => {
-    bottleData = snapshot.docs.map(doc => ({
-      id: doc.id,
-      data: doc.data()
-    }));
+  onSnapshot(bottlesRef, (snapshot) => {
+    bottleData = snapshot.docs.map(doc => ({ id: doc.id, data: doc.data() }));
     renderBottles();
   });
 
@@ -341,4 +325,3 @@
 </script>
 </body>
 </html>
-DOCTYPE html>
