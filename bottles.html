@@ -174,7 +174,16 @@
     document.getElementById("sortBy").onchange = e => { filters.sortBy = e.target.value; renderFiltered(); };
 
     const allBottles = [];
-    form?.addEventListener("submit", async e => {
+
+    // Make the Add Bottle form visible
+    document.querySelector(".collapsible").addEventListener("click", function () {
+      this.classList.toggle("active");
+      const content = this.nextElementSibling;
+      content.style.display = content.style.display === "block" ? "none" : "block";
+    });
+
+    // Handle form submission
+    form?.addEventListener("submit", async (e) => {
       e.preventDefault();
       const bottleData = {
         name: form.name.value.trim(),
@@ -193,8 +202,9 @@
       }
 
       try {
+        // Add the bottle data to Firestore
         await addDoc(bottlesRef, bottleData);
-        form.reset();
+        form.reset(); // Reset the form fields
         alert("Bottle added successfully!");
       } catch (error) {
         console.error("Error adding bottle:", error);
@@ -202,6 +212,7 @@
       }
     });
 
+    // Listen for changes in the Firestore collection
     onSnapshot(bottlesRef, snap => {
       allBottles.length = 0;
       snap.forEach(ds => allBottles.push({ id: ds.id, ...ds.data() }));
