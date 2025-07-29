@@ -179,7 +179,6 @@
   const access = localStorage.getItem("bungholeAccess");
   if (!access || !role) location = "signin.html";
 
-  // Firebase initialization
   const app = initializeApp({
     apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
     authDomain: "tipsy-bunghole-photos.firebaseapp.com",
@@ -203,16 +202,30 @@
   const allBottles = [];
   form?.addEventListener("submit", async e => {
     e.preventDefault();
-    await addDoc(bottlesRef, {
-      name: form.name.value,
-      distillery: form.distillery.value,
-      age: form.age.value,
-      proof: form.proof.value,
+
+    const bottleData = {
+      name: form.name.value.trim(),
+      distillery: form.distillery.value.trim(),
+      age: form.age.value.trim(),
+      proof: form.proof.value.trim(),
       killed: false,
       favorite: false,
       rare: false
-    });
-    form.reset();
+    };
+
+    if (!bottleData.name || !bottleData.distillery || !bottleData.age || !bottleData.proof) {
+      alert("Please fill in all required fields!");
+      return;
+    }
+
+    try {
+      await addDoc(bottlesRef, bottleData);
+      form.reset();
+      alert("Bottle added successfully!");
+    } catch (error) {
+      console.error("Error adding bottle:", error);
+      alert("There was an error adding the bottle. Please try again.");
+    }
   });
 
   onSnapshot(bottlesRef, snap => {
