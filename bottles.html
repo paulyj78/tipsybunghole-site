@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -102,13 +102,6 @@
       color: red;
     }
 
-    img.bottle-photo {
-      max-width: 100%;
-      max-height: 150px;
-      margin-bottom: 8px;
-      border-radius: 6px;
-    }
-
     #errorMessage {
       text-align: center;
       margin-top: 10px;
@@ -151,7 +144,6 @@
     <input type="text" id="distillery" name="distillery" placeholder="Distillery" />
     <input type="text" id="age" name="age" placeholder="Age" />
     <input type="text" id="proof" name="proof" placeholder="Proof" />
-    <input type="file" id="photo" name="photo" accept="image/*" />
     <button type="submit">Add Bottle</button>
   </form>
   <!-- Error or status message area -->
@@ -170,9 +162,6 @@
     getFirestore, collection, addDoc, updateDoc,
     deleteDoc, doc, onSnapshot
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import {
-    getStorage, ref, uploadBytes, getDownloadURL
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
   const role = localStorage.getItem("bungholeRole");
   const access = localStorage.getItem("bungholeAccess");
@@ -189,7 +178,6 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
-  const storage = getStorage(app);
   const bottlesRef = collection(db, "bottles");
 
   const form = document.getElementById("bottleForm");
@@ -220,13 +208,14 @@
       const card = document.createElement("div");
       card.className = "bottle-card";
 
-      if (data.photoUrl) {
-        const img = document.createElement("img");
-        img.src = data.photoUrl;
-        img.alt = `${data.name} photo`;
-        img.className = "bottle-photo";
-        card.appendChild(img);
-      }
+      // Removed photo rendering since we're no longer handling photos
+      // if (data.photoUrl) {
+      //   const img = document.createElement("img");
+      //   img.src = data.photoUrl;
+      //   img.alt = `${data.name} photo`;
+      //   img.className = "bottle-photo";
+      //   card.appendChild(img);
+      // }
 
       const makeField = (label, field) => {
         const el = document.createElement("div");
@@ -304,26 +293,20 @@
     });
   };
 
+  onSnapshot(bottlesRef, snapshot => {
+    bottleData = snapshot.docs.map(doc => ({
+      id: doc.id,
+      data: doc.data()
+    }));
+    renderBottles();
+  });
+
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
     errorBox.style.color = "black";
     errorBox.textContent = "⏳ Submitting bottle…";
 
     try {
-      const fileInput = document.getElementById("photo");
-      const file = fileInput.files[0];
-      let photoUrl = "";
-
-      if (file) {
-        errorBox.textContent = "⏳ Uploading photo…";
-        const storageRef = ref(storage, `bottles/${Date.now()}-${file.name}`);
-        const snap = await uploadBytes(storageRef, file);
-        photoUrl = await getDownloadURL(snap.ref);
-        errorBox.textContent = "✅ Photo uploaded";
-      } else {
-        errorBox.textContent = "ℹ️ No photo to upload";
-      }
-
       const newBottle = {
         name: form.name.value.trim(),
         distillery: form.distillery.value.trim(),
@@ -332,7 +315,7 @@
         killed: false,
         favorite: false,
         rare: false,
-        photoUrl
+        photoUrl: ""  // No photoUrl needed anymore
       };
 
       errorBox.textContent = "⏳ Saving bottle data…";
@@ -348,19 +331,14 @@
     }
   });
 
-  onSnapshot(bottlesRef, (snapshot) => {
-    bottleData = snapshot.docs.map(doc => ({ id: doc.id, data: doc.data() }));
-    renderBottles();
-  });
-
-  filterSelect.addEventListener("change", renderBottles);
-  sortSelect.addEventListener("change", renderBottles);
-
-  document.querySelector(".collapsible")?.addEventListener("click", function () {
+  // Collapsible section for form
+  document.querySelector(".collapsible").addEventListener("click", function() {
     this.classList.toggle("active");
     const content = this.nextElementSibling;
     content.style.display = content.style.display === "block" ? "none" : "block";
   });
+
 </script>
 </body>
 </html>
+DOCTYPE html>
