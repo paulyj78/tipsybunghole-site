@@ -93,25 +93,15 @@
     }
     .edit-btn { right: 30px; }
     .delete-btn { right: 5px; color: red; }
-
-    /* Pagination */
     .pagination-controls {
       text-align: center;
-      margin: 20px;
+      margin: 20px 0;
     }
-    .pagination-controls button {
-      margin: 0 5px;
-      padding: 6px 10px;
-      font-family: monospace;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    .pagination-controls button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+    #pageNumbers {
+      font-weight: bold;
+      margin: 0 10px;
     }
 
-    /* Mobile */
     @media (max-width: 768px) {
       .bottle-grid {
         grid-template-columns: 1fr;
@@ -130,7 +120,6 @@
   <header>The Tipsy Bunghole Bottle Inventory</header>
   <button onclick="location='index.html'" class="return-button">Return to Bunghole</button>
 
-  <!-- Add Bottle Form -->
   <button class="collapsible">➕ Add a Bottle</button>
   <div class="content">
     <form id="bottleForm">
@@ -156,11 +145,10 @@
 
   <div class="bottle-grid" id="bottleGrid"></div>
 
-  <!-- Pagination Controls -->
   <div class="pagination-controls">
-    <button onclick="previousPage()" id="prevBtn">Previous</button>
-    <span id="pageNumbers"></span>
-    <button onclick="nextPage()" id="nextBtn">Next</button>
+    <button id="prevBtn" onclick="previousPage()">Previous</button>
+    <span id="pageNumbers">Page 1 of 1</span>
+    <button id="nextBtn" onclick="nextPage()">Next</button>
   </div>
 
   <script type="module">
@@ -179,7 +167,6 @@
       messagingSenderId: "223660009700",
       appId: "1:223660009700:web:yourappid"
     });
-
     const db = getFirestore(app);
     const bottlesRef = collection(db, "bottles");
 
@@ -191,6 +178,11 @@
     document.getElementById("filterRare").onchange = e => { filters.rare = e.target.checked; renderFiltered(); };
     document.getElementById("filterKilled").onchange = e => { filters.killed = e.target.checked; renderFiltered(); };
     document.getElementById("sortBy").onchange = e => { filters.sortBy = e.target.value; renderFiltered(); };
+
+    const allBottles = [];
+    let filteredBottles = [];
+    let currentPage = 1;
+    const itemsPerPage = 10;
 
     document.querySelector(".collapsible").addEventListener("click", function () {
       this.classList.toggle("active");
@@ -209,21 +201,21 @@
         favorite: false,
         rare: false
       };
+
       if (!bottleData.name || !bottleData.distillery || !bottleData.age || !bottleData.proof) {
         alert("Please fill in all required fields!");
         return;
       }
+
       try {
         await addDoc(bottlesRef, bottleData);
         form.reset();
+        alert("Bottle added successfully!");
       } catch (error) {
         console.error("Error adding bottle:", error);
+        alert("There was an error adding the bottle. Please try again.");
       }
     });
-
-    const allBottles = [];
-    let currentPage = 1;
-    const itemsPerPage = 10;
 
     onSnapshot(bottlesRef, snap => {
       allBottles.length = 0;
@@ -232,23 +224,35 @@
     });
 
     function renderFiltered() {
-      let arr = allBottles.filter(b => {
+      filteredBottles = allBottles.filter(b => {
         if (filters.favorite && !b.favorite) return false;
         if (filters.rare && !b.rare) return false;
         if (filters.killed && !b.killed) return false;
         return true;
       });
 
-      if (filters.sortBy === "age" || filters.sortBy === "proof")
-        arr.sort((a, b) => (parseFloat(a[filters.sortBy]) || 0) - (parseFloat(b[filters.sortBy]) || 0));
-      else
-        arr.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+      if (filters.sortBy === "age" || filters.sortBy === "proof") {
+        filteredBottles.sort((a, b) =>
+          (parseFloat(a[filters.sortBy]) || 0) - (parseFloat(b[filters.sortBy]) || 0)
+        );
+      } else {
+        filteredBottles.sort((a, b) =>
+          (a.name || "").localeCompare(b.name || "")
+        );
+      }
 
-      const totalPages = Math.ceil(arr.length / itemsPerPage);
-      currentPage = Math.min(currentPage, totalPages || 1);
+      currentPage = 1;
+      renderPage();
+    }
+
+    function renderPage() {
+      bottleGrid.innerHTML = "";
+      const totalPages = Math.ceil(filteredBottles.length / itemsPerPage) || 1;
+      currentPage = Math.min(currentPage, totalPages);
+
       const start = (currentPage - 1) * itemsPerPage;
-      const end = currentPage * itemsPerPage;
-      renderBottles(arr.slice(start, end));
+      const pageItems = filteredBottles.slice(start, start + itemsPerPage);
+      renderBottles(pageItems);
       updatePaginationControls(totalPages);
     }
 
@@ -272,7 +276,8 @@
         ["killed", "favorite", "rare"].forEach(f => {
           const lab = document.createElement("label");
           lab.innerHTML = `<input type="checkbox" ${b[f] ? "checked" : ""} ${role !== "admin" ? "disabled" : ""}/> ${f.charAt(0).toUpperCase() + f.slice(1)}`;
-          if (role === "admin") lab.querySelector("input").onchange = async e => await updateDoc(doc(db, "bottles", b.id), { [f]: e.target.checked });
+          if (role === "admin") lab.querySelector("input").onchange =
+            async e => await updateDoc(doc(db, "bottles", b.id), { [f]: e.target.checked });
           tg.append(lab);
         });
         card.append(tg);
@@ -283,23 +288,21 @@
     function updatePaginationControls(totalPages) {
       document.getElementById("prevBtn").disabled = currentPage <= 1;
       document.getElementById("nextBtn").disabled = currentPage >= totalPages;
-
-      const pageNumbers = document.getElementById("pageNumbers");
-      pageNumbers.innerHTML = `Page ${currentPage} of ${totalPages}`;
+      document.getElementById("pageNumbers").textContent = `Page ${currentPage} of ${totalPages}`;
     }
 
     function nextPage() {
-      const totalPages = Math.ceil(allBottles.length / itemsPerPage);
+      const totalPages = Math.ceil(filteredBottles.length / itemsPerPage);
       if (currentPage < totalPages) {
         currentPage++;
-        renderFiltered();
+        renderPage();
       }
     }
 
     function previousPage() {
       if (currentPage > 1) {
         currentPage--;
-        renderFiltered();
+        renderPage();
       }
     }
   </script>
