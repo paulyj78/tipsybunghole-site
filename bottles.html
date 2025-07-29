@@ -93,7 +93,25 @@
     }
     .edit-btn { right: 30px; }
     .delete-btn { right: 5px; color: red; }
-    /* Mobile responsiveness */
+
+    /* Pagination */
+    .pagination-controls {
+      text-align: center;
+      margin: 20px;
+    }
+    .pagination-controls button {
+      margin: 0 5px;
+      padding: 6px 10px;
+      font-family: monospace;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .pagination-controls button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Mobile */
     @media (max-width: 768px) {
       .bottle-grid {
         grid-template-columns: 1fr;
@@ -139,9 +157,10 @@
   <div class="bottle-grid" id="bottleGrid"></div>
 
   <!-- Pagination Controls -->
-  <div class="pagination-controls" style="text-align: center; margin-top: 20px;">
-    <button onclick="previousPage()">Previous</button>
-    <button onclick="nextPage()">Next</button>
+  <div class="pagination-controls">
+    <button onclick="previousPage()" id="prevBtn">Previous</button>
+    <span id="pageNumbers"></span>
+    <button onclick="nextPage()" id="nextBtn">Next</button>
   </div>
 
   <script type="module">
@@ -152,7 +171,6 @@
     const access = localStorage.getItem("bungholeAccess");
     if (!access || !role) location = "signin.html";
 
-    // Firebase initialization
     const app = initializeApp({
       apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
       authDomain: "tipsy-bunghole-photos.firebaseapp.com",
@@ -161,6 +179,7 @@
       messagingSenderId: "223660009700",
       appId: "1:223660009700:web:yourappid"
     });
+
     const db = getFirestore(app);
     const bottlesRef = collection(db, "bottles");
 
@@ -173,16 +192,12 @@
     document.getElementById("filterKilled").onchange = e => { filters.killed = e.target.checked; renderFiltered(); };
     document.getElementById("sortBy").onchange = e => { filters.sortBy = e.target.value; renderFiltered(); };
 
-    const allBottles = [];
-
-    // Make the Add Bottle form visible
     document.querySelector(".collapsible").addEventListener("click", function () {
       this.classList.toggle("active");
       const content = this.nextElementSibling;
       content.style.display = content.style.display === "block" ? "none" : "block";
     });
 
-    // Handle form submission
     form?.addEventListener("submit", async (e) => {
       e.preventDefault();
       const bottleData = {
@@ -194,34 +209,27 @@
         favorite: false,
         rare: false
       };
-
-      // Basic validation
       if (!bottleData.name || !bottleData.distillery || !bottleData.age || !bottleData.proof) {
         alert("Please fill in all required fields!");
         return;
       }
-
       try {
-        // Add the bottle data to Firestore
         await addDoc(bottlesRef, bottleData);
-        form.reset(); // Reset the form fields
-        alert("Bottle added successfully!");
+        form.reset();
       } catch (error) {
         console.error("Error adding bottle:", error);
-        alert("There was an error adding the bottle. Please try again.");
       }
     });
 
-    // Listen for changes in the Firestore collection
+    const allBottles = [];
+    let currentPage = 1;
+    const itemsPerPage = 10;
+
     onSnapshot(bottlesRef, snap => {
       allBottles.length = 0;
       snap.forEach(ds => allBottles.push({ id: ds.id, ...ds.data() }));
       renderFiltered();
     });
-
-    // Pagination settings
-    let currentPage = 1;
-    const itemsPerPage = 10;
 
     function renderFiltered() {
       let arr = allBottles.filter(b => {
@@ -235,13 +243,13 @@
         arr.sort((a, b) => (parseFloat(a[filters.sortBy]) || 0) - (parseFloat(b[filters.sortBy]) || 0));
       else
         arr.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-      
-      // Apply pagination
+
+      const totalPages = Math.ceil(arr.length / itemsPerPage);
+      currentPage = Math.min(currentPage, totalPages || 1);
       const start = (currentPage - 1) * itemsPerPage;
       const end = currentPage * itemsPerPage;
-      arr = arr.slice(start, end);
-
-      renderBottles(arr);
+      renderBottles(arr.slice(start, end));
+      updatePaginationControls(totalPages);
     }
 
     function renderBottles(arr) {
@@ -268,13 +276,21 @@
           tg.append(lab);
         });
         card.append(tg);
-        
         bottleGrid.append(card);
       });
     }
 
+    function updatePaginationControls(totalPages) {
+      document.getElementById("prevBtn").disabled = currentPage <= 1;
+      document.getElementById("nextBtn").disabled = currentPage >= totalPages;
+
+      const pageNumbers = document.getElementById("pageNumbers");
+      pageNumbers.innerHTML = `Page ${currentPage} of ${totalPages}`;
+    }
+
     function nextPage() {
-      if (currentPage * itemsPerPage < allBottles.length) {
+      const totalPages = Math.ceil(allBottles.length / itemsPerPage);
+      if (currentPage < totalPages) {
         currentPage++;
         renderFiltered();
       }
@@ -287,6 +303,5 @@
       }
     }
   </script>
-
 </body>
 </html>
