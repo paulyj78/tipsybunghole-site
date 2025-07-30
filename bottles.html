@@ -245,10 +245,11 @@
     }
 
     function renderPage() {
-      bottleGrid.innerHTML = ""; // Clear the bottle grid
-
-      const totalPages = Math.ceil(filteredBottles.length / itemsPerPage) || 1;
+      bottleGrid.innerHTML = "";
+      const totalPages = Math.ceil(filteredBottles.length / itemsPerPage);
       currentPage = Math.min(currentPage, totalPages);
+
+      console.log(`Rendering page: ${currentPage}`); // Debugging
 
       const start = (currentPage - 1) * itemsPerPage;
       const pageItems = filteredBottles.slice(start, start + itemsPerPage);
@@ -262,7 +263,6 @@
       arr.forEach(b => {
         const card = document.createElement("div");
         card.className = "bottle-card";
-
         const makeField = (lbl, fld, fb = "N/A") => {
           const ed = role === "admin" ? "true" : "false";
           const div = document.createElement("div");
