@@ -247,19 +247,14 @@
     function renderPage() {
       bottleGrid.innerHTML = "";
       const totalPages = Math.ceil(filteredBottles.length / itemsPerPage);
-      currentPage = Math.min(currentPage, totalPages);
-
-      console.log(`Rendering page: ${currentPage}`); // Debugging
 
       const start = (currentPage - 1) * itemsPerPage;
       const pageItems = filteredBottles.slice(start, start + itemsPerPage);
-
       renderBottles(pageItems);
       updatePaginationControls(totalPages);
     }
 
     function renderBottles(arr) {
-      bottleGrid.innerHTML = "";
       arr.forEach(b => {
         const card = document.createElement("div");
         card.className = "bottle-card";
