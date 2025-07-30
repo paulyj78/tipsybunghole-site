@@ -246,12 +246,14 @@
     }
 
     function renderPage() {
-      bottleGrid.innerHTML = "";
+      bottleGrid.innerHTML = ""; // Clear the bottle grid once per page render
+
       const totalPages = Math.ceil(filteredBottles.length / itemsPerPage) || 1;
       currentPage = Math.min(currentPage, totalPages);
 
       const start = (currentPage - 1) * itemsPerPage;
       const pageItems = filteredBottles.slice(start, start + itemsPerPage);
+
       renderBottles(pageItems);
       updatePaginationControls(totalPages);
     }
