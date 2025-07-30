@@ -241,12 +241,11 @@
         );
       }
 
-      currentPage = 1;
       renderPage();
     }
 
     function renderPage() {
-      bottleGrid.innerHTML = ""; // Clear the bottle grid once per page render
+      bottleGrid.innerHTML = ""; // Clear the bottle grid
 
       const totalPages = Math.ceil(filteredBottles.length / itemsPerPage) || 1;
       currentPage = Math.min(currentPage, totalPages);
