@@ -43,12 +43,12 @@
      cursor: pointer;
      user-select:none;
    }
-   .toggle-group span {
+   .toggle-group .emoji {
      font-weight: bold;
-     font-size: 1.1em;
-     cursor: pointer;
+     font-size: 1.3em;
      display: inline-block;
-     transition: transform 0.3s ease;
+     transition: transform 0.4s ease;
+     user-select:none;
    }
    .edit-btn,.delete-btn{position:absolute;top:5px;background:transparent;border:none;cursor:pointer;font-size:1.1em;}
    .edit-btn{right:30px;} .delete-btn{right:5px;color:red;}
@@ -188,52 +188,33 @@
      const tg = document.createElement("div");
      tg.className = "toggle-group";
 
+     // Icons for toggles
      const fieldIcons = {
-       favorite: "⭐ Favorite",
-       killed: "🪦 Killed",
-       rare: "🦄 Unicorn"
+       favorite: "⭐ Star",
+       rare: "🦄 Unicorn",
+       killed: "🪦 Tombstone"
      };
 
      ["killed", "favorite", "rare"].forEach(f => {
        const lab = document.createElement("label");
+       lab.title = fieldIcons[f];
+       const emojiSpan = document.createElement("span");
+       emojiSpan.className = "emoji";
+       emojiSpan.textContent = b[f] ? fieldIcons[f].split(" ")[0] : "⬜";
+       lab.appendChild(emojiSpan);
+       lab.appendChild(document.createTextNode(" " + fieldIcons[f].split(" ")[1]));
 
-       if (b[f]) {
-         if (role === "admin") {
-           const span = document.createElement("span");
-           span.className = "toggle-emoji";
-           span.textContent = fieldIcons[f].split(" ")[0];
-           span.title = fieldIcons[f];
-           // Spin animation on click and toggle update
-           span.onclick = async () => {
-             span.classList.add("spin");
-             await updateDoc(doc(db, "bottles", b.id), { [f]: false });
-             // Remove animation class after done
-             span.addEventListener("animationend", () => {
-               span.classList.remove("spin");
-             }, { once: true });
-           };
-           lab.appendChild(span);
-         } else {
-           lab.textContent = fieldIcons[f];
-         }
-       } else {
-         if (role === "admin") {
-           const span = document.createElement("span");
-           span.className = "toggle-emoji";
-           span.textContent = "⬜"; // empty box for off state
-           span.title = `Set ${fieldIcons[f]}`;
-           span.onclick = async () => {
-             span.classList.add("spin");
-             await updateDoc(doc(db, "bottles", b.id), { [f]: true });
-             span.addEventListener("animationend", () => {
-               span.classList.remove("spin");
-             }, { once: true });
-           };
-           lab.appendChild(span);
-         } else {
-           lab.textContent = fieldIcons[f];
-         }
+       if (role === "admin") {
+         emojiSpan.style.cursor = "pointer";
+         emojiSpan.onclick = async () => {
+           emojiSpan.classList.add("spin");
+           await updateDoc(doc(db, "bottles", b.id), { [f]: !b[f] });
+           emojiSpan.addEventListener("animationend", () => {
+             emojiSpan.classList.remove("spin");
+           }, { once: true });
+         };
        }
+
        tg.appendChild(lab);
      });
 
@@ -247,7 +228,7 @@
          let updates = {};
          card.querySelectorAll("span[contenteditable='true']").forEach(span => {
            const fld = span.className.replace("field-", ""),
-                 val = span.innerText.trim();
+             val = span.innerText.trim();
            updates[fld] = val;
          });
          if (Object.keys(updates).length) await updateDoc(doc(db, "bottles", b.id), updates);
