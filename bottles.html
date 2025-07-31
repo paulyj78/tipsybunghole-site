@@ -47,9 +47,21 @@
      font-weight: bold;
      font-size: 1.1em;
      cursor: pointer;
+     display: inline-block;
+     transition: transform 0.3s ease;
    }
    .edit-btn,.delete-btn{position:absolute;top:5px;background:transparent;border:none;cursor:pointer;font-size:1.1em;}
    .edit-btn{right:30px;} .delete-btn{right:5px;color:red;}
+
+   /* Spin animation */
+   @keyframes spin360 {
+     from { transform: rotate(0deg); }
+     to { transform: rotate(360deg); }
+   }
+   .spin {
+     animation: spin360 0.4s ease;
+   }
+
    @media (max-width: 600px) {
      .controls {
        flex-direction: column;
@@ -188,26 +200,41 @@
        if (b[f]) {
          if (role === "admin") {
            const span = document.createElement("span");
-           span.textContent = fieldIcons[f];
-           span.style.cursor = "pointer";
-           span.title = `Click to unmark as ${f}`;
+           span.className = "toggle-emoji";
+           span.textContent = fieldIcons[f].split(" ")[0];
+           span.title = fieldIcons[f];
+           // Spin animation on click and toggle update
            span.onclick = async () => {
+             span.classList.add("spin");
              await updateDoc(doc(db, "bottles", b.id), { [f]: false });
+             // Remove animation class after done
+             span.addEventListener("animationend", () => {
+               span.classList.remove("spin");
+             }, { once: true });
            };
-           lab.append(span);
+           lab.appendChild(span);
          } else {
            lab.textContent = fieldIcons[f];
          }
        } else {
-         lab.innerHTML = `<input type="checkbox" ${role !== "admin" ? "disabled" : ""}/> ${f.charAt(0).toUpperCase() + f.slice(1)}`;
          if (role === "admin") {
-           lab.querySelector("input").onchange = async e => {
-             await updateDoc(doc(db, "bottles", b.id), { [f]: e.target.checked });
+           const span = document.createElement("span");
+           span.className = "toggle-emoji";
+           span.textContent = "⬜"; // empty box for off state
+           span.title = `Set ${fieldIcons[f]}`;
+           span.onclick = async () => {
+             span.classList.add("spin");
+             await updateDoc(doc(db, "bottles", b.id), { [f]: true });
+             span.addEventListener("animationend", () => {
+               span.classList.remove("spin");
+             }, { once: true });
            };
+           lab.appendChild(span);
+         } else {
+           lab.textContent = fieldIcons[f];
          }
        }
-
-       tg.append(lab);
+       tg.appendChild(lab);
      });
 
      card.append(tg);
@@ -219,7 +246,8 @@
        eb.onclick = async () => {
          let updates = {};
          card.querySelectorAll("span[contenteditable='true']").forEach(span => {
-           const fld = span.className.replace("field-", ""), val = span.innerText.trim();
+           const fld = span.className.replace("field-", ""),
+                 val = span.innerText.trim();
            updates[fld] = val;
          });
          if (Object.keys(updates).length) await updateDoc(doc(db, "bottles", b.id), updates);
@@ -231,7 +259,6 @@
        dbtn.onclick = async () => {
          if (confirm("Delete this bottle?")) await deleteDoc(doc(db, "bottles", b.id));
        };
-
        card.append(eb, dbtn);
      }
 
@@ -239,7 +266,7 @@
    });
  }
 
- document.querySelector(".collapsible").onclick = function () {
+ document.querySelector(".collapsible").onclick = function(){
    this.classList.toggle("active");
    const c = this.nextElementSibling;
    c.style.display = c.style.display === "block" ? "none" : "block";
