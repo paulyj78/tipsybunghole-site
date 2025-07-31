@@ -188,10 +188,9 @@
      const tg = document.createElement("div");
      tg.className = "toggle-group";
 
-     // Icons for toggles
      const fieldIcons = {
        favorite: "⭐ Favorite",
-       rare: "🦄 Rare",
+       rare: "🦄 Unicorn",
        killed: "🪦 Killed"
      };
 
@@ -207,8 +206,12 @@
        if (role === "admin") {
          emojiSpan.style.cursor = "pointer";
          emojiSpan.onclick = async () => {
+           emojiSpan.classList.remove("spin");
+           void emojiSpan.offsetWidth; // trigger reflow to restart animation
            emojiSpan.classList.add("spin");
+
            await updateDoc(doc(db, "bottles", b.id), { [f]: !b[f] });
+
            emojiSpan.addEventListener("animationend", () => {
              emojiSpan.classList.remove("spin");
            }, { once: true });
