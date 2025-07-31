@@ -5,29 +5,112 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>The Tipsy Bunghole Bottles</title>
   <style>
-    html, body { height:100%; margin:0; padding:0; }
-    body {
-      font-family:"Courier New",monospace;
-      background-image:url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.firebasestorage.app/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
-      background-size:cover;
-      background-repeat:no-repeat;
-      background-position:center;
-      background-attachment:fixed;
-      min-height:100vh;
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
     }
-    header{background:rgba(0,0,0,0.7);color:white;text-align:center;padding:1rem;font-size:1.5rem;font-weight:bold;}
-    .return-button{display:block;margin:1rem auto;padding:10px 20px;background:#a6794a;color:white;border:none;cursor:pointer;}
-    .controls{padding:10px;text-align:center;background:rgba(255,255,255,0.9);}
-    .controls label, .controls select, .controls input[type="text"]{margin:0 8px;font-size:0.9em;}
-    .collapsible{background:#a6794a;color:white;cursor:pointer;padding:10px;width:100%;border:none;text-align:left;font-size:1.1em;}
-    .collapsible:hover{background:#8b6434;}
-    .content{display:none;background:#fff8e6;padding:10px;border:1px solid #ccc;}
-    form input{margin:5px;}
-    .bottle-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:15px;padding:1rem;}
-    .bottle-card{background:rgba(255,255,255,0.92);padding:10px;border:1px solid #ccc;border-radius:8px;position:relative;box-shadow:0 4px 10px rgba(0,0,0,0.2);}
-    .toggle-group{display:flex;justify-content:space-between;margin-top:8px;font-size:0.9em;}
-    .edit-btn,.delete-btn{position:absolute;top:5px;background:transparent;border:none;cursor:pointer;font-size:1.1em;}
-    .edit-btn{right:30px;} .delete-btn{right:5px;color:red;}
+    body {
+      font-family: "Courier New", monospace;
+      background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.firebasestorage.app/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+    }
+    header {
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .return-button {
+      display: block;
+      margin: 1rem auto;
+      padding: 10px 20px;
+      background: #a6794a;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .controls {
+      padding: 10px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    .controls label,
+    .controls select,
+    .controls input[type="text"] {
+      font-size: 0.9em;
+      white-space: nowrap;
+      flex: 1 1 150px;
+      max-width: 200px;
+    }
+    .collapsible {
+      background: #a6794a;
+      color: white;
+      cursor: pointer;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      text-align: left;
+      font-size: 1.1em;
+    }
+    .collapsible:hover {
+      background: #8b6434;
+    }
+    .content {
+      display: none;
+      background: #fff8e6;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+    form input {
+      margin: 5px;
+    }
+    .bottle-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 15px;
+      padding: 1rem;
+    }
+    .bottle-card {
+      background: rgba(255, 255, 255, 0.92);
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    .toggle-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 0.9em;
+    }
+    .edit-btn,
+    .delete-btn {
+      position: absolute;
+      top: 5px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1em;
+    }
+    .edit-btn {
+      right: 30px;
+    }
+    .delete-btn {
+      right: 5px;
+      color: red;
+    }
   </style>
 </head>
 
@@ -76,16 +159,16 @@
     });
 
     const app = initializeApp({
-      apiKey:"AIzaSyAxvLgYQOO...",
-      authDomain:"tipsy-bunghole-photos.firebaseapp.com",
-      projectId:"tipsy-bunghole-photos",
-      storageBucket:"tipsy-bunghole-photos.appspot.com",
-      messagingSenderId:"223660009700",
-      appId:"1:223660009700:web:yourappid"
+      apiKey: "AIzaSyAxvLgYQOO...",
+      authDomain: "tipsy-bunghole-photos.firebaseapp.com",
+      projectId: "tipsy-bunghole-photos",
+      storageBucket: "tipsy-bunghole-photos.appspot.com",
+      messagingSenderId: "223660009700",
+      appId: "1:223660009700:web:yourappid"
     });
 
     const db = getFirestore(app);
-    const bottlesRef = collection(db,"bottles");
+    const bottlesRef = collection(db, "bottles");
 
     const form = document.getElementById("bottleForm");
     const bottleGrid = document.getElementById("bottleGrid");
@@ -154,12 +237,14 @@
       arr.forEach(b => {
         const card = document.createElement("div");
         card.className = "bottle-card";
+
         const makeField = (lbl, fld, fb = "N/A") => {
           const ed = role === "admin" ? "true" : "false";
           const div = document.createElement("div");
           div.innerHTML = `<strong>${lbl}:</strong> <span contenteditable="${ed}" class="field-${fld}">${b[fld] || fb}</span>`;
           return div;
         };
+
         card.append(
           makeField("Name", "name"),
           makeField("Distillery", "distillery"),
