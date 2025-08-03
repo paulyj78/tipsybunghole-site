@@ -403,11 +403,26 @@ textarea {
 
   // Reservation confirmation
   function sendReservation() {
-    const name = document.getElementById("name").value;
-    const date = document.getElementById("date").value;
-    const confirmation = document.getElementById("confirmation");
-    confirmation.innerText = `Thanks ${name}! Your bunghole has been tentatively reserved for ${date}. Expect a text from our drunk intern shortly.`;
-  }
+  const name = document.getElementById("name").value;
+  const rawDate = document.getElementById("date").value;
+
+  const confirmation = document.getElementById("confirmation");
+
+  // Parse and format the date
+  const dateObj = new Date(rawDate);
+  const options = {
+    month: '2-digit',
+    day: '2-digit',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  };
+  const formattedDate = dateObj.toLocaleString('en-US', options).replace(',', '');
+
+  confirmation.innerText = `Thanks ${name}! Your bunghole has been tentatively reserved for ${formattedDate}. Expect a text from our drunk intern shortly.`;
+}
+
 </script>
 </body>
 </html>
