@@ -285,12 +285,13 @@ textarea {
   <h2>📆 Make a Reservation</h2>
   <form onsubmit="sendReservation(); return false;">
     <input type="text" id="name" placeholder="Your Name" required /><br />
-    <input type="text" id="date" placeholder="Preferred Date/Time" required /><br />
+    <input type="datetime-local" id="date" required /><br />
     <textarea id="notes" placeholder="Anything we should know? Raunchy preferences welcome."></textarea><br />
     <button type="submit">Reserve My Bunghole</button>
   </form>
   <p id="confirmation" style="margin-top: 10px;"></p>
 </section>
+
 
 <section id="contact">
   <h2>📞 Contact Us</h2>
