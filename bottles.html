@@ -47,11 +47,25 @@
 
     #rouletteBtn {
       position: absolute;
-      right: 10px;
+      right: 120px;
       top: 50%;
       transform: translateY(-50%);
       padding: 10px 20px;
       background: #a6794a;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    #labelWallBtn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 10px 20px;
+      background: #4a7a8c;
       color: white;
       border: none;
       cursor: pointer;
@@ -215,7 +229,7 @@
         margin: 4px 0;
       }
 
-      .return-button, #rouletteBtn {
+      .return-button, #rouletteBtn, #labelWallBtn {
         position: static;
         transform: none;
         margin: 5px auto;
@@ -234,6 +248,7 @@
     <button onclick="location='index.html'" class="return-button">Return to Bunghole</button>
     The Tipsy Bunghole Bottle Inventory
     <button id="rouletteBtn">What Should I Drink?</button>
+    <button id="labelWallBtn">Label Wall</button>
   </header>
 
   <button class="collapsible">➕ Add a Bottle</button>
@@ -457,6 +472,11 @@
       rouletteResult.classList.remove('show');
       rouletteResult.setAttribute('aria-hidden', 'true');
     }
+
+    // Label Wall button click handler
+    document.getElementById("labelWallBtn").addEventListener("click", () => {
+      location.href = "labelwall.html";
+    });
   </script>
 </body>
 </html>
