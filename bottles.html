@@ -323,29 +323,49 @@
 
     form?.addEventListener("submit", async e => {
       e.preventDefault();
+      console.log("Form submit started");
 
-      const fileInput = document.getElementById("labelImage");
-      let labelImageUrl = null;
+      try {
+        const fileInput = document.getElementById("labelImage");
+        let labelImageUrl = null;
 
-      if (fileInput.files.length > 0) {
-        const file = fileInput.files[0];
-        const storageRef = ref(storage, `bottleLabels/${Date.now()}_${file.name}`);
-        await uploadBytes(storageRef, file);
-        labelImageUrl = await getDownloadURL(storageRef);
+        if (fileInput.files.length > 0) {
+          console.log("Uploading label image...");
+          const file = fileInput.files[0];
+          const storageRef = ref(storage, `bottleLabels/${Date.now()}_${file.name}`);
+          await uploadBytes(storageRef, file);
+          labelImageUrl = await getDownloadURL(storageRef);
+          console.log("Label image uploaded:", labelImageUrl);
+        } else {
+          console.log("No label image selected");
+        }
+
+        const newBottle = {
+          name: form.name.value.trim(),
+          distillery: form.distillery.value.trim(),
+          age: form.age.value.trim(),
+          proof: form.proof.value.trim(),
+          labelImageUrl: labelImageUrl,
+          killed: false,
+          favorite: false,
+          rare: false
+        };
+
+        if (!newBottle.name) {
+          alert("Please enter a bottle name.");
+          console.log("Bottle name missing.");
+          return;
+        }
+
+        console.log("Adding bottle to Firestore:", newBottle);
+        await addDoc(bottlesRef, newBottle);
+
+        alert("Bottle added successfully!");
+        form.reset();
+      } catch (error) {
+        console.error("Error adding bottle:", error);
+        alert("Error adding bottle: " + error.message);
       }
-
-      await addDoc(bottlesRef, {
-        name: form.name.value,
-        distillery: form.distillery.value,
-        age: form.age.value,
-        proof: form.proof.value,
-        labelImageUrl: labelImageUrl,
-        killed: false,
-        favorite: false,
-        rare: false
-      });
-
-      form.reset();
     });
 
     onSnapshot(bottlesRef, snap => {
