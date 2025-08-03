@@ -1,1 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Label Art Wall | The Tipsy Bunghole</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Helvetica Neue', sans-serif;
+      background: #f4f4f4;
+      color: #333;
+    }
+
+    header {
+      background-color: #222;
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+    }
+
+    .card img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .info {
+      padding: 10px;
+      text-align: center;
+    }
+
+    .info h4 {
+      margin: 5px 0;
+      font-size: 1rem;
+    }
+
+    .return-button {
+      display: block;
+      text-align: center;
+      margin: 20px auto;
+      background-color: #333;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      width: fit-content;
+    }
+  </style>
+</head>
+<body>
+  <header>🍾 Label Art Wall</header>
+
+  <div class="gallery" id="gallery"></div>
+
+  <a href="index.html" class="return-button">Return to Bunghole</a>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "tipsy-bunghole-photos.firebaseapp.com",
+      projectId: "tipsy-bunghole-photos",
+      storageBucket: "tipsy-bunghole-photos.appspot.com",
+      messagingSenderId: "223660009700",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const gallery = document.getElementById("gallery");
+
+    async function loadLabelImages() {
+      const bottlesRef = collection(db, "bottles");
+      const snapshot = await getDocs(bottlesRef);
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        if (data.labelImage) {
+          const card = document.createElement("div");
+          card.className = "card";
+
+          card.innerHTML = `
+            <img src="${data.labelImage}" alt="Bottle Label">
+            <div class="info">
+              <h4>${data.name || "Unnamed Bottle"}</h4>
+              <div>${data.distillery || ""}</div>
+            </div>
+          `;
+          gallery.appendChild(card);
+        }
+      });
+    }
+
+    loadLabelImages();
+  </script>
+</body>
+</html>
 
