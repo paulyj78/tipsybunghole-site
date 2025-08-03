@@ -83,11 +83,19 @@
       margin: 5px;
     }
 
-    #lookupMessage {
+    #lookupMessage, #debugMessage {
       font-size: 0.9em;
-      color: green;
       padding-left: 5px;
-      min-height: 1.2em;
+      margin-top: 6px;
+    }
+
+    #lookupMessage {
+      color: green;
+    }
+
+    #debugMessage {
+      color: darkred;
+      white-space: pre-wrap;
     }
 
     .bottle-grid {
@@ -184,6 +192,7 @@
       <button type="submit">Add Bottle</button>
     </form>
     <div id="lookupMessage"></div>
+    <div id="debugMessage"></div>
   </div>
 
   <div class="controls">
@@ -229,6 +238,8 @@
 
     const form = document.getElementById("bottleForm");
     const bottleGrid = document.getElementById("bottleGrid");
+    const lookupMessage = document.getElementById("lookupMessage");
+    const debugMessage = document.getElementById("debugMessage");
 
     const filters = { favorite: false, rare: false, killed: false, sortBy: "name" };
 
@@ -241,23 +252,38 @@
 
     form?.addEventListener("submit", async e => {
       e.preventDefault();
-      await addDoc(bottlesRef, {
-        name: form.name.value,
-        distillery: form.distillery.value,
-        age: form.age.value,
-        proof: form.proof.value,
-        killed: false,
-        favorite: false,
-        rare: false
-      });
-      form.reset();
-      document.getElementById("lookupMessage").textContent = "";
+      lookupMessage.textContent = "";
+      debugMessage.textContent = "";
+
+      if (!form.name.value.trim()) {
+        lookupMessage.textContent = "Please enter a bottle name.";
+        return;
+      }
+
+      try {
+        await addDoc(bottlesRef, {
+          name: form.name.value.trim(),
+          distillery: form.distillery.value.trim(),
+          age: form.age.value.trim(),
+          proof: form.proof.value.trim(),
+          killed: false,
+          favorite: false,
+          rare: false
+        });
+        form.reset();
+        lookupMessage.textContent = "Bottle added successfully.";
+      } catch (err) {
+        lookupMessage.textContent = "Error adding bottle.";
+        debugMessage.textContent = `Add error: ${err.message || err}`;
+      }
     });
 
     onSnapshot(bottlesRef, snap => {
       allBottles.length = 0;
       snap.forEach(ds => allBottles.push({ id: ds.id, ...ds.data() }));
       renderFiltered();
+    }, error => {
+      debugMessage.textContent = "Error fetching data: " + (error.message || error);
     });
 
     function renderFiltered() {
@@ -356,34 +382,39 @@
       });
     }
 
-    // UPC lookup logic
+    // UPC lookup logic with visible debug output
     document.getElementById("barcode").addEventListener("change", function () {
       const upc = this.value.trim();
-      const msg = document.getElementById("lookupMessage");
-      if (!upc || upc.length < 8) return;
+      lookupMessage.textContent = "";
+      debugMessage.textContent = "";
 
-      msg.style.color = "green";
-      msg.textContent = "Looking up bottle info...";
+      if (!upc || upc.length < 8) {
+        lookupMessage.textContent = "";
+        return;
+      }
+
+      lookupMessage.textContent = "Looking up bottle info...";
 
       fetch(`https://api.upcitemdb.com/prod/trial/lookup?upc=${upc}`)
-        .then(res => res.json())
+        .then(res => {
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          return res.json();
+        })
         .then(data => {
           if (data && data.items && data.items.length > 0) {
             const item = data.items[0];
             document.getElementById("name").value = item.title || "";
             document.getElementById("distillery").value = item.brand || "";
-            document.getElementById("age").value = item.releaseDate ? item.releaseDate.split("-")[0] : "";
-
-            msg.style.color = "green";
-            msg.textContent = "Bottle info auto-filled!";
+            document.getElementById("age").value = item.releaseDate?.split("-")[0] || "";
+            lookupMessage.textContent = "Bottle info auto-filled!";
+            debugMessage.textContent = JSON.stringify(data, null, 2);
           } else {
-            msg.style.color = "red";
-            msg.textContent = "No match found for that UPC.";
+            lookupMessage.textContent = "No match found for that UPC.";
           }
         })
-        .catch(() => {
-          msg.style.color = "red";
-          msg.textContent = "Error fetching UPC data.";
+        .catch(err => {
+          lookupMessage.textContent = "Error fetching UPC data.";
+          debugMessage.textContent = `Fetch error: ${err.message || err}`;
         });
     });
 
