@@ -1,4 +1,6 @@
-head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>The Tipsy Bunghole Bottles</title>
@@ -79,6 +81,12 @@ head>
 
     form input {
       margin: 5px;
+    }
+
+    #lookupMessage {
+      font-size: 0.9em;
+      color: green;
+      padding-left: 5px;
     }
 
     .bottle-grid {
@@ -167,12 +175,14 @@ head>
   <button class="collapsible">➕ Add a Bottle</button>
   <div class="content">
     <form id="bottleForm">
+      <input type="text" id="barcode" placeholder="Scan/Enter UPC" />
       <input type="text" id="name" placeholder="Bottle Name" required />
       <input type="text" id="distillery" placeholder="Distillery" />
       <input type="text" id="age" placeholder="Age" />
       <input type="text" id="proof" placeholder="Proof" />
       <button type="submit">Add Bottle</button>
     </form>
+    <div id="lookupMessage"></div>
   </div>
 
   <div class="controls">
@@ -240,6 +250,7 @@ head>
         rare: false
       });
       form.reset();
+      document.getElementById("lookupMessage").textContent = "";
     });
 
     onSnapshot(bottlesRef, snap => {
@@ -343,6 +354,33 @@ head>
         bottleGrid.append(card);
       });
     }
+
+    // UPC lookup logic
+    document.getElementById("barcode").addEventListener("change", function () {
+      const upc = this.value.trim();
+      const msg = document.getElementById("lookupMessage");
+      if (!upc || upc.length < 8) return;
+
+      msg.textContent = "Looking up bottle info...";
+
+      fetch(`https://api.upcitemdb.com/prod/trial/lookup?upc=${upc}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.items && data.items.length > 0) {
+            const item = data.items[0];
+            document.getElementById("name").value = item.title || "";
+            document.getElementById("distillery").value = item.brand || "";
+            document.getElementById("age").value = item.releaseDate?.split("-")[0] || "";
+
+            msg.textContent = "Bottle info auto-filled!";
+          } else {
+            msg.textContent = "No match found for that UPC.";
+          }
+        })
+        .catch(() => {
+          msg.textContent = "Error fetching UPC data.";
+        });
+    });
 
     document.querySelector(".collapsible").onclick = function () {
       this.classList.toggle("active");
