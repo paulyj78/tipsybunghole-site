@@ -395,7 +395,8 @@
 
       lookupMessage.textContent = "Looking up bottle info...";
 
-      fetch(`https://api.upcitemdb.com/prod/trial/lookup?upc=${upc}`)
+      fetch(`https://cors-anywhere.herokuapp.com/https://api.upcitemdb.com/prod/trial/lookup?upc=${upc}`)
+
         .then(res => {
           if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
           return res.json();
