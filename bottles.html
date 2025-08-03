@@ -87,6 +87,7 @@
       font-size: 0.9em;
       color: green;
       padding-left: 5px;
+      min-height: 1.2em;
     }
 
     .bottle-grid {
@@ -361,6 +362,7 @@
       const msg = document.getElementById("lookupMessage");
       if (!upc || upc.length < 8) return;
 
+      msg.style.color = "green";
       msg.textContent = "Looking up bottle info...";
 
       fetch(`https://api.upcitemdb.com/prod/trial/lookup?upc=${upc}`)
@@ -370,14 +372,17 @@
             const item = data.items[0];
             document.getElementById("name").value = item.title || "";
             document.getElementById("distillery").value = item.brand || "";
-            document.getElementById("age").value = item.releaseDate?.split("-")[0] || "";
+            document.getElementById("age").value = item.releaseDate ? item.releaseDate.split("-")[0] : "";
 
+            msg.style.color = "green";
             msg.textContent = "Bottle info auto-filled!";
           } else {
+            msg.style.color = "red";
             msg.textContent = "No match found for that UPC.";
           }
         })
         .catch(() => {
+          msg.style.color = "red";
           msg.textContent = "Error fetching UPC data.";
         });
     });
