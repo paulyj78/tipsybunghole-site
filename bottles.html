@@ -35,28 +35,28 @@
     .return-button {
       position: absolute;
       left: 10px;
-      top: 12px;
+      top: 50%;
+      transform: translateY(-50%);
       padding: 10px 20px;
       background: #a6794a;
       color: white;
       border: none;
       cursor: pointer;
-      font-weight: bold;
       border-radius: 4px;
     }
 
     #rouletteBtn {
       position: absolute;
       right: 10px;
-      top: 12px;
+      top: 50%;
+      transform: translateY(-50%);
       padding: 10px 20px;
-      background: #512e14;
-      color: #fff;
+      background: #a6794a;
+      color: white;
       border: none;
-      border-radius: 4px;
       cursor: pointer;
+      border-radius: 4px;
       font-weight: bold;
-      z-index: 10;
     }
 
     .controls {
@@ -85,7 +85,6 @@
       border: none;
       text-align: left;
       font-size: 1.1em;
-      margin-top: 1rem;
     }
 
     .collapsible:hover {
@@ -150,7 +149,7 @@
     }
 
     .spin {
-      animation: spin360 0.6s ease;
+      animation: spin360 0.4s ease;
     }
 
     @keyframes spin360 {
@@ -172,26 +171,27 @@
 
     #rouletteResult {
       position: fixed;
-      bottom: -100%;
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%) rotate(0deg);
+      transform: translate(-50%, 100%) rotate(0deg);
       background: rgba(255, 255, 255, 0.95);
       border: 2px solid #333;
-      border-radius: 20px 20px 0 0;
+      border-radius: 20px;
       padding: 20px;
       width: 80%;
       max-width: 400px;
       text-align: center;
       font-size: 18px;
-      box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
-      transition: bottom 0.6s ease, transform 0.6s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      transition: transform 0.6s ease, opacity 0.6s ease;
       z-index: 100;
+      opacity: 0;
       color: #3e2f1c;
     }
 
     #rouletteResult.show {
-      bottom: 0;
-      transform: translateX(-50%) rotate(720deg);
+      transform: translate(-50%, -50%) rotate(720deg);
+      opacity: 1;
     }
 
     #rouletteResult .closeBtn {
@@ -202,7 +202,6 @@
       padding: 6px 12px;
       border-radius: 5px;
       cursor: pointer;
-      font-weight: bold;
     }
 
     @media (max-width: 600px) {
@@ -218,13 +217,13 @@
 
       .return-button, #rouletteBtn {
         position: static;
-        margin: 0.5rem auto;
+        transform: none;
+        margin: 5px auto;
         display: block;
       }
 
       header {
-        text-align: center;
-        position: relative;
+        padding: 0.5rem;
       }
     }
   </style>
@@ -233,7 +232,7 @@
 <body>
   <header>
     <button onclick="location='index.html'" class="return-button">Return to Bunghole</button>
-    <h1>The Tipsy Bunghole Bottle Inventory</h1>
+    The Tipsy Bunghole Bottle Inventory
     <button id="rouletteBtn">What Should I Drink?</button>
   </header>
 
@@ -262,7 +261,7 @@
 
   <div class="bottle-grid" id="bottleGrid"></div>
 
-  <div id="rouletteResult">
+  <div id="rouletteResult" aria-live="polite" role="dialog" aria-modal="true" aria-hidden="true">
     <div id="rouletteContent"></div>
     <button class="closeBtn" onclick="hideRoulette()">Close</button>
   </div>
@@ -428,7 +427,7 @@
       c.style.display = c.style.display === "block" ? "none" : "block";
     };
 
-    // Bourbon Roulette button logic
+    // Roulette logic
     const rouletteBtn = document.getElementById('rouletteBtn');
     const rouletteResult = document.getElementById('rouletteResult');
     const rouletteContent = document.getElementById('rouletteContent');
@@ -450,11 +449,13 @@
         `;
       }
 
+      rouletteResult.setAttribute('aria-hidden', 'false');
       rouletteResult.classList.add('show');
     });
 
     window.hideRoulette = function () {
       rouletteResult.classList.remove('show');
+      rouletteResult.setAttribute('aria-hidden', 'true');
     }
   </script>
 </body>
