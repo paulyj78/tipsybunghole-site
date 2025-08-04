@@ -2,468 +2,217 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>The Tipsy Bunghole Bottles</title>
   <style>
-    html, body {
-      height: 100%;
+    body {
       margin: 0;
-      padding: 0;
-      font-family: "Courier New", monospace;
-      background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.firebasestorage.app/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
+      font-family: 'Courier New', monospace;
+      background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
       background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center;
       background-attachment: fixed;
-      min-height: 100vh;
-      color: #3e2f1c;
+      padding: 20px;
+      color: #2d2d2d;
     }
-
-    header {
-      background: rgba(0, 0, 0, 0.7);
-      color: white;
+    h1 {
       text-align: center;
-      padding: 1rem;
-      font-size: 1.5rem;
-      font-weight: bold;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
+      font-size: 2em;
     }
-
-    .return-button {
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      padding: 10px 20px;
-      background: #a6794a;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-
-    /* New Roulette button styles */
-    #rouletteBtn {
-      padding: 10px 20px;
-      background: #a6794a;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 4px;
-      font-weight: bold;
-      font-size: 1rem;
-      user-select: none;
-      transition: background-color 0.3s ease;
-    }
-    #rouletteBtn:hover {
-      background: #8b6434;
-    }
-
-    .collapsible {
-      background: #a6794a;
-      color: white;
-      cursor: pointer;
-      padding: 10px;
-      width: 100%;
-      border: none;
-      text-align: left;
-      font-size: 1.1em;
-      margin-top: 10px;
-    }
-
-    .collapsible:hover {
-      background: #8b6434;
-    }
-
-    .content {
-      display: none;
-      background: #fff8e6;
-      padding: 10px;
-      border: 1px solid #ccc;
-    }
-
-    form input, form button {
-      margin: 5px;
-      font-size: 1em;
-    }
-
-    form input[type="file"] {
-      padding: 3px;
-    }
-
-    .bottle-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 15px;
-      padding: 1rem;
-    }
-
-    .bottle-card {
-      background: rgba(255, 255, 255, 0.92);
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      position: relative;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      transition: opacity 0.3s ease;
-      color: #3e2f1c;
-    }
-
-    .bottle-card img {
-      max-width: 150px;  /* smaller size */
-      height: auto;
-      border-radius: 6px;
-      margin-bottom: 8px;
-      user-select: none;
-      pointer-events: none;
-    }
-
-    .bottle-card.killed {
-      opacity: 0.5;
-      filter: grayscale(100%);
-    }
-
-    .toggle-group {
+    .top-bar {
       display: flex;
       justify-content: space-between;
-      margin-top: 8px;
-      font-size: 1em;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .toggle-group label {
-      display: flex;
       align-items: center;
-      gap: 6px;
-      cursor: pointer;
     }
-
-    .emoji {
-      font-weight: bold;
-      font-size: 1.3em;
-      display: inline-block;
-      transition: transform 0.4s ease;
-    }
-
-    .spin {
-      animation: spin360 0.4s ease;
-    }
-
-    @keyframes spin360 {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .edit-btn, .delete-btn {
-      position: absolute;
-      top: 5px;
-      background: transparent;
+    .roulette-btn {
+      background: #552200;
+      color: white;
+      padding: 10px 16px;
+      font-size: 14px;
       border: none;
+      border-radius: 4px;
       cursor: pointer;
-      font-size: 1.1em;
     }
-
-    .edit-btn { right: 30px; }
-    .delete-btn { right: 5px; color: red; }
-
-    /* Roulette result popup */
-    #rouletteResult {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, 100%) rotate(0deg);
-      background: rgba(255, 255, 255, 0.95);
-      border: 2px solid #333;
-      border-radius: 20px;
-      padding: 20px;
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-      font-size: 18px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-      transition: transform 0.6s ease, opacity 0.6s ease;
-      z-index: 100;
-      opacity: 0;
-      color: #3e2f1c;
-      pointer-events: none;
+    .form-container {
+      margin: 20px auto;
+      padding: 15px;
+      background: #fff8e1;
+      border: 2px dashed #ccc;
+      max-width: 700px;
+      box-shadow: 3px 3px 8px rgba(0,0,0,0.2);
     }
-
-    #rouletteResult.show {
-      transform: translate(-50%, -50%) rotate(720deg);
-      opacity: 1;
-      pointer-events: auto;
+    .form-container input,
+    .form-container select {
+      width: calc(100% - 12px);
+      margin: 5px 0;
+      padding: 6px;
+      font-family: inherit;
+      font-size: 14px;
     }
-
-    #rouletteResult .closeBtn {
+    .form-container button {
       margin-top: 10px;
-      background: #c0392b;
-      color: #fff;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 5px;
-      cursor: pointer;
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+    .bottle-list {
+      margin-top: 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+    }
+    .bottle-card {
+      background: #fffaf0;
+      padding: 10px;
+      border: 1px solid #aaa;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .bottle-card img {
+      max-width: 100%;
+      max-height: 150px;
+      object-fit: contain;
+      margin-bottom: 5px;
+      display: block;
+    }
+    .roulette-card {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, 200%) rotate(0deg);
+      transition: transform 0.8s ease-out;
+      z-index: 1000;
+      background: #fffaf0;
+      padding: 20px;
+      border: 2px solid #552200;
+      font-size: 20px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+    .roulette-card.show {
+      transform: translate(-50%, -50%) rotate(720deg);
     }
   </style>
 </head>
-
 <body>
-  <header>
-    <button onclick="location='index.html'" class="return-button">Return to Bunghole</button>
-    The Tipsy Bunghole Bottle Inventory
-    <button id="rouletteBtn" aria-label="Choose a random bottle to drink">What Should I Drink?</button>
-  </header>
-
-  <button class="collapsible">➕ Add a Bottle</button>
-  <div class="content">
-    <form id="bottleForm">
-      <input type="text" id="name" placeholder="Bottle Name" required />
-      <input type="text" id="distillery" placeholder="Distillery" />
-      <input type="text" id="age" placeholder="Age" />
-      <input type="text" id="proof" placeholder="Proof" />
-      <input type="file" id="labelImage" accept="image/*" />
-      <button type="submit">Add Bottle</button>
-    </form>
-    <p id="formStatus" style="color:#a6794a; font-weight:bold;"></p>
+  <div class="top-bar">
+    <a href="index.html">Return to Bunghole</a>
+    <button class="roulette-btn" onclick="spinRoulette()">What Should I Drink?</button>
   </div>
 
-  <div class="bottle-grid" id="bottleGrid"></div>
+  <h1>Bottle Inventory</h1>
 
-  <!-- Roulette Result Popup -->
-  <div id="rouletteResult" aria-live="polite" role="dialog" aria-modal="true" aria-hidden="true">
-    <div id="rouletteContent"></div>
-    <button class="closeBtn" aria-label="Close roulette result">Close</button>
+  <div class="form-container">
+    <input type="text" id="bottleName" placeholder="Bottle Name">
+    <input type="text" id="distillery" placeholder="Distillery">
+    <input type="text" id="year" placeholder="Year">
+    <input type="text" id="proof" placeholder="Proof">
+    <input type="file" id="labelImage" accept="image/*">
+    <button onclick="addBottle()">Add Bottle</button>
   </div>
 
-  <!-- Firebase v9 compat SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <div class="bottle-list" id="bottleList"></div>
+
+  <div class="roulette-card" id="rouletteCard"></div>
+
+  <!-- Firebase App (the core Firebase SDK) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
 
   <script>
-    // Your Firebase config - matches index.html config exactly
     const firebaseConfig = {
       apiKey: "AIzaSyAdHvy_zumpvAObyIF_o-nVcJwhH2M_q_Q",
       authDomain: "tipsy-bunghole-photos.firebaseapp.com",
       projectId: "tipsy-bunghole-photos",
-      storageBucket: "tipsy-bunghole-photos.firebasestorage.app",
+      storageBucket: "tipsy-bunghole-photos.appspot.com",
       messagingSenderId: "2480051479",
       appId: "1:2480051479:web:c89f9cf8f4b3df8cdf1352"
     };
 
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
     const storage = firebase.storage();
-    const firestore = firebase.firestore();
 
-    // Role check - redirect if no access
-    const role = localStorage.getItem("bungholeRole");
-    const access = localStorage.getItem("bungholeAccess");
-    if (!access || !role) location = "signin.html";
+    function addBottle() {
+      const name = document.getElementById("bottleName").value.trim();
+      const distillery = document.getElementById("distillery").value.trim();
+      const year = document.getElementById("year").value.trim();
+      const proof = document.getElementById("proof").value.trim();
+      const fileInput = document.getElementById("labelImage");
+      const file = fileInput.files[0];
 
-    document.addEventListener("DOMContentLoaded", () => {
-      if (role !== "admin") {
-        document.querySelector(".collapsible").style.display = "none";
-        document.querySelector(".content").style.display = "none";
-      }
-    });
-
-    const bottleGrid = document.getElementById("bottleGrid");
-    const form = document.getElementById("bottleForm");
-    const formStatus = document.getElementById("formStatus");
-
-    // Collapsible form toggle
-    document.querySelector(".collapsible").onclick = function () {
-      this.classList.toggle("active");
-      const content = this.nextElementSibling;
-      content.style.display = content.style.display === "block" ? "none" : "block";
-      formStatus.textContent = "";
-    };
-
-    // All bottles cache
-    let allBottles = [];
-
-    // Listen to bottles collection realtime updates
-    firestore.collection("bottles").onSnapshot(snapshot => {
-      allBottles = [];
-      snapshot.forEach(doc => allBottles.push({ id: doc.id, ...doc.data() }));
-      renderBottles(allBottles);
-    });
-
-    // Render bottles on page
-    function renderBottles(bottles) {
-      bottleGrid.innerHTML = "";
-      const icons = { favorite: "⭐", rare: "🦄", killed: "🪦" };
-
-      bottles.forEach(b => {
-        const card = document.createElement("div");
-        card.className = "bottle-card" + (b.killed ? " killed" : "");
-
-        if (b.labelImageUrl) {
-          const img = document.createElement("img");
-          img.src = b.labelImageUrl;
-          img.alt = `${b.name || "Bottle"} Label`;
-          card.appendChild(img);
-        }
-
-        const fields = ["name", "distillery", "age", "proof"];
-        fields.forEach(fld => {
-          const div = document.createElement("div");
-          div.innerHTML = `<strong>${fld.charAt(0).toUpperCase() + fld.slice(1)}:</strong> ${b[fld] || "N/A"}`;
-          card.appendChild(div);
-        });
-
-        // Toggle group (killed, favorite, rare)
-        const toggleGroup = document.createElement("div");
-        toggleGroup.className = "toggle-group";
-
-        ["killed", "favorite", "rare"].forEach(fld => {
-          const label = document.createElement("label");
-          const emoji = document.createElement("span");
-          emoji.className = "emoji";
-          emoji.textContent = b[fld] ? icons[fld] : "⬜";
-
-          label.appendChild(emoji);
-          label.appendChild(document.createTextNode(" " + fld.charAt(0).toUpperCase() + fld.slice(1)));
-
-          if (role === "admin") {
-            emoji.style.cursor = "pointer";
-            emoji.onclick = async () => {
-              emoji.classList.remove("spin");
-              void emoji.offsetWidth; // trigger reflow
-              emoji.classList.add("spin");
-
-              await firestore.collection("bottles").doc(b.id).update({ [fld]: !b[fld] });
-            };
-          }
-
-          toggleGroup.appendChild(label);
-        });
-
-        card.appendChild(toggleGroup);
-
-        if (role === "admin") {
-          // Edit button to allow inline editing (basic)
-          const editBtn = document.createElement("button");
-          editBtn.className = "edit-btn";
-          editBtn.textContent = "✏️";
-          editBtn.onclick = async () => {
-            const updated = {};
-            fields.forEach(fld => {
-              const val = prompt(`Update ${fld}`, b[fld] || "");
-              if (val !== null) updated[fld] = val.trim();
-            });
-            if (Object.keys(updated).length) {
-              await firestore.collection("bottles").doc(b.id).update(updated);
-            }
-          };
-          card.appendChild(editBtn);
-
-          // Delete button
-          const deleteBtn = document.createElement("button");
-          deleteBtn.className = "delete-btn";
-          deleteBtn.textContent = "🗑️";
-          deleteBtn.onclick = async () => {
-            if (confirm("Delete this bottle?")) {
-              await firestore.collection("bottles").doc(b.id).delete();
-            }
-          };
-          card.appendChild(deleteBtn);
-        }
-
-        bottleGrid.appendChild(card);
-      });
-    }
-
-    // Form submit handler - add bottle with optional label image upload
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      formStatus.style.color = "#a6794a";
-      formStatus.textContent = "Adding bottle...";
-
-      const name = form.name.value.trim();
       if (!name) {
-        formStatus.style.color = "red";
-        formStatus.textContent = "Bottle name is required!";
+        alert("Bottle name is required.");
         return;
       }
 
-      try {
-        let labelImageUrl = null;
-        const fileInput = form.labelImage;
-        if (fileInput.files.length > 0) {
-          const file = fileInput.files[0];
-          const fileName = `bottleLabels/${Date.now()}_${file.name}`;
-          const storageRef = storage.ref(fileName);
-          await storageRef.put(file);
-          labelImageUrl = await storageRef.getDownloadURL();
-        }
-
-        await firestore.collection("bottles").add({
-          name,
-          distillery: form.distillery.value.trim() || "",
-          age: form.age.value.trim() || "",
-          proof: form.proof.value.trim() || "",
-          labelImageUrl,
-          killed: false,
-          favorite: false,
-          rare: false,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      if (file) {
+        const storageRef = storage.ref(`bottlelabels/${Date.now()}_${file.name}`);
+        storageRef.put(file).then(snapshot => {
+          snapshot.ref.getDownloadURL().then(url => {
+            saveBottle({ name, distillery, year, proof, labelURL: url });
+          });
         });
-
-        formStatus.textContent = "Bottle added successfully! 🍾";
-        form.reset();
-      } catch (err) {
-        console.error("Add bottle error:", err);
-        formStatus.style.color = "red";
-        formStatus.textContent = "Failed to add bottle, try again.";
+      } else {
+        saveBottle({ name, distillery, year, proof });
       }
-    });
+    }
 
-    // --- Roulette Logic ---
-    const rouletteBtn = document.getElementById('rouletteBtn');
-    const rouletteResult = document.getElementById('rouletteResult');
-    const rouletteContent = document.getElementById('rouletteContent');
-    const closeBtn = rouletteResult.querySelector('.closeBtn');
+    function saveBottle(data) {
+      db.collection("bottles").add(data).then(() => {
+        loadBottles();
+        clearForm();
+      });
+    }
 
-    closeBtn.onclick = () => {
-      rouletteResult.classList.remove('show');
-      rouletteResult.setAttribute('aria-hidden', 'true');
-    };
+    function clearForm() {
+      document.getElementById("bottleName").value = "";
+      document.getElementById("distillery").value = "";
+      document.getElementById("year").value = "";
+      document.getElementById("proof").value = "";
+      document.getElementById("labelImage").value = "";
+    }
 
-    rouletteBtn.addEventListener('click', async () => {
-      try {
-        const snapshot = await firestore.collection("bottles").get();
-        const bottles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        const available = bottles.filter(b => !b.killed);
-
-        if (available.length === 0) {
-          rouletteContent.innerHTML = '<strong>No available bottles found!</strong>';
-        } else {
-          const chosen = available[Math.floor(Math.random() * available.length)];
-          rouletteContent.innerHTML = `
-            <h2>${chosen.name || 'Unnamed Bottle'}</h2>
-            <p><strong>Distillery:</strong> ${chosen.distillery || 'N/A'}</p>
-            <p><strong>Age:</strong> ${chosen.age || 'N/A'}</p>
-            <p><strong>Proof:</strong> ${chosen.proof || 'N/A'}</p>
-            ${chosen.labelImageUrl ? `<img src="${chosen.labelImageUrl}" alt="${chosen.name} Label" style="max-width:150px; margin-top:10px; border-radius:6px;">` : ''}
-            <p style="margin-top:10px; font-weight:bold;">Drink this one, pal! 🍻</p>
+    function loadBottles() {
+      const list = document.getElementById("bottleList");
+      list.innerHTML = "";
+      db.collection("bottles").onSnapshot(snapshot => {
+        list.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const div = document.createElement("div");
+          div.className = "bottle-card";
+          if (data.labelURL) {
+            const img = document.createElement("img");
+            img.src = data.labelURL;
+            div.appendChild(img);
+          }
+          div.innerHTML += `
+            <strong>${data.name}</strong><br>
+            ${data.distillery || ''}<br>
+            ${data.year || ''} ${data.proof ? '- ' + data.proof + ' proof' : ''}
           `;
-        }
+          list.appendChild(div);
+        });
+      });
+    }
 
-        rouletteResult.classList.add('show');
-        rouletteResult.setAttribute('aria-hidden', 'false');
-      } catch (error) {
-        console.error('Roulette error:', error);
-        rouletteContent.innerHTML = '<strong>Error choosing a bottle, try again later.</strong>';
-        rouletteResult.classList.add('show');
-        rouletteResult.setAttribute('aria-hidden', 'false');
-      }
-    });
+    function spinRoulette() {
+      db.collection("bottles").get().then(snapshot => {
+        const bottles = snapshot.docs.map(doc => doc.data());
+        if (bottles.length === 0) {
+          alert("No bottles to choose from.");
+          return;
+        }
+        const pick = bottles[Math.floor(Math.random() * bottles.length)];
+        const card = document.getElementById("rouletteCard");
+        card.textContent = pick.name + (pick.proof ? ` - ${pick.proof} proof` : "");
+        card.classList.add("show");
+        setTimeout(() => {
+          card.classList.remove("show");
+        }, 4000);
+      });
+    }
+
+    loadBottles();
   </script>
 </body>
 </html>
