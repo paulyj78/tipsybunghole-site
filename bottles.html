@@ -2,222 +2,181 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>The Tipsy Bunghole Bottles</title>
   <style>
     body {
       font-family: 'Courier New', Courier, monospace;
-      background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
+      background: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.appspot.com/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db') no-repeat center center fixed;
       background-size: cover;
+      color: #2b1d0e;
       margin: 0;
       padding: 0;
     }
-    .sidebar {
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 220px;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.85);
-      color: white;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    .sidebar a {
-      color: white;
-      display: block;
-      margin: 10px 0;
-      text-decoration: none;
-    }
-    .main {
-      margin-left: 240px;
-      padding: 20px;
-    }
-    .form-row {
+
+    header {
+      background: rgba(255, 255, 240, 0.95);
+      padding: 10px 20px;
       display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      background: #f9f2e7;
-      padding: 10px;
-      border: 1px dashed #aaa;
+      justify-content: space-between;
       align-items: center;
+      border-bottom: 2px solid #ccc;
     }
-    .form-row input[type="text"],
-    .form-row input[type="number"],
-    .form-row input[type="file"] {
-      flex: 1;
+
+    h1 {
+      font-family: Georgia, serif;
+      font-size: 24px;
+      margin: 0;
     }
-    .bottle-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-    .bottle-card {
-      background: #fffefc;
-      padding: 10px;
-      border: 1px solid #ccc;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .bottle-label {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border: 1px solid #999;
-    }
-    .roulette-btn {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      background: darkred;
+
+    .return-button {
+      font-size: 14px;
+      padding: 8px 12px;
+      background: #5c3d2e;
       color: white;
-      padding: 10px 15px;
       border: none;
       cursor: pointer;
-      z-index: 999;
+      border-radius: 4px;
+    }
+
+    #bottle-form {
+      background: rgba(255, 255, 240, 0.95);
+      padding: 15px;
+      margin: 20px;
+      border: 2px dashed #aaa;
+      border-radius: 8px;
+    }
+
+    #bottle-form input,
+    #bottle-form select,
+    #bottle-form button {
+      margin: 5px;
+    }
+
+    .bottle-entry {
+      background: rgba(255, 255, 255, 0.9);
+      margin: 10px 20px;
+      padding: 10px;
+      border-left: 4px solid #9c6c3f;
+      border-radius: 6px;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .bottle-entry img {
+      max-height: 100px;
+      display: block;
+      margin-top: 5px;
+    }
+
+    .label {
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
 
-  <div class="sidebar">
-    <h2>The Tipsy Bunghole</h2>
-    <a href="index.html">Home</a>
-    <a href="bottles.html">Bottle Inventory</a>
-    <a href="labelwall.html">Label Wall</a>
-  </div>
+<header>
+  <h1>The Tipsy Bunghole Bottles</h1>
+  <button class="return-button" onclick="window.location.href='index.html'">Return to Bunghole</button>
+</header>
 
-  <button class="roulette-btn" onclick="spinRoulette()">Bourbon Roulette</button>
+<section id="bottle-form">
+  <h2>Add a Bottle</h2>
+  <input type="text" id="name" placeholder="Bottle Name" required />
+  <input type="text" id="distillery" placeholder="Distillery" />
+  <input type="number" id="year" placeholder="Year" />
+  <input type="text" id="proof" placeholder="Proof" />
+  <label for="labelImage">Label Image (optional):</label>
+  <input type="file" id="labelImage" accept="image/*" />
+  <button onclick="addBottle()">Add Bottle</button>
+</section>
 
-  <div class="main">
-    <h1>Bottle Inventory</h1>
-    <div class="form-row">
-      <input type="text" id="name" placeholder="Bottle Name">
-      <input type="text" id="distillery" placeholder="Distillery">
-      <input type="number" id="year" placeholder="Year">
-      <input type="number" id="proof" placeholder="Proof">
-      <input type="file" id="labelImage" accept="image/*">
-      <button onclick="addBottle()">Add Bottle</button>
-    </div>
+<section id="bottle-list"></section>
 
-    <div id="bottleList" class="bottle-grid"></div>
-  </div>
+<!-- Firebase SDKs -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
-  <!-- ROULETTE POPUP -->
-  <div id="rouletteCard" style="display:none; position:fixed; bottom:-200px; left:50%; transform:translateX(-50%); background:#fff; padding:20px; border:2px solid #000; box-shadow:0 4px 10px rgba(0,0,0,0.3); transition:bottom 0.6s ease-out;">
-    <h2>Spin Result</h2>
-    <p id="rouletteResult">?</p>
-  </div>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAdHvy_zumpvAObyIF_o-nVcJwhH2M_q_Q",
+    authDomain: "tipsy-bunghole-photos.firebaseapp.com",
+    projectId: "tipsy-bunghole-photos",
+    storageBucket: "tipsy-bunghole-photos.appspot.com",
+    messagingSenderId: "2480051479",
+    appId: "1:2480051479:web:c89f9cf8f4b3df8cdf1352"
+  };
 
-  <script type="module">
-    // Firebase imports
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAxvLgYQOOxx8QIqVckgEdjHpDlYTzcwGs",
-      authDomain: "tipsy-bunghole-photos.firebaseapp.com",
-      projectId: "tipsy-bunghole-photos",
-      storageBucket: "tipsy-bunghole-photos.appspot.com",
-      messagingSenderId: "223660009700",
-      appId: "1:223660009700:web:xxxxxxxxxxxxxxxx"
-    };
+  const bottleList = document.getElementById('bottle-list');
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
+  async function addBottle() {
+    const name = document.getElementById("name").value.trim();
+    const distillery = document.getElementById("distillery").value.trim();
+    const year = document.getElementById("year").value.trim();
+    const proof = document.getElementById("proof").value.trim();
+    const imageFile = document.getElementById("labelImage").files[0];
 
-    const bottleList = document.getElementById("bottleList");
-
-    async function addBottle() {
-      const name = document.getElementById("name").value.trim();
-      const distillery = document.getElementById("distillery").value.trim();
-      const year = document.getElementById("year").value.trim();
-      const proof = document.getElementById("proof").value.trim();
-      const imageFile = document.getElementById("labelImage").files[0];
-
-      if (!name || !distillery) {
-        alert("Name and distillery required.");
-        return;
-      }
-
-      let imageUrl = "";
-      try {
-        const docRef = await addDoc(collection(db, "bottles"), {
-          name,
-          distillery,
-          year,
-          proof,
-          timestamp: Date.now(),
-        });
-
-        if (imageFile) {
-          const imageRef = ref(storage, `bottlelabels/${docRef.id}`);
-          await uploadBytes(imageRef, imageFile);
-          imageUrl = await getDownloadURL(imageRef);
-          await addDoc(collection(db, "bottles"), {
-            ...{ name, distillery, year, proof },
-            labelImage: imageUrl,
-            timestamp: Date.now()
-          });
-        }
-
-        document.getElementById("name").value = "";
-        document.getElementById("distillery").value = "";
-        document.getElementById("year").value = "";
-        document.getElementById("proof").value = "";
-        document.getElementById("labelImage").value = "";
-
-      } catch (error) {
-        alert("Error adding bottle: " + error.message);
-      }
+    if (!name) {
+      alert("Bottle name is required.");
+      return;
     }
 
-    function renderBottle(doc) {
-      const data = doc.data();
-      const div = document.createElement("div");
-      div.className = "bottle-card";
+    let labelUrl = "";
 
-      if (data.labelImage) {
-        const img = document.createElement("img");
-        img.src = data.labelImage;
-        img.className = "bottle-label";
-        div.appendChild(img);
+    try {
+      if (imageFile) {
+        const imageRef = storageRef(storage, 'bottlelabels/' + imageFile.name);
+        const snapshot = await uploadBytes(imageRef, imageFile);
+        labelUrl = await getDownloadURL(snapshot.ref);
       }
 
-      const info = document.createElement("div");
-      info.innerHTML = `<strong>${data.name}</strong><br>${data.distillery} | ${data.year || "?"} | ${data.proof || "?"} proof`;
-      div.appendChild(info);
+      const docRef = await addDoc(collection(db, "bottles"), {
+        name,
+        distillery,
+        year,
+        proof,
+        labelUrl,
+        timestamp: new Date()
+      });
 
-      bottleList.appendChild(div);
+      document.getElementById("name").value = "";
+      document.getElementById("distillery").value = "";
+      document.getElementById("year").value = "";
+      document.getElementById("proof").value = "";
+      document.getElementById("labelImage").value = "";
+    } catch (error) {
+      console.error("Error adding bottle:", error);
+      alert("Failed to add bottle. Try again.");
     }
+  }
 
-    onSnapshot(collection(db, "bottles"), snapshot => {
-      bottleList.innerHTML = "";
-      snapshot.forEach(doc => renderBottle(doc));
-    });
+  function displayBottle(doc) {
+    const data = doc.data();
+    const div = document.createElement("div");
+    div.className = "bottle-entry";
 
-    function spinRoulette() {
-      const card = document.getElementById("rouletteCard");
-      const bottleCards = document.querySelectorAll(".bottle-card");
-      if (bottleCards.length === 0) {
-        document.getElementById("rouletteResult").innerText = "No bottles!";
-      } else {
-        const pick = Math.floor(Math.random() * bottleCards.length);
-        const selected = bottleCards[pick];
-        const name = selected.querySelector("div")?.innerText || "Mystery Bourbon";
-        document.getElementById("rouletteResult").innerText = name;
-      }
-      card.style.display = "block";
-      setTimeout(() => {
-        card.style.bottom = "50%";
-      }, 10);
-      setTimeout(() => {
-        card.style.bottom = "-200px";
-      }, 5000);
-    }
-  </script>
+    div.innerHTML = `
+      <div><span class="label">Name:</span> ${data.name}</div>
+      ${data.distillery ? `<div><span class="label">Distillery:</span> ${data.distillery}</div>` : ""}
+      ${data.year ? `<div><span class="label">Year:</span> ${data.year}</div>` : ""}
+      ${data.proof ? `<div><span class="label">Proof:</span> ${data.proof}</div>` : ""}
+      ${data.labelUrl ? `<img src="${data.labelUrl}" alt="Label Image" />` : ""}
+    `;
+
+    bottleList.appendChild(div);
+  }
+
+  const q = query(collection(db, "bottles"), orderBy("timestamp", "desc"));
+  onSnapshot(q, (snapshot) => {
+    bottleList.innerHTML = "";
+    snapshot.forEach(displayBottle);
+  });
+</script>
+
 </body>
 </html>
