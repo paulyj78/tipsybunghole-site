@@ -1,462 +1,362 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <meta charset="UTF-8" />
- <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
- <title>The Tipsy Bunghole Bottles</title>
- <style>
-   html, body {
-     height: 100%;
-     margin: 0;
-     padding: 0;
-   }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Tipsy Bunghole Bottles</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: "Courier New", monospace;
+      background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.firebasestorage.app/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: #3e2f1c;
+    }
 
-   body {
-     font-family: "Courier New", monospace;
-     background-image: url('https://firebasestorage.googleapis.com/v0/b/tipsy-bunghole-photos.firebasestorage.app/o/IMG_0037.jpeg?alt=media&token=857fc39c-1247-45df-9fc7-5836eddce8db');
-     background-size: cover;
-     background-repeat: no-repeat;
-     background-position: center;
-     background-attachment: fixed;
-     min-height: 100vh;
-     color: #3e2f1c;
-   }
+    header {
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      position: relative;
+    }
 
-   header {
-     background: rgba(0, 0, 0, 0.7);
-     color: white;
-     text-align: center;
-     padding: 1rem;
-     font-size: 1.5rem;
-     font-weight: bold;
-     position: relative;
-   }
+    .return-button {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 10px 20px;
+      background: #a6794a;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
 
-   .return-button {
-     position: absolute;
-     left: 10px;
-     top: 50%;
-     transform: translateY(-50%);
-     padding: 10px 20px;
-     background: #a6794a;
-     color: white;
-     border: none;
-     cursor: pointer;
-     border-radius: 4px;
-   }
+    .collapsible {
+      background: #a6794a;
+      color: white;
+      cursor: pointer;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      text-align: left;
+      font-size: 1.1em;
+      margin-top: 10px;
+    }
 
-   #rouletteBtn {
-     position: absolute;
-     right: 10px;
-     top: 50%;
-     transform: translateY(-50%);
-     padding: 10px 20px;
-     background: #a6794a;
-     color: white;
-     border: none;
-     cursor: pointer;
-     border-radius: 4px;
-     font-weight: bold;
-   }
+    .collapsible:hover {
+      background: #8b6434;
+    }
 
-   .controls {
-     padding: 10px;
-     text-align: center;
-     background: rgba(255, 255, 255, 0.9);
-     display: flex;
-     flex-wrap: wrap;
-     justify-content: center;
-     gap: 10px;
-   }
+    .content {
+      display: none;
+      background: #fff8e6;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
 
-   .controls label,
-   .controls select {
-     margin: 0 8px;
-     font-size: 0.9em;
-     white-space: nowrap;
-   }
+    form input, form button {
+      margin: 5px;
+      font-size: 1em;
+    }
 
-   .collapsible {
-     background: #a6794a;
-     color: white;
-     cursor: pointer;
-     padding: 10px;
-     width: 100%;
-     border: none;
-     text-align: left;
-     font-size: 1.1em;
-   }
+    form input[type="file"] {
+      padding: 3px;
+    }
 
-   .collapsible:hover {
-     background: #8b6434;
-   }
+    .bottle-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 15px;
+      padding: 1rem;
+    }
 
-   .content {
-     display: none;
-     background: #fff8e6;
-     padding: 10px;
-     border: 1px solid #ccc;
-   }
+    .bottle-card {
+      background: rgba(255, 255, 255, 0.92);
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: opacity 0.3s ease;
+      color: #3e2f1c;
+    }
 
-   form input {
-     margin: 5px;
-   }
+    .bottle-card img {
+      max-width: 100%;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      user-select: none;
+      pointer-events: none;
+    }
 
-   .bottle-grid {
-     display: grid;
-     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-     gap: 15px;
-     padding: 1rem;
-   }
+    .bottle-card.killed {
+      opacity: 0.5;
+      filter: grayscale(100%);
+    }
 
-   .bottle-card {
-     background: rgba(255, 255, 255, 0.92);
-     padding: 10px;
-     border: 1px solid #ccc;
-     border-radius: 8px;
-     position: relative;
-     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-     transition: opacity 0.3s ease;
-     color: #3e2f1c;
-   }
+    .toggle-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 1em;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
-   .bottle-card.killed {
-     opacity: 0.5;
-     filter: grayscale(100%);
-   }
+    .toggle-group label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
 
-   .toggle-group {
-     display: flex;
-     justify-content: space-between;
-     margin-top: 8px;
-     font-size: 1em;
-     gap: 10px;
-     flex-wrap: wrap;
-   }
+    .emoji {
+      font-weight: bold;
+      font-size: 1.3em;
+      display: inline-block;
+      transition: transform 0.4s ease;
+    }
 
-   .toggle-group label {
-     display: flex;
-     align-items: center;
-     gap: 6px;
-     cursor: pointer;
-   }
+    .spin {
+      animation: spin360 0.4s ease;
+    }
 
-   .emoji {
-     font-weight: bold;
-     font-size: 1.3em;
-     display: inline-block;
-     transition: transform 0.4s ease;
-   }
+    @keyframes spin360 {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
 
-   .spin {
-     animation: spin360 0.4s ease;
-   }
+    .edit-btn, .delete-btn {
+      position: absolute;
+      top: 5px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1em;
+    }
 
-   @keyframes spin360 {
-     from { transform: rotate(0deg); }
-     to { transform: rotate(360deg); }
-   }
+    .edit-btn { right: 30px; }
+    .delete-btn { right: 5px; color: red; }
 
-   .edit-btn, .delete-btn {
-     position: absolute;
-     top: 5px;
-     background: transparent;
-     border: none;
-     cursor: pointer;
-     font-size: 1.1em;
-   }
-
-   .edit-btn { right: 30px; }
-   .delete-btn { right: 5px; color: red; }
-
-   #rouletteResult {
-     position: fixed;
-     top: 50%;
-     left: 50%;
-     transform: translate(-50%, 100%) rotate(0deg);
-     background: rgba(255, 255, 255, 0.95);
-     border: 2px solid #333;
-     border-radius: 20px;
-     padding: 20px;
-     width: 80%;
-     max-width: 400px;
-     text-align: center;
-     font-size: 18px;
-     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-     transition: transform 0.6s ease, opacity 0.6s ease;
-     z-index: 100;
-     opacity: 0;
-     color: #3e2f1c;
-   }
-
-   #rouletteResult.show {
-     transform: translate(-50%, -50%) rotate(720deg);
-     opacity: 1;
-   }
-
-   #rouletteResult .closeBtn {
-     margin-top: 10px;
-     background: #c0392b;
-     color: #fff;
-     border: none;
-     padding: 6px 12px;
-     border-radius: 5px;
-     cursor: pointer;
-   }
-
-   @media (max-width: 600px) {
-     .controls {
-       flex-direction: column;
-       align-items: center;
-     }
-
-     .controls label,
-     .controls select {
-       margin: 4px 0;
-     }
-
-     .return-button, #rouletteBtn {
-       position: static;
-       transform: none;
-       margin: 5px auto;
-       display: block;
-     }
-
-     header {
-       padding: 0.5rem;
-     }
-   }
- </style>
+  </style>
 </head>
 
 <body>
- <header>
-   <button onclick="location='index.html'" class="return-button">Return to Bunghole</button>
-   The Tipsy Bunghole Bottle Inventory
-   <button id="rouletteBtn">What Should I Drink?</button>
- </header>
+  <header>
+    <button onclick="location='index.html'" class="return-button">Return to Bunghole</button>
+    The Tipsy Bunghole Bottle Inventory
+  </header>
 
- <button class="collapsible">➕ Add a Bottle</button>
- <div class="content">
-   <form id="bottleForm">
-     <input type="text" id="name" placeholder="Bottle Name" required />
-     <input type="text" id="distillery" placeholder="Distillery" />
-     <input type="text" id="age" placeholder="Age" />
-     <input type="text" id="proof" placeholder="Proof" />
-     <button type="submit">Add Bottle</button>
-   </form>
- </div>
+  <button class="collapsible">➕ Add a Bottle</button>
+  <div class="content">
+    <form id="bottleForm">
+      <input type="text" id="name" placeholder="Bottle Name" required />
+      <input type="text" id="distillery" placeholder="Distillery" />
+      <input type="text" id="age" placeholder="Age" />
+      <input type="text" id="proof" placeholder="Proof" />
+      <input type="file" id="labelImage" accept="image/*" />
+      <button type="submit">Add Bottle</button>
+    </form>
+    <p id="formStatus" style="color:#a6794a; font-weight:bold;"></p>
+  </div>
 
- <div class="controls">
-   <label><input type="checkbox" id="filterFavorite"/> Favorites only</label>
-   <label><input type="checkbox" id="filterRare"/> Rare only</label>
-   <label><input type="checkbox" id="filterKilled"/> Killed only</label>
-   <label for="sortBy">Sort by:</label>
-   <select id="sortBy">
-     <option value="name">Name (A–Z)</option>
-     <option value="age">Age (low→high)</option>
-     <option value="proof">Proof (low→high)</option>
-   </select>
- </div>
+  <div class="bottle-grid" id="bottleGrid"></div>
 
- <div class="bottle-grid" id="bottleGrid"></div>
+  <!-- Firebase v9 compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
- <div id="rouletteResult" aria-live="polite" role="dialog" aria-modal="true" aria-hidden="true">
-   <div id="rouletteContent"></div>
-   <button class="closeBtn" onclick="hideRoulette()">Close</button>
- </div>
+  <script>
+    // Your Firebase config - matches index.html config exactly
+    const firebaseConfig = {
+      apiKey: "AIzaSyAdHvy_zumpvAObyIF_o-nVcJwhH2M_q_Q",
+      authDomain: "tipsy-bunghole-photos.firebaseapp.com",
+      projectId: "tipsy-bunghole-photos",
+      storageBucket: "tipsy-bunghole-photos.firebasestorage.app",
+      messagingSenderId: "2480051479",
+      appId: "1:2480051479:web:c89f9cf8f4b3df8cdf1352"
+    };
 
- <script type="module">
-   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-   import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const storage = firebase.storage();
+    const firestore = firebase.firestore();
 
-   const role = localStorage.getItem("bungholeRole");
-   const access = localStorage.getItem("bungholeAccess");
-   if (!access || !role) location = "signin.html";
+    // Role check - redirect if no access
+    const role = localStorage.getItem("bungholeRole");
+    const access = localStorage.getItem("bungholeAccess");
+    if (!access || !role) location = "signin.html";
 
-   document.addEventListener("DOMContentLoaded", () => {
-     if (role !== "admin") {
-       document.querySelector(".collapsible").style.display = "none";
-       document.querySelector(".content").style.display = "none";
-     }
-   });
+    document.addEventListener("DOMContentLoaded", () => {
+      if (role !== "admin") {
+        document.querySelector(".collapsible").style.display = "none";
+        document.querySelector(".content").style.display = "none";
+      }
+    });
 
-   const app = initializeApp({
-     apiKey: "AIzaSyAxvLgYQOO...",
-     authDomain: "tipsy-bunghole-photos.firebaseapp.com",
-     projectId: "tipsy-bunghole-photos",
-     storageBucket: "tipsy-bunghole-photos.appspot.com",
-     messagingSenderId: "223660009700",
-     appId: "1:223660009700:web:yourappid"
-   });
+    const bottleGrid = document.getElementById("bottleGrid");
+    const form = document.getElementById("bottleForm");
+    const formStatus = document.getElementById("formStatus");
 
-   const db = getFirestore(app);
-   const bottlesRef = collection(db, "bottles");
+    // Collapsible form toggle
+    document.querySelector(".collapsible").onclick = function () {
+      this.classList.toggle("active");
+      const content = this.nextElementSibling;
+      content.style.display = content.style.display === "block" ? "none" : "block";
+      formStatus.textContent = "";
+    };
 
-   const form = document.getElementById("bottleForm");
-   const bottleGrid = document.getElementById("bottleGrid");
+    // All bottles cache
+    let allBottles = [];
 
-   const filters = { favorite: false, rare: false, killed: false, sortBy: "name" };
+    // Listen to bottles collection realtime updates
+    firestore.collection("bottles").onSnapshot(snapshot => {
+      allBottles = [];
+      snapshot.forEach(doc => allBottles.push({ id: doc.id, ...doc.data() }));
+      renderBottles(allBottles);
+    });
 
-   document.getElementById("filterFavorite").onchange = e => { filters.favorite = e.target.checked; renderFiltered(); };
-   document.getElementById("filterRare").onchange = e => { filters.rare = e.target.checked; renderFiltered(); };
-   document.getElementById("filterKilled").onchange = e => { filters.killed = e.target.checked; renderFiltered(); };
-   document.getElementById("sortBy").onchange = e => { filters.sortBy = e.target.value; renderFiltered(); };
+    // Render bottles on page
+    function renderBottles(bottles) {
+      bottleGrid.innerHTML = "";
+      const icons = { favorite: "⭐", rare: "🦄", killed: "🪦" };
 
-   const allBottles = [];
+      bottles.forEach(b => {
+        const card = document.createElement("div");
+        card.className = "bottle-card" + (b.killed ? " killed" : "");
 
-   form?.addEventListener("submit", async e => {
-     e.preventDefault();
-     await addDoc(bottlesRef, {
-       name: form.name.value,
-       distillery: form.distillery.value,
-       age: form.age.value,
-       proof: form.proof.value,
-       killed: false,
-       favorite: false,
-       rare: false
-     });
-     form.reset();
-   });
+        if (b.labelImageUrl) {
+          const img = document.createElement("img");
+          img.src = b.labelImageUrl;
+          img.alt = `${b.name || "Bottle"} Label`;
+          card.appendChild(img);
+        }
 
-   onSnapshot(bottlesRef, snap => {
-     allBottles.length = 0;
-     snap.forEach(ds => allBottles.push({ id: ds.id, ...ds.data() }));
-     renderFiltered();
-   });
+        const fields = ["name", "distillery", "age", "proof"];
+        fields.forEach(fld => {
+          const div = document.createElement("div");
+          div.innerHTML = `<strong>${fld.charAt(0).toUpperCase() + fld.slice(1)}:</strong> ${b[fld] || "N/A"}`;
+          card.appendChild(div);
+        });
 
-   function renderFiltered() {
-     let arr = allBottles.filter(b => {
-       if (filters.favorite && !b.favorite) return false;
-       if (filters.rare && !b.rare) return false;
-       if (filters.killed && !b.killed) return false;
-       return true;
-     });
+        // Toggle group (killed, favorite, rare)
+        const toggleGroup = document.createElement("div");
+        toggleGroup.className = "toggle-group";
 
-     if (filters.sortBy === "age" || filters.sortBy === "proof") {
-       arr.sort((a, b) => (parseFloat(a[filters.sortBy]) || 0) - (parseFloat(b[filters.sortBy]) || 0));
-     } else {
-       arr.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-     }
+        ["killed", "favorite", "rare"].forEach(fld => {
+          const label = document.createElement("label");
+          const emoji = document.createElement("span");
+          emoji.className = "emoji";
+          emoji.textContent = b[fld] ? icons[fld] : "⬜";
 
-     renderBottles(arr);
-   }
+          label.appendChild(emoji);
+          label.appendChild(document.createTextNode(" " + fld.charAt(0).toUpperCase() + fld.slice(1)));
 
-   function renderBottles(arr) {
-     bottleGrid.innerHTML = "";
-     const fieldIcons = { favorite: "⭐ Favorite", rare: "🦄 Rare", killed: "🪦 Killed" };
+          if (role === "admin") {
+            emoji.style.cursor = "pointer";
+            emoji.onclick = async () => {
+              emoji.classList.remove("spin");
+              void emoji.offsetWidth; // trigger reflow
+              emoji.classList.add("spin");
 
-     arr.forEach(b => {
-       const card = document.createElement("div");
-       card.className = "bottle-card" + (b.killed ? " killed" : "");
+              await firestore.collection("bottles").doc(b.id).update({ [fld]: !b[fld] });
+            };
+          }
 
-       const makeField = (lbl, fld, fb = "N/A") => {
-         const ed = role === "admin" ? "true" : "false";
-         const div = document.createElement("div");
-         div.innerHTML = `<strong>${lbl}:</strong> <span contenteditable="${ed}" class="field-${fld}">${b[fld] || fb}</span>`;
-         return div;
-       };
+          toggleGroup.appendChild(label);
+        });
 
-       card.append(makeField("Name", "name"), makeField("Distillery", "distillery"), makeField("Age", "age"), makeField("Proof", "proof"));
+        card.appendChild(toggleGroup);
 
-       const tg = document.createElement("div");
-       tg.className = "toggle-group";
+        if (role === "admin") {
+          // Edit button to allow inline editing (basic)
+          const editBtn = document.createElement("button");
+          editBtn.className = "edit-btn";
+          editBtn.textContent = "✏️";
+          editBtn.onclick = async () => {
+            const updated = {};
+            fields.forEach(fld => {
+              const val = prompt(`Update ${fld}`, b[fld] || "");
+              if (val !== null) updated[fld] = val.trim();
+            });
+            if (Object.keys(updated).length) {
+              await firestore.collection("bottles").doc(b.id).update(updated);
+            }
+          };
+          card.appendChild(editBtn);
 
-       ["killed", "favorite", "rare"].forEach(f => {
-         const lab = document.createElement("label");
-         const emojiSpan = document.createElement("span");
-         emojiSpan.className = "emoji";
-         emojiSpan.textContent = b[f] ? fieldIcons[f].split(" ")[0] : "⬜";
+          // Delete button
+          const deleteBtn = document.createElement("button");
+          deleteBtn.className = "delete-btn";
+          deleteBtn.textContent = "🗑️";
+          deleteBtn.onclick = async () => {
+            if (confirm("Delete this bottle?")) {
+              await firestore.collection("bottles").doc(b.id).delete();
+            }
+          };
+          card.appendChild(deleteBtn);
+        }
 
-         lab.appendChild(emojiSpan);
-         lab.appendChild(document.createTextNode(" " + fieldIcons[f].split(" ")[1]));
+        bottleGrid.appendChild(card);
+      });
+    }
 
-         if (role === "admin") {
-           emojiSpan.style.cursor = "pointer";
-           emojiSpan.onclick = async () => {
-             emojiSpan.classList.remove("spin");
-             void emojiSpan.offsetWidth;
-             emojiSpan.classList.add("spin");
+    // Form submit handler - add bottle with optional label image upload
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      formStatus.style.color = "#a6794a";
+      formStatus.textContent = "Adding bottle...";
 
-             await updateDoc(doc(db, "bottles", b.id), { [f]: !b[f] });
+      const name = form.name.value.trim();
+      if (!name) {
+        formStatus.style.color = "red";
+        formStatus.textContent = "Bottle name is required!";
+        return;
+      }
 
-             const onAnimEnd = () => {
-               emojiSpan.classList.remove("spin");
-               emojiSpan.removeEventListener("animationend", onAnimEnd);
-             };
-             emojiSpan.addEventListener("animationend", onAnimEnd);
-           };
-         }
+      try {
+        let labelImageUrl = null;
+        const fileInput = form.labelImage;
+        if (fileInput.files.length > 0) {
+          const file = fileInput.files[0];
+          const fileName = `bottleLabels/${Date.now()}_${file.name}`;
+          const storageRef = storage.ref(fileName);
+          await storageRef.put(file);
+          labelImageUrl = await storageRef.getDownloadURL();
+        }
 
-         tg.appendChild(lab);
-       });
+        await firestore.collection("bottles").add({
+          name,
+          distillery: form.distillery.value.trim() || "",
+          age: form.age.value.trim() || "",
+          proof: form.proof.value.trim() || "",
+          labelImageUrl,
+          killed: false,
+          favorite: false,
+          rare: false,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        });
 
-       card.append(tg);
-
-       if (role === "admin") {
-         const eb = document.createElement("button");
-         eb.className = "edit-btn";
-         eb.innerText = "✏️";
-         eb.onclick = async () => {
-           let updates = {};
-           card.querySelectorAll("span[contenteditable='true']").forEach(span => {
-             const fld = span.className.replace("field-", ""),
-                   val = span.innerText.trim();
-             updates[fld] = val;
-           });
-           if (Object.keys(updates).length) await updateDoc(doc(db, "bottles", b.id), updates);
-         };
-
-         const dbtn = document.createElement("button");
-         dbtn.className = "delete-btn";
-         dbtn.innerText = "🗑️";
-         dbtn.onclick = async () => {
-           if (confirm("Delete this bottle?")) await deleteDoc(doc(db, "bottles", b.id));
-         };
-
-         card.append(eb, dbtn);
-       }
-
-       bottleGrid.append(card);
-     });
-   }
-
-   document.querySelector(".collapsible").onclick = function () {
-     this.classList.toggle("active");
-     const c = this.nextElementSibling;
-     c.style.display = c.style.display === "block" ? "none" : "block";
-   };
-
-   // Roulette logic
-   const rouletteBtn = document.getElementById('rouletteBtn');
-   const rouletteResult = document.getElementById('rouletteResult');
-   const rouletteContent = document.getElementById('rouletteContent');
-
-   rouletteBtn.addEventListener('click', async () => {
-     const bottlesSnapshot = await getDocs(collection(db, "bottles"));
-     const bottles = bottlesSnapshot.docs.map(doc => doc.data());
-     const available = bottles.filter(b => !b.killed);
-
-     if (available.length === 0) {
-       rouletteContent.innerHTML = '<strong>No available bottles found!</strong>';
-     } else {
-       const chosen = available[Math.floor(Math.random() * available.length)];
-       rouletteContent.innerHTML = `
-         <h2>${chosen.name || 'Unnamed Bottle'}</h2>
-         <p><strong>Distillery:</strong> ${chosen.distillery || 'N/A'}</p>
-         <p><strong>Age:</strong> ${chosen.age || 'N/A'}</p>
-         <p><strong>Proof:</strong> ${chosen.proof || 'N/A'}</p>
-       `;
-     }
-
-     rouletteResult.setAttribute('aria-hidden', 'false');
-     rouletteResult.classList.add('show');
-   });
-
-   window.hideRoulette = function () {
-     rouletteResult.classList.remove('show');
-     rouletteResult.setAttribute('aria-hidden', 'true');
-   }
- </script>
+        formStatus.textContent = "Bottle added successfully! 🍾";
+        form.reset();
+      } catch (err) {
+        console.error("Add bottle error:", err);
+        formStatus.style.color = "red";
+        formStatus.textContent = "Failed to add bottle, try again.";
+      }
+    });
+  </script>
 </body>
 </html>
