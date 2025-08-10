@@ -1,4 +1,7 @@
-meta charset="UTF-8" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>The Tipsy Bunghole Bottles</title>
   <style>
@@ -88,6 +91,10 @@ meta charset="UTF-8" />
     }
     .filters input[type="text"]::placeholder { color: #d0c5a6; }
 
+    /* filter-icon sizing (will hold inline SVG) */
+    .filter-icon { display:inline-block; vertical-align: middle; margin-left:6px; line-height:0; }
+    .filters .toggle-svg { width:16px; height:16px; }
+
     /* Collapsible form button and content */
     .collapsible {
       background: #a6794a;
@@ -159,6 +166,7 @@ meta charset="UTF-8" />
       border: 2px solid #a6794a;
       border-radius: 8px;
       padding: 12px;
+      padding-right: 72px; /* reserve space for edit/delete buttons */
       color: white;
       position: relative;
       box-shadow:
@@ -246,7 +254,7 @@ meta charset="UTF-8" />
       flex-direction: column;     /* vertical stack */
       gap: 8px;
       align-items: flex-start;    /* left align */
-      margin-left: -8px;          /* nudge left as requested */
+      margin-left: -18px;         /* nudge left a bit to separate from edit/trash */
       min-width: 96px;
     }
     .toggle-group label {
@@ -334,9 +342,9 @@ meta charset="UTF-8" />
     }
 
     @media (max-width: 720px) {
-      .bottle-card { flex-direction: column; align-items: stretch; }
+      .bottle-card { flex-direction: column; align-items: stretch; padding-right: 20px; }
       .bottle-card img, .placeholder-container { width: 100%; height: 180px; transform: none !important; }
-      .toggle-group { flex-direction: row; justify-content: center; min-width: auto; }
+      .toggle-group { flex-direction: row; justify-content: center; min-width: auto; margin-left: 0; }
       .edit-btn, .delete-btn { right: 12px; top: 6px; }
       .bottle-info div { white-space: normal; }
     }
@@ -348,9 +356,9 @@ meta charset="UTF-8" />
     <div>The Tipsy Bunghole Bottle Inventory</div>
     <button id="rouletteBtn" aria-label="Choose a random bottle to drink">🎰 What Should I Drink?</button>
     <div class="filters" role="region" aria-label="Bottle filters">
-      <label><input type="checkbox" id="filterFavorite" /> ⭐ Favorite</label>
-      <label><input type="checkbox" id="filterRare" /> 🦄 Rare</label>
-      <label><input type="checkbox" id="filterKilled" /> 🪦 Killed</label>
+      <label><input type="checkbox" id="filterFavorite" /> <span class="filter-icon" data-icon="favorite"></span> Favorite</label>
+      <label><input type="checkbox" id="filterRare" /> <span class="filter-icon" data-icon="rare"></span> Rare</label>
+      <label><input type="checkbox" id="filterKilled" /> <span class="filter-icon" data-icon="killed"></span> Killed</label>
       <input type="text" id="filterSearch" placeholder="Search name or distillery…" aria-label="Search bottles"/>
     </div>
   </header>
@@ -408,6 +416,9 @@ meta charset="UTF-8" />
       });
       document.getElementById('filterSearch').oninput = applyFilters;
 
+      // replace the small emoji in the filter labels with matching chalk SVGs (off-state)
+      setFilterIcons();
+
       document.querySelector(".collapsible").onclick = function() {
         this.classList.toggle("active");
         const content = this.nextElementSibling;
@@ -430,6 +441,34 @@ meta charset="UTF-8" />
       killedOn: `<svg class="toggle-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="#f4d89a" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" fill="none"><path d="M12 2c2.5 0 4.5 2 4.5 4.5S14.5 11 12 11s-4.5-2-4.5-4.5S9.5 2 12 2z"/><path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>`,
       killedOff: `<svg class="toggle-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.35)" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" fill="none"><path d="M12 2c2.5 0 4.5 2 4.5 4.5S14.5 11 12 11s-4.5-2-4.5-4.5S9.5 2 12 2z"/><path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>`
     };
+
+    // Set the small filter icons (off-state) to match list icons
+    function setFilterIcons() {
+      const map = {
+        filterFavorite: 'favoriteOff',
+        filterRare: 'rareOff',
+        filterKilled: 'killedOff'
+      };
+      const textMap = {
+        filterFavorite: ' Favorite',
+        filterRare: ' Rare',
+        filterKilled: ' Killed'
+      };
+      Object.keys(map).forEach(id => {
+        const chk = document.getElementById(id);
+        if (!chk) return;
+        const label = chk.parentElement;
+        const svgKey = map[id];
+        // rebuild label content (preserve the existing checkbox element)
+        label.innerHTML = '';
+        label.appendChild(chk);
+        const span = document.createElement('span');
+        span.className = 'filter-icon';
+        span.innerHTML = svgIcons[svgKey];
+        label.appendChild(span);
+        label.appendChild(document.createTextNode(textMap[id]));
+      });
+    }
 
     // Placeholder SVG (small chalk sketch)
     const chalkPlaceholderSVG = `
