@@ -93,11 +93,9 @@
     .filters input[type="text"]::placeholder { color: #d0c5a6; }
     font-size: 0.95rem;
 
-    /* filter-icon sizing (will hold inline SVG) */
     .filter-icon { display:inline-block; vertical-align: middle; margin-left:6px; line-height:0; }
     .filters .toggle-svg { width:16px; height:16px; }
 
-    /* Collapsible form button and content */
     .collapsible {
       background: #a6794a;
       color: white;
@@ -124,7 +122,6 @@
       font-family: "Courier New", monospace;
     }
 
-    /* Form inputs */
     form input, form button {
       margin: 5px;
       font-size: 1em;
@@ -149,7 +146,6 @@
     }
     form button:hover { background: #8b6434; }
 
-    /* LIST layout (thumbnail left, info center, toggles right) */
     .bottle-grid {
       display: flex;
       flex-direction: column;
@@ -168,7 +164,7 @@
       border: 2px solid #a6794a;
       border-radius: 8px;
       padding: 12px;
-      padding-right: 72px; /* reserve space for edit/delete buttons */
+      padding-right: 72px; /* reserve space for top buttons */
       color: white;
       position: relative;
       box-shadow:
@@ -189,7 +185,6 @@
     }
     .bottle-card.killed { opacity: 0.5; filter: grayscale(100%); }
 
-    /* Thumbnail and placeholder sizing */
     .bottle-card img {
       width: 80px;
       height: 120px;
@@ -225,7 +220,6 @@
       position: relative;
     }
 
-    /* Bottle info left aligned */
     .bottle-info {
       text-align: left;
       flex: 1 1 auto;
@@ -250,13 +244,12 @@
       white-space: nowrap;
     }
 
-    /* Toggle group: vertical, nudged left */
     .toggle-group {
       display: flex;
-      flex-direction: column;     /* vertical stack */
+      flex-direction: column;
       gap: 8px;
-      align-items: flex-start;    /* left align */
-      margin-left: -18px;         /* nudge left a bit to separate from edit/trash */
+      align-items: flex-start;
+      margin-left: -18px;
       min-width: 96px;
     }
     .toggle-group label {
@@ -270,7 +263,6 @@
       user-select: none;
     }
 
-    /* Inline SVG icon container */
     .toggle-icon {
       width: 28px;
       height: 28px;
@@ -287,7 +279,6 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Edit & delete remain absolute top-right */
     .edit-btn, .delete-btn {
       position: absolute;
       top: 8px;
@@ -304,7 +295,6 @@
     .delete-btn { right: 10px; color: #e04848; }
     .delete-btn:hover { color: #ff7272; }
 
-    /* Roulette popup unchanged */
     #rouletteResult {
       position: fixed;
       top: 50%; left: 50%;
@@ -343,11 +333,36 @@
       user-select: none;
     }
 
+    /* MOBILE LAYOUT ADJUSTMENTS */
     @media (max-width: 720px) {
-      .bottle-card { flex-direction: column; align-items: stretch; padding-right: 20px; }
-      .bottle-card img, .placeholder-container { width: 100%; height: 180px; transform: none !important; }
-      .toggle-group { flex-direction: row; justify-content: center; min-width: auto; margin-left: 0; }
-      .edit-btn, .delete-btn { right: 12px; top: 6px; }
+      .bottle-card {
+        flex-direction: column;
+        align-items: stretch;
+        padding-right: 20px;
+      }
+      .bottle-card img, .placeholder-container {
+        width: 100%;
+        height: 180px;
+        transform: none !important;
+      }
+      .toggle-group {
+        flex-direction: row;
+        justify-content: center;
+        min-width: auto;
+        margin-left: 0;
+      }
+      .edit-btn, .delete-btn {
+        /* Remove absolute positioning on mobile */
+        position: static;
+        font-size: 1.2em;
+        margin-top: 10px;
+      }
+      .admin-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 10px;
+      }
       .bottle-info div { white-space: normal; }
     }
   </style>
@@ -385,13 +400,12 @@
     <button class="closeBtn" aria-label="Close roulette result">Close</button>
   </div>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase SDKs & Script (same as before) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
   <script>
-    // Initialize Firebase (unchanged)
+    // Initialize Firebase (unchanged) ...
     firebase.initializeApp({
       apiKey: "AIzaSyAdHvy_zumpvAObyIF_o-nVcJwhH2M_q_Q",
       authDomain: "tipsy-bunghole-photos.firebaseapp.com",
@@ -403,7 +417,6 @@
     const storage = firebase.storage();
     const firestore = firebase.firestore();
 
-    // Access control (unchanged)
     const role = localStorage.getItem("bungholeRole");
     const access = localStorage.getItem("bungholeAccess");
     if (!access || !role) location = "signin.html";
@@ -417,10 +430,7 @@
         document.getElementById(id).onchange = applyFilters;
       });
       document.getElementById('filterSearch').oninput = applyFilters;
-
-      // replace the small emoji in the filter labels with matching chalk SVGs (off-state)
       setFilterIcons();
-
       document.querySelector(".collapsible").onclick = function() {
         this.classList.toggle("active");
         const content = this.nextElementSibling;
@@ -432,54 +442,31 @@
       };
     });
 
-    // Inline SVG icon set (chalk-style)
     const svgIcons = {
-      favoriteOn: `<svg class="toggle-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="#f4d89a" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" fill="none"><path d="M12 17.3l6.18 3.99-1.64-7.03L21 9.24l-7.19-.61L12 2 10.19 8.63 3 9.24l4.46 4.02L5.82 21.3z"/></svg>`,
-      favoriteOff: `<svg class="toggle-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.35)" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" fill="none"><path d="M12 17.3l6.18 3.99-1.64-7.03L21 9.24l-7.19-.61L12 2 10.19 8.63 3 9.24l4.46 4.02L5.82 21.3z"/></svg>`,
-
-      rareOn: `<svg class="toggle-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="#f4d89a" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" fill="none"><path d="M12 2l4 6 6 2-6 4-4 6-4-6-6-4 6-2z"/></svg>`,
-      rareOff: `<svg class="toggle-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.35)" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" fill="none"><path d="M12 2l4 6 6 2-6 4-4 6-4-6-6-4 6-2z"/></svg>`,
-
-      killedOn: `<svg class="toggle-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="#f4d89a" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" fill="none"><path d="M12 2c2.5 0 4.5 2 4.5 4.5S14.5 11 12 11s-4.5-2-4.5-4.5S9.5 2 12 2z"/><path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>`,
-      killedOff: `<svg class="toggle-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.35)" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" fill="none"><path d="M12 2c2.5 0 4.5 2 4.5 4.5S14.5 11 12 11s-4.5-2-4.5-4.5S9.5 2 12 2z"/><path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>`
+      favoriteOn: `<svg class="toggle-svg" xmlns="http://www.w3.org/2000/svg"...`,
+      favoriteOff: `<svg class="toggle-svg" xmlns="http://www.w3.org...`,
+      rareOn: `<svg class="toggle-svg" xmlns="http://www.w3.org...`,
+      rareOff: `<svg class="toggle-svg" xmlns="http://www.w3.org...`,
+      killedOn: `<svg class="toggle-svg" xmlns="http://www.w3.org...`,
+      killedOff: `<svg class="toggle-svg" xmlns="http://www.w3.org...`
     };
 
-    // Set the small filter icons (off-state) to match list icons
     function setFilterIcons() {
-      const map = {
-        filterFavorite: 'favoriteOff',
-        filterRare: 'rareOff',
-        filterKilled: 'killedOff'
-      };
-      const textMap = {
-        filterFavorite: ' Favorite',
-        filterRare: ' Rare',
-        filterKilled: ' Killed'
-      };
+      const map = { filterFavorite: 'favoriteOff', filterRare: 'rareOff', filterKilled: 'killedOff' };
+      const textMap = { filterFavorite: ' Favorite', filterRare: ' Rare', filterKilled: ' Killed' };
       Object.keys(map).forEach(id => {
         const chk = document.getElementById(id);
         if (!chk) return;
         const label = chk.parentElement;
-        const svgKey = map[id];
-        // rebuild label content (preserve the existing checkbox element)
         label.innerHTML = '';
         label.appendChild(chk);
         const span = document.createElement('span');
         span.className = 'filter-icon';
-        span.innerHTML = svgIcons[svgKey];
+        span.innerHTML = svgIcons[map[id]];
         label.appendChild(span);
         label.appendChild(document.createTextNode(textMap[id]));
       });
     }
-
-    // Placeholder SVG (small chalk sketch)
-    const chalkPlaceholderSVG = `
-      <svg class="placeholder-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="18" y="12" width="28" height="72" rx="8" ry="8" />
-        <path d="M 18 24 L 46 24" />
-        <path d="M 32 12 L 32 84" />
-        <circle cx="32" cy="84" r="6" />
-      </svg>`;
 
     let allBottles = [];
     firestore.collection("bottles").onSnapshot(snapshot => {
@@ -491,7 +478,6 @@
       const card = document.createElement('div');
       card.className = 'bottle-card' + (b.killed ? ' killed' : '');
 
-      // Image or placeholder
       if (b.labelImageUrl) {
         const img = document.createElement('img');
         img.src = b.labelImageUrl;
@@ -501,11 +487,16 @@
       } else {
         const placeholderDiv = document.createElement('div');
         placeholderDiv.className = 'placeholder-container';
-        placeholderDiv.innerHTML = chalkPlaceholderSVG;
+        placeholderDiv.innerHTML = `
+          <svg class="placeholder-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 96" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="18" y="12" width="28" height="72" rx="8" ry="8" />
+            <path d="M 18 24 L 46 24" />
+            <path d="M 32 12 L 32 84" />
+            <circle cx="32" cy="84" r="6" />
+          </svg>`;
         card.appendChild(placeholderDiv);
       }
 
-      // Bottle info fields
       const infoDiv = document.createElement('div');
       infoDiv.className = 'bottle-info';
       ['name', 'distillery', 'year', 'proof'].forEach(field => {
@@ -516,7 +507,6 @@
       });
       card.appendChild(infoDiv);
 
-      // Toggle group vertical + chalk SVG icons
       const toggleGroup = document.createElement('div');
       toggleGroup.className = 'toggle-group';
       const svgsMap = {
@@ -528,19 +518,12 @@
       ['killed', 'favorite', 'rare'].forEach(fld => {
         const label = document.createElement('label');
         label.style.cursor = role === 'admin' ? 'pointer' : 'default';
-        // icon container
         const iconWrap = document.createElement('span');
         iconWrap.className = 'toggle-icon';
         iconWrap.innerHTML = b[fld] ? svgIcons[svgsMap[fld][0]] : svgIcons[svgsMap[fld][1]];
         iconWrap.title = fld.charAt(0).toUpperCase() + fld.slice(1);
-
-        // label text
-        const textNode = document.createTextNode(' ' + fld.charAt(0).toUpperCase() + fld.slice(1));
-
-        // click handler (admin only)
         if (role === 'admin') {
-          const toggleFn = async (evt) => {
-            // animate
+          const toggleFn = async () => {
             iconWrap.classList.remove('spin');
             void iconWrap.offsetWidth;
             iconWrap.classList.add('spin');
@@ -551,29 +534,25 @@
               alert('Error updating bottle: ' + (err.message || err));
             }
           };
-          // bind click both to icon and label text area
           iconWrap.addEventListener('click', toggleFn);
           label.addEventListener('click', (e) => {
-            // clicking the label (not icon) should also toggle; avoid double-fire if icon clicked
             if (e.target === iconWrap || iconWrap.contains(e.target)) return;
             toggleFn();
           });
         }
-
         label.appendChild(iconWrap);
-        label.appendChild(textNode);
+        label.appendChild(document.createTextNode(' ' + fld.charAt(0).toUpperCase() + fld.slice(1)));
         toggleGroup.appendChild(label);
       });
 
       card.appendChild(toggleGroup);
 
-      // Admin edit/delete buttons (unchanged behavior)
       if (role === 'admin') {
         const editBtn = document.createElement('button');
         editBtn.className = 'edit-btn';
         editBtn.textContent = '✏️';
         editBtn.title = 'Edit Bottle';
-        editBtn.onclick = async e => {
+        editBtn.onclick = e => {
           e.stopPropagation();
           const upd = {};
           ['name','distillery','year','proof'].forEach(fld => {
@@ -581,50 +560,41 @@
             if (v !== null) upd[fld] = v.trim();
           });
           if (Object.keys(upd).length) {
-            try {
-              await firestore.collection('bottles').doc(b.id).update(upd);
-            } catch(e) {
-              alert('Failed to update bottle: ' + e.message);
-            }
+            firestore.collection('bottles').doc(b.id).update(upd).catch(e => alert('Failed to update bottle: ' + e.message));
           }
         };
-        card.appendChild(editBtn);
 
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
         deleteBtn.textContent = '🗑️';
         deleteBtn.title = 'Delete Bottle';
-        deleteBtn.onclick = async e => {
+        deleteBtn.onclick = e => {
           e.stopPropagation();
           if (confirm('Delete this bottle?')) {
-            try {
-              await firestore.collection('bottles').doc(b.id).delete();
-            } catch(e) {
-              alert('Failed to delete bottle: ' + e.message);
-            }
+            firestore.collection('bottles').doc(b.id).delete().catch(e => alert('Failed to delete bottle: ' + e.message));
           }
         };
-        card.appendChild(deleteBtn);
+
+        const adminActions = document.createElement('div');
+        adminActions.className = 'admin-actions';
+        adminActions.appendChild(editBtn);
+        adminActions.appendChild(deleteBtn);
+        card.appendChild(adminActions);
       }
 
       return card;
     }
 
-    // Render bottles list
     const bottleGrid = document.getElementById('bottleGrid');
     function renderBottles(bottles) {
       bottleGrid.innerHTML = '';
-      if (bottles.length === 0) {
+      if (!bottles.length) {
         bottleGrid.textContent = 'No bottles found.';
         return;
       }
-      bottles.forEach(b => {
-        const card = createBottleCard(b);
-        bottleGrid.appendChild(card);
-      });
+      bottles.forEach(b => bottleGrid.appendChild(createBottleCard(b)));
     }
 
-    // Filters logic (kept identical)
     function applyFilters() {
       let filtered = [...allBottles];
       if (document.getElementById('filterFavorite').checked) filtered = filtered.filter(b => b.favorite);
@@ -632,10 +602,7 @@
       if (document.getElementById('filterKilled').checked) filtered = filtered.filter(b => b.killed);
       const term = document.getElementById('filterSearch').value.trim().toLowerCase();
       if (term) {
-        filtered = filtered.filter(b =>
-          (b.name && b.name.toLowerCase().includes(term)) ||
-          (b.distillery && b.distillery.toLowerCase().includes(term))
-        );
+        filtered = filtered.filter(b => (b.name && b.name.toLowerCase().includes(term)) || (b.distillery && b.distillery.toLowerCase().includes(term)));
       }
       renderBottles(filtered);
     }
@@ -643,7 +610,6 @@
     const form = document.getElementById('bottleForm');
     const formStatus = document.getElementById('formStatus');
 
-    // Add bottle handler (unchanged)
     form.addEventListener('submit', async e => {
       e.preventDefault();
       formStatus.style.color = '#a6794a';
@@ -682,7 +648,6 @@
       }
     });
 
-    // Roulette popup (unchanged)
     const rouletteBtnEl = document.getElementById('rouletteBtn');
     const rouletteRes = document.getElementById('rouletteResult');
     const rouletteContent = document.getElementById('rouletteContent');
@@ -697,7 +662,7 @@
       try {
         const snap = await firestore.collection('bottles').get();
         const available = snap.docs.map(d => ({ id:d.id, ...d.data() })).filter(b => !b.killed);
-        if (available.length === 0) {
+        if (!available.length) {
           rouletteContent.innerHTML = '<strong>No available bottles found!</strong>';
         } else {
           const chosen = available[Math.floor(Math.random() * available.length)];
